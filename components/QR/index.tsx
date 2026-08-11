@@ -1,10 +1,13 @@
 import { useEffect, useRef } from 'react'
 import QRCode from 'qrcode'
 import logo from '@/assets/images/logo.png'
+import { assetPrefix } from '@/contents/apiUrl'
 
 interface Props {
   link: string
 }
+// 二维码中央 Logo 跟随 NEXT_PUBLIC_ASSET_PREFIX 配置：配置了资源前缀（OSS/CDN）→ 使用 {前缀}/logo.ico；留空 → 使用本地 /favicon.ico
+const qrLogo = assetPrefix ? `${assetPrefix}/logo.ico` : '/favicon.ico'
 export default function QRCodePage(props: Props) {
   const { link } = props
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -18,8 +21,7 @@ export default function QRCodePage(props: Props) {
         // 加载Logo图片
         const logoImage = new Image()
         logoImage.crossOrigin = 'anonymous'
-        logoImage.src =
-          'https://filscan-v2.oss-accelerate.aliyuncs.com/client/logo.ico' // 替换为你的Logo图片路径
+        logoImage.src = qrLogo
         // 在Canvas上绘制二维码和Logo图片
         const canvas: any = canvasRef.current
         const context = canvas.getContext('2d')

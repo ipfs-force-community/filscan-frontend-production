@@ -3,6 +3,11 @@ import { StyleProvider, createCache, extractStyle } from '@ant-design/cssinjs'
 import Document, { Head, Html, Main, NextScript } from 'next/document'
 import type { DocumentContext } from 'next/document'
 import Script from 'next/script'
+import { assetPrefix } from '@/contents/apiUrl'
+
+// favicon 跟随 NEXT_PUBLIC_ASSET_PREFIX 配置：
+//   配置了资源前缀（OSS/CDN）→ 使用 {前缀}/logo.ico；留空 → 使用本地 /favicon.ico
+const favicon = assetPrefix ? `${assetPrefix}/logo.ico` : '/favicon.ico'
 
 const MyDocument = () => (
   <Html lang="en">
@@ -24,10 +29,7 @@ const MyDocument = () => (
       <link rel="alternate" href="https://filscan.io/kr" hrefLang="kr-US" />
       <link rel="alternate" href="https://filscan.io/en" hrefLang="en-US" />
       <link rel="alternate" href="https://filscan.io" hrefLang="zh-CN" />
-      <link
-        rel="icon"
-        href="https://filscan-v2.oss-accelerate.aliyuncs.com/client/logo.ico"
-      />
+      <link rel="icon" href={favicon} />
       <link
         href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
         rel="stylesheet"

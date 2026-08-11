@@ -5,6 +5,7 @@ import { BrowserView, MobileView } from '../device-detect'
 import MFooter from '@/components/mobile/footer'
 import codeImg from '@/assets/images/code.png'
 import Image from 'next/image'
+import { staticUrl } from '@/contents/apiUrl'
 
 const footerLinks = [
   {
@@ -43,18 +44,14 @@ export default () => {
               className="text_color flex cursor-pointer items-center gap-x-2"
             >
               <Image
-                src={
-                  'https://filscan-v2.oss-cn-hongkong.aliyuncs.com/fvm_manage/images/logo.png'
-                }
+                src={staticUrl + '/images/logo.png'}
                 width={40}
                 height={40}
                 alt="logo"
               />
               {/* {getSvgIcon('logoText')} */}
               <Image
-                src={
-                  'https://filscan-v2.oss-cn-hongkong.aliyuncs.com/fvm_manage/images/logoText.png'
-                }
+                src={staticUrl + '/images/logoText.png'}
                 alt="logo"
                 width={95}
                 height={16}

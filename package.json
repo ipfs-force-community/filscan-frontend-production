@@ -17,7 +17,7 @@
     "cali": "HOSTNAME=0.0.0.0 PORT=9092 node server.js",
     "test": "HOSTNAME=0.0.0.0 PORT=9092 node server.js",
     "proMain": "PORT=9098 node server.js",
-    "build": "NODE_ENV=development environment=dev  FVM_URL='https://filscan-v2.oss-accelerate.aliyuncs.com/fvm_manage' next build",
+    "build": "NODE_ENV=development environment=dev next build",
     "build:dev": "env-cmd -f .env.test next build",
     "build:pre": "env-cmd -f .env.pre next build",
     "build:pro": "env-cmd -f .env.proMain next build",

@@ -7,6 +7,7 @@ import fvm from '@/assets/images/fvm.png'
 import code from '@/assets/images/fevmCode.png'
 import style from './index.module.scss'
 import { Translation } from '@/components/hooks/Translation'
+import { staticUrl } from '@/contents/apiUrl'
 
 function Share({ data, title }: { data: any; title: string }) {
   const myRef = useRef<any>()
@@ -82,17 +83,13 @@ function Share({ data, title }: { data: any; title: string }) {
               <div className={style['shareFvmContent-header']}>
                 <div className="flex items-center gap-x-2">
                   <Image
-                    src={
-                      'https://filscan-v2.oss-cn-hongkong.aliyuncs.com/fvm_manage/images/logo.png'
-                    }
+                    src={staticUrl + '/images/logo.png'}
                     width={60}
                     height={60}
                     alt="logo"
                   />
                   <Image
-                    src={
-                      'https://filscan-v2.oss-cn-hongkong.aliyuncs.com/fvm_manage/images/logoText.png'
-                    }
+                    src={staticUrl + '/images/logoText.png'}
                     alt="logo"
                     width={142}
                     height={24}

@@ -1,4 +1,3 @@
-import { fvmUrl } from '@/contents/apiUrl'
 import accountBg from '@/assets/images/accountBg.png'
 import accountMain from '@/assets/images/accountMain.png'
 import Image from 'next/image'

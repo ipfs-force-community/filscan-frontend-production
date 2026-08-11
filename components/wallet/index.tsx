@@ -6,19 +6,20 @@ import { addNetwork, connect_account, getNetWork } from '@/store/wallet'
 import { LogoutOutlined } from '@ant-design/icons'
 import { isIndent } from '@/utils'
 import walletStore from '@/store/modules/wallet'
+import { staticUrl } from '@/contents/apiUrl'
 
 const WalletList = [
   {
     label: 'TokenPocket',
     value: 'TokenPocket',
     url: 'https://chrome.google.com/webstore/detail/tokenpocket/mfgccjchihfkkindfppnaooecgfneiii',
-    icon: 'https://filscan-v2.oss-accelerate.aliyuncs.com/fvm_manage/images/TokenPocket.png',
+    icon: staticUrl + '/images/TokenPocket.png',
   },
   {
     label: 'MetaMask',
     value: 'MetaMask',
     url: 'https://metamask.io/',
-    icon: 'https://filscan-v2.oss-accelerate.aliyuncs.com/fvm_manage/images/MetaMask.png',
+    icon: staticUrl + '/images/MetaMask.png',
   },
 ]
 

@@ -2,7 +2,18 @@ const mainUrl = process.env.APP_BASE_URL
 // const testUrl = 'http://192.168.19.80:17000/api/v1'
 const proUrl =
   process.env.APP_BASE_URL_PRO || 'http://192.168.1.177:27000/pro/v1'
-export const fvmUrl = process.env.FVM_URL
+
+// 静态资源基地址（images 等资源的根目录），通过 .env 的 NEXT_PUBLIC_STATIC_URL 配置：
+//   - 留空：使用本地资源（相对路径 /images/xxx，资源放 public/images 或由 nginx 提供）
+//   - OSS：https://filscan-v2.oss-accelerate.aliyuncs.com/fvm_manage
+//   - CDN：https://cdn.filscan.io/fvm_manage
+export const staticUrl = process.env.NEXT_PUBLIC_STATIC_URL || ''
+
+// 构建产物（_next/*）资源前缀，通过 .env 的 NEXT_PUBLIC_ASSET_PREFIX 配置：
+//   - 留空：使用本地（/_next/static/...，由 Next.js server 或 nginx 提供）
+//   - OSS：https://filscan-v2.oss-accelerate.aliyuncs.com/client
+//   - CDN：https://cdn.filscan.io/client
+export const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || ''
 
 export interface API {
   home_meta: string

@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Search from './Search'
 import { useRouter } from 'next/router'
 import { getSvgIcon } from '@/svgsIcon'
+import { staticUrl } from '@/contents/apiUrl'
 
 export default () => {
   const { tr } = Translation({ ns: 'nav' })
@@ -51,18 +52,14 @@ export default () => {
         className="text_color mt-1 flex cursor-pointer items-center gap-x-2"
       >
         <Image
-          src={
-            'https://filscan-v2.oss-cn-hongkong.aliyuncs.com/fvm_manage/images/logo.png'
-          }
+          src={staticUrl + '/images/logo.png'}
           width={40}
           height={40}
           alt="logo"
         />
         {/* {getSvgIcon('logoText')} */}
         <Image
-          src={
-            'https://filscan-v2.oss-cn-hongkong.aliyuncs.com/fvm_manage/images/logoText.png'
-          }
+          src={staticUrl + '/images/logoText.png'}
           alt="logo"
           width={95}
           height={16}
