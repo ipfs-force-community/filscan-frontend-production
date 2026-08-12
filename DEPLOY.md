@@ -10,13 +10,13 @@ npm install
 bash deploy.sh
 
 # 产物在 dist/ 目录：
-#   dist/filscan-main.tar.gz  （主网，端口 9090）
+#   dist/filscan-main.tar.gz  （主网，应用内部端口 3000，对外由 Nginx 9090 反代）
 #   dist/filscan-cali.tar.gz  （Calibration 测试网，端口 9092）
 
 # 3. 部署：上传解压即用，无需手动移动任何目录
 tar -xzf dist/filscan-main.tar.gz -C /root/standalone
 cd /root/standalone
-PORT=9090 node server.js        # 或 pm2 start node server.js --name filscan_main
+PORT=3000 node server.js        # 或 pm2 start node server.js --name filscan_main
 ```
 
 ## 环境要求
