@@ -15,6 +15,24 @@ export const staticUrl = process.env.NEXT_PUBLIC_STATIC_URL || ''
 //   - CDN：https://cdn.filscan.io/client
 export const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || ''
 
+// 后端接口返回的图片等资源 URL 可能指向 OSS（如 https://filscan-v2.oss-xxx.aliyuncs.com/fvm_manage/xxx），
+// 此处统一按 NEXT_PUBLIC_STATIC_URL 配置重写：
+//   - 配置 CDN/OSS 前缀 → 替换为对应前缀（如 https://cdn.filscan.io/fvm_manage/xxx）
+//   - 留空（本地）→ 去掉 OSS 域名前缀，变为相对路径（如 /banner/xxx，由本地 public 提供）
+const OSS_URL_PREFIX_RE = /^https:\/\/filscan-v2\.oss-(?:cn-hongkong|accelerate)\.aliyuncs\.com\/fvm_manage/
+
+export function resolveStaticUrl(url?: string): string {
+  if (!url) return ''
+  // 本地相对路径 / data:/ blob: 等直接返回
+  if (url.startsWith('/') || url.startsWith('data:') || url.startsWith('blob:')) return url
+  const matched = url.match(OSS_URL_PREFIX_RE)
+  if (matched) {
+    return staticUrl + url.slice(matched[0].length)
+  }
+  // 非本 OSS 域名的外链（第三方图片等）原样返回
+  return url
+}
+
 export interface API {
   home_meta: string
   line_trend: string

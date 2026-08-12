@@ -1,7 +1,7 @@
 import { Carousel, Image } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 import useAxiosData from '@/store/useAxiosData'
-import { apiUrl } from '@/contents/apiUrl'
+import { apiUrl, resolveStaticUrl } from '@/contents/apiUrl'
 import style from './style.module.scss'
 import filscanStore from '@/store/modules/filscan'
 import { observer } from 'mobx-react'
@@ -56,7 +56,7 @@ function Banner() {
             >
               <Image
                 preview={false}
-                src={item.url}
+                src={resolveStaticUrl(item.url)}
                 alt=""
                 width="100%"
                 className="carousel-image cursor-pointer rounded-2xl object-cover"

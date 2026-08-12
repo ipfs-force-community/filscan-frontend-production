@@ -4,7 +4,7 @@ import { Carousel, Image } from 'antd'
 import useAxiosData from '@/store/useAxiosData'
 import { useEffect, useRef, useState } from 'react'
 import useWindow from '@/components/hooks/useWindown'
-import { apiUrl } from '@/contents/apiUrl'
+import { apiUrl, resolveStaticUrl } from '@/contents/apiUrl'
 import filscanStore from '@/store/modules/filscan'
 
 const Banner = (props: any) => {
@@ -44,7 +44,7 @@ const Banner = (props: any) => {
             >
               <Image
                 preview={false}
-                src={item.url}
+                src={resolveStaticUrl(item.url)}
                 alt=""
                 width="100%"
                 className="carousel-image cursor-pointer rounded-[6px] object-cover"

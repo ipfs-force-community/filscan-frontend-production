@@ -1,5 +1,5 @@
 import { Translation } from '@/components/hooks/Translation'
-import { apiUrl } from '@/contents/apiUrl'
+import { apiUrl, resolveStaticUrl } from '@/contents/apiUrl'
 import useAxiosData from '@/store/useAxiosData'
 import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
@@ -132,7 +132,7 @@ export default observer(() => {
                         )}
                       >
                         <Image
-                          src={item.logo}
+                          src={resolveStaticUrl(item.logo)}
                           alt=""
                           width="36"
                           height="36"

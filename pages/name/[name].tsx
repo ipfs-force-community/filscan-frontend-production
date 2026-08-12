@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Image from '@/packages/image'
 import Link from 'next/link'
 import useAxiosData from '@/store/useAxiosData'
-import { apiUrl } from '@/contents/apiUrl'
+import { apiUrl, resolveStaticUrl } from '@/contents/apiUrl'
 
 export default () => {
   const { tr } = Translation({ ns: 'domain' })
@@ -46,7 +46,12 @@ export default () => {
             return (
               <li key={index} className="flex items-center gap-x-2 p-2.5">
                 {item.logo && (
-                  <Image width={35} height={35} src={item.logo} alt="" />
+                  <Image
+                    width={35}
+                    height={35}
+                    src={resolveStaticUrl(item.logo)}
+                    alt=""
+                  />
                 )}
                 <Link
                   key={item}

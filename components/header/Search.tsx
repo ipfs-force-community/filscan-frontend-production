@@ -4,7 +4,7 @@ import { search } from '@/contents/common'
 import SearchIcon from '@/assets/images/searchIcon_w.svg'
 import Image from 'next/image'
 import useAxiosData from '@/store/useAxiosData'
-import { apiUrl } from '@/contents/apiUrl'
+import { apiUrl, resolveStaticUrl } from '@/contents/apiUrl'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { LoadingOutlined } from '@ant-design/icons'
@@ -115,7 +115,7 @@ export default ({
                 onClick={() => handleClick(item)}
               >
                 <Image
-                  src={item.icon}
+                  src={resolveStaticUrl(item.icon)}
                   alt=""
                   width={45}
                   height={45}

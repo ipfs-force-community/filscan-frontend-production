@@ -7,7 +7,7 @@ import fvm from '@/assets/images/fvm.png'
 import code from '@/assets/images/fevmCode.png'
 import style from './index.module.scss'
 import { Translation } from '@/components/hooks/Translation'
-import { staticUrl } from '@/contents/apiUrl'
+import { staticUrl, resolveStaticUrl } from '@/contents/apiUrl'
 
 function Share({ data, title }: { data: any; title: string }) {
   const myRef = useRef<any>()
@@ -115,7 +115,7 @@ function Share({ data, title }: { data: any; title: string }) {
                                 }
                               >
                                 <Image
-                                  src={item.logo}
+                                  src={resolveStaticUrl(item.logo)}
                                   alt=""
                                   width={36}
                                   height={36}

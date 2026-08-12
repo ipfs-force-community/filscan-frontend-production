@@ -1,6 +1,6 @@
 /** @format */
 
-import { apiUrl } from '@/contents/apiUrl'
+import { apiUrl, resolveStaticUrl } from '@/contents/apiUrl'
 import { Translation } from '@/components/hooks/Translation'
 import Table from '@/packages/Table'
 import fetchData from '@/store/server'
@@ -81,7 +81,7 @@ export default ({ origin }: { origin?: string }) => {
                   }}
                 >
                   <Image
-                    src={record.icon_url || ''}
+                    src={resolveStaticUrl(record.icon_url) || ''}
                     width={22}
                     height={22}
                     className="rounded"
@@ -125,7 +125,7 @@ export default ({ origin }: { origin?: string }) => {
                   }}
                 >
                   <Image
-                    src={record.icon_url || ''}
+                    src={resolveStaticUrl(record.icon_url) || ''}
                     width={25}
                     height={25}
                     alt="logo"

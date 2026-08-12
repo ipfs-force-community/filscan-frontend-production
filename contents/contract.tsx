@@ -13,6 +13,7 @@ import {
   titleCase,
 } from '@/utils'
 import Image from '@/packages/image'
+import { resolveStaticUrl } from '@/contents/apiUrl'
 import Link from 'next/link'
 import { BrowserView, MobileView } from '@/components/device-detect'
 import AccountLink from '@/components/accountLink'
@@ -702,7 +703,7 @@ export const contract_nfts = {
           >
             <Image
               className="fvm_img_url"
-              src={record.icon}
+              src={resolveStaticUrl(record.icon)}
               alt=""
               height={36}
               width={36}
