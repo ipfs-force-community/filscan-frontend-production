@@ -33,7 +33,18 @@ build_env() {
   echo ""
   echo " [3/3] 打包 ${name}..."
   tar -czf "${OUT_DIR}/filscan-${name}.tar.gz" -C .next/standalone .
-  echo "       ✅ 已生成 ${OUT_DIR}/filscan-${name}.tar.gz（端口 ${port}）"
+
+  # 校验部署包完整性（防止 server.js 启动时报 .next/BUILD_ID 缺失）
+  local tar_file="${OUT_DIR}/filscan-${name}.tar.gz"
+  if ! tar -tzf "$tar_file" | grep -q "\.next/BUILD_ID"; then
+    echo "       ❌ 部署包缺少 .next/BUILD_ID，构建不完整！"
+    exit 1
+  fi
+  if ! tar -tzf "$tar_file" | grep -q "server.js"; then
+    echo "       ❌ 部署包缺少 server.js，构建不完整！"
+    exit 1
+  fi
+  echo "       ✅ 已生成 ${tar_file}（端口 ${port}），完整性校验通过"
 }
 
 echo "=============================================="
