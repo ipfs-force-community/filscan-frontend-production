@@ -10,6 +10,12 @@ const assetPrefix = process.env['NEXT_PUBLIC_ASSET_PREFIX'] || undefined
 const nextConfig = {
   reactStrictMode: true,
   trailingSlash: true,
+  // 本项目是纯 pages router（无 app/ 目录），必须关闭 appDir。
+  // 否则 Next 13.4 默认 appDir=true，会启用 next-render-worker-pages 渲染 worker，
+  // 且这些 worker 会泄漏累积（单个 130-194MB），最终吃满内存。
+  experimental: {
+    appDir: false,
+  },
   // 构建时跳过 ESLint（develop 分支存在历史 prettier 格式错误，会阻断 build）
   // 格式问题可单独用 npm run lint-fix 处理
   eslint: {
