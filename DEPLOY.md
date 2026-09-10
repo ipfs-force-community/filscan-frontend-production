@@ -68,12 +68,32 @@ curl -sI http://127.0.0.1:<应用端口>/ | head -3    # 应用 200
 curl -sI http://127.0.0.1:<nginx端口>/  | head -3   # Nginx 200
 ```
 
+### 502 归因：先判断是谁报的（ALB 还是本机 Nginx）
+
+主网链路是 `ALB → Nginx(9090) → Next.js(127.0.0.1:3000)`，两处都会产生 502，但响应头不同，一条命令即可分清：
+
+```bash
+curl -sSI https://filscan.io/ | grep -i -E '^(HTTP|server)'
+# Server: awselb/2.0  → ALB 自己报的（没拿到 target 的合法响应）：查 target group 健康、SG、target 端口
+# server: nginx       → 本机 Nginx 报的（连不上 127.0.0.1:3000）：查 PM2 应用，按「快速恢复」处理
+```
+
+判定依据（2026-09-10 实测 + AWS ALB 故障排查文档）：
+
+- ALB 自产错误页带 `Server: awselb/2.0`（实测：`http://filscan.io/` 返回 301、畸形请求返回 501，均带该头）；Nginx 自产 502 页是 150 字节标准页，含 `<hr><center>nginx</center>`，无 `awselb` 字样。
+- ALB 层「无健康 target / 无可用 target」返回 **503**；502 表示 target 层连不上或响应非法。
+- ALB 会把 target 产生的 5xx **原样转发**给客户端，并计入 CloudWatch `HTTPCode_Target_5XX_Count`（ELB 自产的才计入 `HTTPCode_ELB_5XX_Count`）。两个指标谁有值，责任方就是谁。
+- 全站（含 `/_next/static/*`、`robots.txt`）持续 502 且耗时稳定 = 3000 端口长期不可用，不是抖动、也不是限流（限流走 429/503）。若同时 `calibration.filscan.io`（无 ALB）返回 200，则机房/DNS/Nginx 层均正常，问题只在该应用的 Node 进程。
+- 注意 ALB 只负责转发，它前面没有第二层 Nginx；因此**出现 `server: nginx` 的 502 时，故障一定在前端服务器内部**，与 ALB、安全组、网络 ACL 无关（请求已经成功穿过它们到达 Nginx）。
+
+排查顺序：`pm2 status` → `ss -tlnp | grep :3000` → `tail -100 /var/log/nginx/error.log`（找 `connect() failed (111: Connection refused) while connecting to upstream`）→ `pm2 logs filscan_main --err` → `dmesg -T | grep -i oom` + `free -m`。
+
 ### 常见问题
 
 - **页面 JS/CSS 404**：确认部署包包含 `.next/static`（用 deploy.sh 或手动 cp）
 - **cali chunk 404**：线上 Nginx 静态 location 必须反代应用，不能 `root` 本地目录（`cali-online.conf` 已修复）
 - **限流返回 503 而不是 429**：检查是否漏配 `limit_req_status 429;`
-- **502 Bad Gateway**：多为应用崩溃循环或端口不对，按上面"快速恢复"
+- **502 Bad Gateway**：先用响应头的 `Server` 判断是谁报的（见上文「502 归因」）；本机 Nginx 报的多为应用崩溃循环或端口不对，按上面"快速恢复"
 - **图片裂图**：确认 `public/images/` 存在（本地模式），或 `NEXT_PUBLIC_STATIC_URL` 指向的资源可访问
 - **改环境变量不生效**：`NEXT_PUBLIC_*` 构建时内联，需重新构建
 - **OSS 图片下载 403**：OSS 有防盗链，需带 `Referer: https://filscan.io/`
