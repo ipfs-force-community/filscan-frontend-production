@@ -112,13 +112,14 @@ grep -E "SIGABRT" /root/.pm2/pm2.log | tail                    # PM2 记录的�
 
 崩法不是瞬间死：报错是 `Ineffective mark-compacts near heap limit` —— 堆到顶后 GC 变成无效回收，**事件循环被卡死几分钟**，请求收得进、回不出，所以外部表现为 504；随后 V8 abort（SIGABRT），PM2 秒级重启（这两次重启用户通常无感）。整机会被 GC 一起拖僵（`journalctl` 里 snapd watchdog 超时、sshd/EC2 Instance Connect 超时），但**内核日志里没有 oom-killer 记录** —— 别去 `dmesg` 找 OOM，那是另一个方向。
 
-**已固化的三道防线（2026-09-21 起，改动前先看这里）：**
+**已固化的生产基线（2026-09-21 起，改动前先看这里）：**
 
 1. **PM2 开机自启**：`systemctl is-enabled pm2-root` 应为 `enabled`（单元 `/etc/systemd/system/pm2-root.service`，`ExecStart=.../pm2 resurrect`、`PM2_HOME=/root/.pm2`）。**改过进程列表必须 `pm2 save`**，否则重启后 resurrect 的是旧 dump；缺这个单元时重启机器后应用不会自己起来，只能人工拉起。
-2. **内存上限自动回收**：`filscan_main` 以 `--max-memory-restart 1200M` 启动，并带 `NODE_OPTIONS="--max-old-space-size=900 --heapsnapshot-near-heap-limit=1"`。RSS 到 1.2G 由 PM2 重启；堆到 900M 时 Node 先落堆快照再退出（快照写在 standalone 目录的 `Heap.<pid>.<ts>.heapsnapshot`），用来自证泄漏对象。这样不会再出现"GC 卡死整机"。
-3. **每分钟探活看门狗**：`/root/check_frontend.sh`（cron `* * * * *`，仓内副本 `ops/check_frontend.sh`，改动两边同步）探 `http://127.0.0.1:3000/`，连续 2 次非 200 即 `pm2 restart filscan_main`，日志 `/root/logs/check_frontend.log`。**钉钉告警要求把本机出口 IP 加进机器人白名单**，否则返回 `errcode 310000`（自愈仍生效，只是收不到消息）。
+2. **运行时版本（2026-09-24 起）**：node **18.20.8**（`/root/.nvm/versions/node/v18.20.8/bin/node`）——pm2 systemd 单元的 `Environment=PATH` 与三个 `Exec*` 绝对路径、`/root/check_frontend.sh` 的 PATH、`nvm alias default` 都指它。**从 18.16.0 升级的原因**：18.16.0 自带的 undici 5.21.0 在内部 IPC fetch（router worker → render worker）上每页面请求保留约 19KB 对象图，约 2h20m 就撞满内存上限被回收一次；18.20.8 的 undici 5.29.0 已修（隔离实测 18,967 B/请求 → 280 B/请求，页面响应逐字节一致）。升级只换 node 二进制，standalone 产物与 `server.js` 不用改。
+3. **内存上限自动回收**：`filscan_main` 以 `--max-memory-restart 1000M` 启动，并带 `NODE_OPTIONS="--max-old-space-size=900"`（**2026-09-23 起已撤掉 `--heapsnapshot-near-heap-limit`**：快照的内存膨胀会先撞上上限，13 次快照全部停在 0 字节，产不出证据；撤开关的同时必须把上限压到「堆硬限 + 堆外开销」之下，否则秒级回收会退化成 V8 十几秒 abort）。堆泄漏修掉后这个上限退化为安全网，正常情况下不再触发。
+4. **每分钟探活看门狗**：`/root/check_frontend.sh`（cron `* * * * *`，仓内副本 `ops/check_frontend.sh`，改动两边同步）探 `http://127.0.0.1:3000/`，连续 2 次非 200 即 `pm2 restart filscan_main`，日志 `/root/logs/check_frontend.log`。**钉钉告警要求把本机出口 IP 加进机器人白名单**，否则返回 `errcode 310000`（自愈仍生效，只是收不到消息）。
 
-迁移/换机清单：`pm2 startup systemd -u root --hp /root` + `pm2 save` + 装上探活看门狗 cron，三件缺一件就会退化成"崩了没人管"。
+迁移/换机清单：装 node 18.20.8（nvm）并在该 node 下 `npm i -g pm2@5.3.0` + `pm2 startup systemd -u root --hp /root` + `pm2 save` + 装上探活看门狗 cron，四件缺一件就会退化成"崩了没人管"。
 
 ### 常见问题
 

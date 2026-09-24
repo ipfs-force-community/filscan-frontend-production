@@ -6,7 +6,7 @@
 # 逻辑：每分钟探活 http://127.0.0.1:3000/ ；连续 2 次非 200 才动作（避免抖动误判），
 #      重启 PM2 应用后复测并钉钉告警。PM2 里找不到应用时走 resurrect。
 # 说明：钉钉机器人若配了 IP 白名单，需把本机出口 IP 加入，否则返回 errcode 310000（自愈仍生效）。
-export PATH=/root/.nvm/versions/node/v18.16.0/bin:$PATH
+export PATH=/root/.nvm/versions/node/v18.20.8/bin:$PATH
 
 HOOK="$1"
 PORT="${2:-3000}"
