@@ -9,6 +9,10 @@ const statistic = {
   power: '스토리지 파워 추세',
   power_tips:
     '기준선은 Filecoin 네트워크가 요구하는 네트워크 성장 규모이며, 메인넷 출시 때는 2.5EiB이며, 연간 증가율은 100% 입니다.',
+  // 파워 추세: 테스트넷은 약 36시간의 이력 상태만 보관
+  power_trend_history_note:
+    '테스트넷은 약 36시간의 이력 상태만 보관합니다. 최근 {{range}} 데이터를 표시합니다.',
+  power_trend_data_unavailable: '테스트넷 이력 데이터가 부족합니다',
   trend_24: '24시간 기본 수수료 추세',
   total_raw_byte_power: '원래 로우바이트 파워',
   base_line_power: '기준선 추세',

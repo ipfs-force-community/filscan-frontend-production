@@ -8,6 +8,10 @@ const statistic = {
   // power
   "power": 'ベースラインとハッシュレートの傾向',
   power_tips: 'ベースライン基準は、Filecoinに要求されるネットワーク成長規模であり、メインネットがオンラインになったときに2.5EiBであり、年間成長率は100％となる。',
+  // パワー推移: テストネットは履歴状態を約36時間分のみ保持
+  power_trend_history_note:
+    'テストネットの履歴状態は約 36 時間分のみ保持されます。直近 {{range}} を表示しています。',
+  power_trend_data_unavailable: 'テストネットの履歴データが不足しています',
   trend_24: '24h基础手续费走势',
   total_raw_byte_power: '全ネットーワークの計算力',
   base_line_power: 'ベースライントレンド',

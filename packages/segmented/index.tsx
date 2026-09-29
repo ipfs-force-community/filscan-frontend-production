@@ -22,12 +22,18 @@ export default ({
   isHash = true,
   onChange,
   defaultActive,
+  disabledKeys,
+  disabledTip,
 }: {
   data: Array<Item>
   defaultValue: string
   ns: string
   isHash: boolean
   defaultActive?: string
+  /** 无数据的档位（如测试网 1y），置灰且不可点 */
+  disabledKeys?: string[]
+  /** 置灰档位的悬停提示（i18n key，走 ns 命名空间） */
+  disabledTip?: string
   onChange?: (value: string) => void
 }) => {
   const { tr } = Translation({ ns })
@@ -83,16 +89,29 @@ export default ({
       >
         {data.map((item: any) => {
           const { title } = item
+          const isDisabled = !!disabledKeys?.includes(item.dataIndex)
           return (
             <li
               // href={hash ? `${pathValue}#${item.dataIndex}` : ''}
               key={item.dataIndex}
-              onClick={(e) => handleClick(e, item.dataIndex)}
+              title={isDisabled && disabledTip ? tr(disabledTip) : undefined}
+              onClick={(e) => {
+                if (isDisabled) {
+                  // 无数据的档位（测试网历史数据不足）：置灰且不响应点击
+                  e.preventDefault()
+                  return
+                }
+                handleClick(e, item.dataIndex)
+              }}
               className={classNames(
-                `text_des_hover  flex h-7 w-fit cursor-pointer items-center justify-center px-4 py-[5px] text-xs font-medium  ${
+                `text_des_hover  flex h-7 w-fit items-center justify-center px-4 py-[5px] text-xs font-medium  ${
                   active === item.dataIndex
                     ? 'tab_shadow highlight  main_bg_color rounded-[5px]'
                     : ''
+                } ${
+                  isDisabled
+                    ? 'cursor-not-allowed opacity-40'
+                    : 'cursor-pointer'
                 }`,
                 styles.item,
               )}

@@ -9,6 +9,10 @@ const statistic = {
   power: 'Storage Power Trend',
   power_tips:
     'The network baseline is the scale of network growth required by the Filecoin Network, which was 2.5 EiB when the Mainnet launched, with a growth rate of 100% per year',
+  // Power trend: testnet keeps only ~36h of historical state, so the default interval can't draw a line
+  power_trend_history_note:
+    'Testnet keeps only ~36h of historical state; showing the last {{range}}',
+  power_trend_data_unavailable: 'Insufficient testnet historical data',
   trend_24: '24h Base Fee Variations',
   total_raw_byte_power: 'Net RawBytePower',
   base_line_power: 'BaseLine',

@@ -145,6 +145,35 @@ export const power_trend = {
   ],
 }
 
+// 算力走势图的档位（注意：本图 30 天档用 interval='30d'；后端 '1m' 在测试网只返回 1 个点，
+// 画不出折线。默认档位仍是 '1m'，见 utils/powerTrend.ts 的 DEFAULT_TREND_INTERVAL）
+export const power_trend_intervals = [
+  {
+    label: '24h',
+    title: '24h',
+    value: '24h',
+    dataIndex: '24h',
+  },
+  {
+    label: '7d',
+    title: '7d',
+    value: '7d',
+    dataIndex: '7d',
+  },
+  {
+    label: '30d',
+    title: '30d',
+    value: '30d',
+    dataIndex: '30d',
+  },
+  {
+    label: '1y',
+    title: 'year',
+    value: '1y',
+    dataIndex: '1y',
+  },
+]
+
 //合约交易走势图
 export const contract_trend = {
   list: [

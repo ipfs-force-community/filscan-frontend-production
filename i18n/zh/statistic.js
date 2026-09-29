@@ -9,6 +9,10 @@ const statistic = {
   power: '算力走势',
   power_tips:
     '基线标准即是FILecoin网络要求的网络增长规模，主网上线时2.5EiB，每年100%增长率。',
+  // 算力走势图：测试网历史状态只保留约 36h，默认档位画不出线时的说明
+  power_trend_history_note:
+    '测试网历史状态仅保留约 36 小时，展示最近 {{range}}',
+  power_trend_data_unavailable: '测试网历史数据不足',
   trend_24: '24h基础手续费走势',
   total_raw_byte_power: '原值算力',
   base_line_power: '基线走势',
