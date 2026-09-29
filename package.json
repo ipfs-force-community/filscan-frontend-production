@@ -27,7 +27,7 @@
     "de": "next start --port 9091",
     "lint-fix": "eslint --fix --ext ts,tsx pages && eslint --fix --ext ts,tsx src && eslint --fix --ext ts,tsx contents && eslint --fix --ext ts,tsx components && eslint --fix --ext ts,tsx utils",
     "typecheck": "tsc --noEmit",
-    "test:unit": "rm -rf .test-build && tsc utils/powerTrend.ts utils/__tests__/powerTrend.test.ts --outDir .test-build --rootDir . --module commonjs --target es2020 --esModuleInterop --skipLibCheck --strict && node --test .test-build/utils/__tests__/powerTrend.test.js"
+    "test:unit": "rm -rf .test-build && tsc utils/powerTrend.ts utils/__tests__/powerTrend.test.ts utils/__tests__/powerTrendAxisCap.test.ts --outDir .test-build --rootDir . --module commonjs --target es2020 --esModuleInterop --skipLibCheck --strict && node --test .test-build/utils/__tests__/powerTrend.test.js .test-build/utils/__tests__/powerTrendAxisCap.test.js"
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.5",

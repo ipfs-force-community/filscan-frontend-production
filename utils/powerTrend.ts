@@ -120,12 +120,28 @@ export function maxAbsBytes(list: any[], fields: string[]): number {
   return max
 }
 
-/** 每个轴按各自数据的最大绝对值定档 */
+/**
+ * 每个轴的单位上限：与改动前的写死值一致（左轴 EiB、右轴 PiB）。
+ * 定档只允许为量级更小的网络（测试网）向下取小单位，不允许超过上限
+ * ⇒ 主网（左轴 12.3 EiB / 右轴 ~2500 PiB）显示与改动前逐字一致。
+ */
+export const POWER_TREND_AXIS_UNIT_CAPS: PowerUnit[] = ['EiB', 'PiB']
+
+/** 把单位压到不超过上限；上限比 unit 更小则返回上限 */
+export function capPowerUnit(unit: PowerUnit, cap?: PowerUnit): PowerUnit {
+  if (!cap) return unit
+  return POWER_UNIT_INDEX[unit] > POWER_UNIT_INDEX[cap] ? cap : unit
+}
+
+/** 每个轴按各自数据的最大绝对值定档（再按该轴单位上限收敛） */
 export function pickAxisUnits(
   list: any[],
   axisFields: string[][] = POWER_TREND_AXIS_FIELDS,
+  caps: PowerUnit[] = POWER_TREND_AXIS_UNIT_CAPS,
 ): PowerUnit[] {
-  return axisFields.map((fields) => pickPowerUnit(maxAbsBytes(list, fields)))
+  return axisFields.map((fields, i) =>
+    capPowerUnit(pickPowerUnit(maxAbsBytes(list, fields)), caps[i]),
+  )
 }
 
 /** Trend 的默认档位（改动前的写死值：后端 1m = 1 个月聚合） */

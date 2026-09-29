@@ -121,7 +121,9 @@ test('maxAbsBytes / pickAxisUnits: 主网 1m 数据左轴 EiB、右轴按净增�
     },
   ]
   assert.equal(maxAbsBytes(list, ['total_quality_adj_power']), 1.422e19)
-  assert.deepEqual(pickAxisUnits(list), ['EiB', 'EiB'])
+  // 右轴有单位上限 PiB（= 改动前的写死值）：即便样本到 EiB 量级也不上探，
+  // 以保证主网显示与改动前逐字一致（上限回归见 powerTrendAxisCap.test.ts）
+  assert.deepEqual(pickAxisUnits(list), ['EiB', 'PiB'])
 })
 
 test('pickAxisUnits: calibration 24h 数据左轴 PiB、右轴 TiB（两轴各自定档）', () => {
