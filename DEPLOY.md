@@ -46,9 +46,11 @@ pm2 save
 | 环境 | 入口 | 中间层 | 应用监听 |
 |---|---|---|---|
 | 主网 filscan.io | ALB | Nginx 9090（含 set_real_ip_from ALB 网段） | 127.0.0.1:3000 |
-| cali calibration.filscan.io | DNS 直连（无 ALB） | Nginx 443（三层限流，无 real_ip） | 172.31.33.238:9092 |
+| cali calibration.filscan.io | DNS 直连（无 ALB），EIP 57.182.186.126 直绑应用机 172.31.33.238 | 本机 Nginx 443（与前端/后端同机，三层限流，无 real_ip） | 127.0.0.1/内网 9092（前端）、27000（API） |
 
 Nginx 配置在仓库 `nginx/` 目录：主网 `filscan.conf`+`anti-dos-limits.conf`，cali `cali-online.conf`。
+
+cali 的 Nginx 自 2026-10-01 起与前端/后端同机部署在 172.31.33.238（弹性 IP 57.182.186.126 直绑该机，DNS 直连无 ALB），链路为 DNS 直连 → 本机 Nginx 443 → 127.0.0.1/内网 9092（前端）/ 27000（API）；**公网 80 必须保持放行**，因为 api-cali.filscan.io 的 Let's Encrypt 证书靠 HTTP-01 续期。
 
 ### 快速恢复（502/无法访问时）
 
