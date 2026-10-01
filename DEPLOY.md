@@ -39,16 +39,18 @@ pm2 save
 2. **禁止 npm 包装**（`pm2 start npm -- run main`）：会读到服务器上旧的 package.json 脚本（旧 PORT），改用 `pm2 start server.js`
 3. **改启动方式必须 `pm2 delete` 后重建**：`pm2 restart` 保留旧启动参数和环境
 4. **每次改动后 `pm2 save`**：覆盖 dump，否则 pm2/系统重启会 resurrect 旧的坏进程
-5. 应用端口：主网 3000（Nginx 9090 反代）、cali 9092（Nginx 443 反代）；端口规划见下方架构
+5. 应用端口：主网 3000（本机 Nginx 9090 反代，公网入口 443/80 → 9090）、cali 9092（Nginx 443 反代）；端口规划见下方架构
 
 ### 部署架构与端口
 
 | 环境 | 入口 | 中间层 | 应用监听 |
 |---|---|---|---|
-| 主网 filscan.io | ALB | Nginx 9090（含 set_real_ip_from ALB 网段） | 127.0.0.1:3000 |
+| 主网 filscan.io | DNS 直连弹性 IP 35.77.192.250（绑 frontend01） | 本机 Nginx 443/80（LE 证书，含 80→443 跳转与 /api/v1/*、/pro/v1/* 分流）→ 127.0.0.1:9090（三层限流） | 127.0.0.1:3000 |
 | cali calibration.filscan.io | DNS 直连（无 ALB），EIP 57.182.186.126 直绑应用机 172.31.33.238 | 本机 Nginx 443（与前端/后端同机，三层限流，无 real_ip） | 127.0.0.1/内网 9092（前端）、27000（API） |
 
-Nginx 配置在仓库 `nginx/` 目录：主网 `filscan.conf`+`anti-dos-limits.conf`，cali `cali-online.conf`。
+Nginx 配置在仓库 `nginx/` 目录：主网入口 `filscan-edge.conf`+`filscan-edge-proxy.conf`，主网业务反代 `filscan.conf`+`anti-dos-limits.conf`，cali `cali-online.conf`。主网三份文件与线上逐字节一致（`md5` 相同），线上改动必须同步回仓。
+
+主网自 2026-10-01 起去掉 ALB+NLB，弹性 IP 35.77.192.250 直接绑到 frontend01，链路为 `DNS → 35.77.192.250(frontend01) → 本机 Nginx 443/80 → 127.0.0.1:9090（三层限流）→ 127.0.0.1:3000`；证书由 ALB 侧商业证书换成本机 Let's Encrypt（一张覆盖 filscan.io / www.filscan.io / m.filscan.io / api-v2.filscan.io，webroot 自动续期、`certbot.timer` 已启用，**公网 80 必须保持放行**）。API 路径 `/api/v1/*`、`/pro/v1/*` 由入口直接反代到主网后端 172.31.34.109:27000（与替换前 ALB 的路径分流一致）；9090 业务块的 `set_real_ip_from` 只信任 `127.0.0.1`（原 ALB 网段已删除），入口层单独写日志 `/var/log/nginx/edge-access.log` 以免与 9090 层重复计数。
 
 cali 的 Nginx 自 2026-10-01 起与前端/后端同机部署在 172.31.33.238（弹性 IP 57.182.186.126 直绑该机，DNS 直连无 ALB），链路为 DNS 直连 → 本机 Nginx 443 → 127.0.0.1/内网 9092（前端）/ 27000（API）；**公网 80 必须保持放行**，因为 api-cali.filscan.io 的 Let's Encrypt 证书靠 HTTP-01 续期。
 
@@ -70,39 +72,46 @@ curl -sI http://127.0.0.1:<应用端口>/ | head -3    # 应用 200
 curl -sI http://127.0.0.1:<nginx端口>/  | head -3   # Nginx 200
 ```
 
-### 502 归因：先判断是谁报的（ALB 还是本机 Nginx）
+### 502 归因：分两层看（入口层 443/80 还是业务反代层 9090）
 
-主网链路是 `ALB → Nginx(9090) → Next.js(127.0.0.1:3000)`，两处都会产生 502，但响应头不同，一条命令即可分清：
+主网链路（2026-10-01 起）是 `DNS → 本机 Nginx 443/80 → Nginx(9090) → Next.js(127.0.0.1:3000)`。ALB/NLB 已下线，因此 **502/504 只可能来自本机 nginx 或应用进程**：要么入口层拿不到 9090 的响应，要么 9090 拿不到 127.0.0.1:3000 的响应。
+
+两层日志分开看：
+
+- **入口层（本机 Nginx 443/80，`nginx/filscan-edge.conf`）**：访问日志 `/var/log/nginx/edge-access.log`（该块显式指定，单独记账以免与 9090 层重复）；错误进全局 `/var/log/nginx/error.log`。
+- **业务反代层（本机 Nginx 9090，`nginx/filscan.conf`）**：访问日志 `/var/log/nginx/access.log`；限流与上游错误日志 `/var/log/nginx/filscan-limit.log`（该 server 块的 `error_log` 指向它，**不是** `error.log`）。
+- `/api/v1/*`、`/pro/v1/*` 由入口层直接反代到后端 172.31.34.109:27000，不经过 9090；这些路径报错要去看后端，不要只看前端两个日志。
 
 ```bash
 curl -sSI https://filscan.io/ | grep -i -E '^(HTTP|server)'
-# Server: awselb/2.0  → ALB 自己报的（没拿到 target 的合法响应）：查 target group 健康、SG、target 端口
-# server: nginx       → 本机 Nginx 报的（连不上 127.0.0.1:3000）：查 PM2 应用，按「快速恢复」处理
+# server: nginx  → 本机 nginx 报的：入口层连不上 9090（查 nginx 是否重载失败 / 9090 是否在监听），
+#                  或 9090 连不上 127.0.0.1:3000（查 PM2 应用，按「快速恢复」处理）
 ```
 
-判定依据（2026-09-10 实测 + AWS ALB 故障排查文档）：
+判定依据：
 
-- ALB 自产错误页带 `Server: awselb/2.0`（实测：`http://filscan.io/` 返回 301、畸形请求返回 501，均带该头）；Nginx 自产 502 页是 150 字节标准页，含 `<hr><center>nginx</center>`，无 `awselb` 字样。
-- ALB 层「无健康 target / 无可用 target」返回 **503**；502 表示 target 层连不上或响应非法。
-- ALB 会把 target 产生的 5xx **原样转发**给客户端，并计入 CloudWatch `HTTPCode_Target_5XX_Count`（ELB 自产的才计入 `HTTPCode_ELB_5XX_Count`）。两个指标谁有值，责任方就是谁。
-- 全站（含 `/_next/static/*`、`robots.txt`）持续 502 且耗时稳定 = 3000 端口长期不可用，不是抖动、也不是限流（限流走 429/503）。若同时 `calibration.filscan.io`（无 ALB）返回 200，则机房/DNS/Nginx 层均正常，问题只在该应用的 Node 进程。
-- 注意 ALB 只负责转发，它前面没有第二层 Nginx；因此**出现 `server: nginx` 的 502 时，故障一定在前端服务器内部**，与 ALB、安全组、网络 ACL 无关（请求已经成功穿过它们到达 Nginx）。
+- 现在公网 5xx 只可能带 `Server: nginx`。Nginx 自产 502 页是标准页（502 约 150 字节，含 `<hr><center>nginx</center>`）；`server_tokens off` 只去掉版本号，`Server` 值仍是 `nginx`。
+- **历史判据（自 2026-10-01 起失效，仅用于回溯该日期之前的故障记录）**：ALB 自产错误页曾带 `Server: awselb/2.0`；ALB/NLB 已下线、EIP 35.77.192.250 直绑 frontend01，该签名不会再出现，CloudWatch 的 `HTTPCode_Target_5XX_Count` / `HTTPCode_ELB_5XX_Count` 也随之停用。
+- 全站（含 `/_next/static/*`、`robots.txt`）持续 502 且耗时稳定 = 3000 端口长期不可用，不是抖动、也不是限流（限流走 429/503）。若同时 `calibration.filscan.io` 返回 200，则机房/DNS 层均正常，问题只在该应用的 Node 进程。
+- 出现 502 说明请求已经走到 Nginx，**与安全组、网络 ACL 无关**；先分层看日志，别只看一层。
 
-排查顺序：`pm2 status` → `ss -tlnp | grep :3000` → `tail -100 /var/log/nginx/filscan-limit.log`（本 server 块的 `error_log` 指向该文件，**不是** `error.log`；找 `connect() failed (111: Connection refused) while connecting to upstream`）→ `pm2 logs filscan_main --err` → `free -m`。
+排查顺序：`pm2 status` → `ss -tlnp | grep :3000` → `tail -100 /var/log/nginx/filscan-limit.log`（9090 层，找 `connect() failed (111: Connection refused) while connecting to upstream`）→ `tail -100 /var/log/nginx/error.log` 与 `tail -100 /var/log/nginx/edge-access.log`（入口层，找连 9090 失败/超时）→ `pm2 logs filscan_main --err` → `free -m`。
 
 主网前端主机 `frontend01`（AWS ap-northeast-1，SSH 别名已配在本地 `~/.ssh/config`），应用目录 `/root/shuqi/filscan-frontend-production/dist/standalone`。
 
 ### 504 归因：全站 504 一般是前端进程自己卡住
 
-`server: awselb/2.0` + 132 字节错误页 + **所有路径**（含 `favicon.ico`/`robots.txt`）一致 504 ⇒ ALB 等不到 target 的响应，责任在 3000 端口的 Node 进程或其宿主机，**不在 ALB、不在 filscan_backend、不在 londobell、不在 aggregator**（前端页面与静态资源都不经它们；后端慢只会让页面数据空/慢）。
+`Server: nginx`（2026-10-01 起公网 5xx 唯一可能的签名）+ **所有路径**（含 `favicon.ico`/`robots.txt`）一致 504 ⇒ 上游等不到响应：入口层（443/80）等不到 9090，或 9090 等不到 127.0.0.1:3000。责任在 3000 端口的 Node 进程或其宿主机，**不在 filscan_backend、不在 londobell、不在 aggregator**（前端页面与静态资源都不经它们；`/api/v1/*`、`/pro/v1/*` 虽由入口直连后端 172.31.34.109:27000，但后端慢只会让页面数据空/慢，不会让页面本身 504）。
+
+（历史判据，2026-10-01 起失效：ALB 自产 504 错误页、以及 ALB「无健康 target」时的 503，均已随 ALB/NLB 下线消失；签名细节见上文「502 归因」的历史判据。）
 
 三类签名速查（同一次故障会先后出现不同签名，别当成三个问题）：
 
 | 外部看到 | 含义 | 本机证据 |
 |---|---|---|
-| 504 `server: awselb/2.0` | Node 进程活着但不回包（GC 卡死 / 事件循环阻塞） | `filscan-limit.log` 里的 `upstream timed out (110)` |
-| 502 `server: nginx` | 3000 端口没人监听（进程崩了 / 重启中 / 没起来） | `filscan-limit.log` 里的 `connect() failed (111: Connection refused)` |
-| 503 `server: awselb/2.0` | ALB 没有健康 target | ALB 目标组健康状态 |
+| 504 `Server: nginx` | Node 进程活着但不回包（GC 卡死 / 事件循环阻塞） | `filscan-limit.log` 里的 `upstream timed out (110)` |
+| 502 `Server: nginx` | 3000 端口没人监听（进程崩了 / 重启中 / 没起来） | `filscan-limit.log` 里的 `connect() failed (111: Connection refused)` |
+| 502/504 `Server: nginx` 且 9090 层日志无对应记录 | 入口层连不上 9090（nginx 重载失败 / 9090 未监听） | 入口层 `/var/log/nginx/error.log` 里的 `connect() failed ... 127.0.0.1:9090` |
 
 **前端进程最常见的崩溃模式：V8 堆 OOM。** 判据（在 frontend01 上）：
 
@@ -128,7 +137,7 @@ grep -E "SIGABRT" /root/.pm2/pm2.log | tail                    # PM2 记录的�
 - **页面 JS/CSS 404**：确认部署包包含 `.next/static`（用 deploy.sh 或手动 cp）
 - **cali chunk 404**：线上 Nginx 静态 location 必须反代应用，不能 `root` 本地目录（`cali-online.conf` 已修复）
 - **限流返回 503 而不是 429**：检查是否漏配 `limit_req_status 429;`
-- **502 Bad Gateway**：先用响应头的 `Server` 判断是谁报的（见上文「502 归因」）；本机 Nginx 报的多为应用崩溃循环或端口不对，按上面"快速恢复"
+- **502 Bad Gateway**：响应头现在只会是 `Server: nginx`（本机 nginx；ALB 自产错误页的签名自 2026-10-01 起已失效，见上文「502 归因」的历史判据）。分入口层（`/var/log/nginx/edge-access.log`、`error.log`）和业务层（`/var/log/nginx/access.log`、`filscan-limit.log`）看；本机 Nginx 报的多为应用崩溃循环或端口不对，按上面"快速恢复"
 - **图片裂图**：确认 `public/images/` 存在（本地模式），或 `NEXT_PUBLIC_STATIC_URL` 指向的资源可访问
 - **改环境变量不生效**：`NEXT_PUBLIC_*` 构建时内联，需重新构建
 - **OSS 图片下载 403**：OSS 有防盗链，需带 `Referer: https://filscan.io/`
