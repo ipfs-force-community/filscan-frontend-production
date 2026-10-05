@@ -57,6 +57,11 @@ const statistic = {
   //charts
   pie_title: '图表统计',
   block_trend: '区块奖励',
+  block_reward_streams: 'ブロック報酬の流れ',
+  reward_stream_miner: 'マイナー',
+  reward_stream_service: 'サービスストリーム',
+  reward_stream_burn: 'バーン',
+  reward_stream_nv29_line: 'NV29以降、ブロック報酬は重みに応じて分配されます',
   block_reward_per_TiB: '产出效率',
   acc_block_rewards: '累计区块奖励',
   active_nodes: '活跃节点数',

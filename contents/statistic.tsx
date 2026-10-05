@@ -244,6 +244,59 @@ export const block_rewards = {
     },
   ],
 }
+// 区块奖励流向（NV29/FIP-0118 起按权重拆分为 矿工/服务流/销毁 三股）
+// 堆叠柱展示份额构成：NV29 之前 miner 占 100%，之后 miner 份额下降。
+export const reward_streams = {
+  title: 'block_reward_streams',
+  list: [
+    {
+      title: 'reward_stream_miner',
+      dataIndex: 'miner',
+      type: 'bar',
+      stack: 'reward_streams',
+      color: '#1C6AFD',
+    },
+    {
+      title: 'reward_stream_service',
+      dataIndex: 'service',
+      type: 'bar',
+      stack: 'reward_streams',
+      color: '#4ACAB4',
+    },
+    {
+      title: 'reward_stream_burn',
+      dataIndex: 'burn',
+      type: 'bar',
+      stack: 'reward_streams',
+      color: '#F8CD4D',
+    },
+  ],
+}
+
+// 区块奖励流向图的时间档：24h / 7d / 30d。
+// 与 DCCTrend 同款 Segmented + timeList 机制；第三档请求值按后端契约用 "30d"
+// （timeList 第三档 dataIndex 是 "1m"=1 个月，契约 B 明确规定 30d）。
+export const reward_streams_intervals = [
+  {
+    label: '24h',
+    title: '24h',
+    value: '24h',
+    dataIndex: '24h',
+  },
+  {
+    label: '7d',
+    title: '7d',
+    value: '7d',
+    dataIndex: '7d',
+  },
+  {
+    label: '30d',
+    title: '30d',
+    value: '30d',
+    dataIndex: '30d',
+  },
+]
+
 //产出效率
 export const block_rewards_per = {
   list: [
@@ -499,6 +552,10 @@ export const chartsNav: Array<Menu_Info> = [
       {
         key: 'blockChain_trend',
         title: 'block_trend',
+      },
+      {
+        key: 'block_reward_streams',
+        title: 'block_reward_streams',
       },
       {
         key: 'blockChain_reward_per',

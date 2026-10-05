@@ -5,6 +5,7 @@ import { Menu_Info } from '@/contents/type'
 import { getSvgIcon } from '@/svgsIcon'
 import PowerTrend from '@/src/statistics/Trend'
 import BlockRewardTrend from '@/src/statistics/BlockRewardTrend'
+import RewardStreams from '@/src/statistics/RewardStreams'
 import BlockRewardPer from '@/src/statistics/BlockRewardPer'
 import ActiveNodeTrend from '@/src/statistics/ActiveNodeTrend'
 import Link from 'next/link'
@@ -143,7 +144,9 @@ export default observer(() => {
               </div>
             </div>
           )}
-          {hash.startsWith('blockChain') && (
+          {/* 区块奖励流向卡锚点 block_reward_streams 归在 blockChain 分组下渲染 */}
+          {(hash.startsWith('blockChain') ||
+            hash === 'block_reward_streams') && (
             <div>
               <div id="blockChain_power">
                 <PowerTrend />
@@ -159,6 +162,12 @@ export default observer(() => {
                 className={styles['statistics-target']}
               >
                 <BlockRewardTrend />
+              </div>
+              <div
+                id="block_reward_streams"
+                className={styles['statistics-target']}
+              >
+                <RewardStreams />
               </div>
               <div
                 id="blockChain_reward_per"

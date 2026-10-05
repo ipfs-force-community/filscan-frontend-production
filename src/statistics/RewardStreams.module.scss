@@ -1,0 +1,12 @@
+@media only screen and (max-width: 1000px) {
+  .wrap {
+    .title-wrap {
+      margin-bottom: 15px;
+
+      margin-inline: unset;
+    }
+    .content {
+      border-radius: 6px;
+    }
+  }
+}

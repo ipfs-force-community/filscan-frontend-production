@@ -62,6 +62,11 @@ const statistic = {
   //charts
   pie_title: '차트 통계',
   block_trend: '블록 보상',
+  block_reward_streams: '블록 보상 흐름',
+  reward_stream_miner: '마이너',
+  reward_stream_service: '서비스 스트림',
+  reward_stream_burn: '소각',
+  reward_stream_nv29_line: 'NV29부터 블록 보상은 가중치에 따라 분배됩니다',
   block_reward_per_TiB: '생산 효율',
   acc_block_rewards: '누적 블록 보상',
   active_nodes: '액티브한 노드 수',

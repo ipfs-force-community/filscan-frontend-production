@@ -64,6 +64,11 @@ const statistic = {
   //charts
   pie_title: 'Chart Statistics',
   block_trend: 'Block Rewards',
+  block_reward_streams: 'Block Reward Streams',
+  reward_stream_miner: 'Miner',
+  reward_stream_service: 'Service Stream',
+  reward_stream_burn: 'Burn',
+  reward_stream_nv29_line: 'Since NV29 block rewards are split by weight',
   block_reward_per_TiB: 'Output Efficiency',
   active_nodes: 'Active Storage Providers',
   active_miner_count: 'Node Counts',

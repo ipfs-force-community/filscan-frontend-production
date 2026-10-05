@@ -47,9 +47,9 @@ const home = {
   add_power_in_64g: '64GiB扇区新增算力成本',
   add_power_in_64g_tip:
     '近24小时64G扇区新增算力所需要花费的成本，包括扇区质押和封装手续费',
-  win_count_reward: '每赢票奖励',
+  win_count_reward: '每赢票奖励（近24h实收）',
   win_count_reward_tip:
-    '最新高度的单位出块奖励，每个高度有多个区块，每个区块均可获得该奖励',
+    '近24h窗口内矿工实收区块奖励 ÷ 该窗口赢票总数（实测口径；旧口径为协议固定毛值）',
   avg_block_count: '平均每高度区块数量',
   avg_block_count_tip: '最近24h平均每个高度下的区块数量',
   avg_message_count: '平均每高度消息数',

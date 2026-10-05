@@ -28,8 +28,9 @@ const home = {
   gas_in_64g_tip: 'Gas used of sealing a 64GiB sector in the last 24 hours',
   add_power_in_64g: 'Est. Cost of a 64GiB Sector',
   add_power_in_64g_tip:'The cost of sealing a 64GiB sector in the past 24 hours, including the sector’s initial pledge and message fee',
-  win_count_reward: 'Rewards per Wincount',
-  win_count_reward_tip: '',
+  win_count_reward: 'Rewards per Wincount (24h actual)',
+  win_count_reward_tip:
+    'Miner block rewards actually received over the last 24h ÷ total wincounts in the same window (measured; the old value was the protocol gross)',
   avg_block_count: 'Avg. Blocks per TipSet',
   avg_block_count_tip:'Average blocks produced per tipSet in 24h',
   avg_message_count: 'Avg. Messages per TipSet',
