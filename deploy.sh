@@ -35,12 +35,18 @@ build_env() {
   tar -czf "${OUT_DIR}/filscan-${name}.tar.gz" -C .next/standalone .
 
   # 校验部署包完整性（防止 server.js 启动时报 .next/BUILD_ID 缺失）
+  # 注意：不能写成 `tar -tzf ... | grep -q ...`——grep -q 命中即退出会让 tar 收
+  # SIGPIPE(141)，配合脚本顶部的 `set -o pipefail` 会把这条管道判成失败，
+  # 于是 `!` 反转成「校验不通过」并 exit 1（实测：构建完 main 就中止，cali 从未产出）。
+  # 这里先把清单读进变量，再对变量 grep，producer 不会收到 SIGPIPE。
   local tar_file="${OUT_DIR}/filscan-${name}.tar.gz"
-  if ! tar -tzf "$tar_file" | grep -q "\.next/BUILD_ID"; then
+  local listing
+  listing="$(tar -tzf "$tar_file")"
+  if ! grep -qF ".next/BUILD_ID" <<<"$listing"; then
     echo "       ❌ 部署包缺少 .next/BUILD_ID，构建不完整！"
     exit 1
   fi
-  if ! tar -tzf "$tar_file" | grep -q "server.js"; then
+  if ! grep -qF "server.js" <<<"$listing"; then
     echo "       ❌ 部署包缺少 server.js，构建不完整！"
     exit 1
   fi
