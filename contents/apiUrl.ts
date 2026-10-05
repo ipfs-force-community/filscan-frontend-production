@@ -98,7 +98,7 @@ export const apiUrl: API | any = {
   static_gas_24: mainUrl + '/GasDataTrend',
   static_fil_chart: mainUrl + '/FilCompose',
   static_block_trend: mainUrl + '/BlockRewardTrend',
-  static_reward_streams: mainUrl + '/RewardStreamsTrend',
+  static_reward_streams: mainUrl + '/RewardStreams',
   static_active_miner: mainUrl + '/ActiveMinerTrend',
   static_message_trend: mainUrl + '/MessageCountTrend',
   rank_pool: mainUrl + '/OwnerRank',
