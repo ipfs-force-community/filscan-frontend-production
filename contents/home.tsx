@@ -105,7 +105,9 @@ export const home_meta = [
             : ''
         return (
           <span>
-            {formatNumber(text, 2)} FIL
+            {/* 接口按本仓惯例给 attoFIL，必须 formatFil 换算成 FIL 再格式化
+                （同卡片总奖励/出块奖励字段同款写法） */}
+            {formatNumber(formatFil(text, 'FIL'), 2)} FIL
             {percent ? (
               <span className="ml-2 text-xs opacity-70">{percent}</span>
             ) : null}
