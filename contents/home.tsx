@@ -88,10 +88,15 @@ export const home_meta = [
     dataIndex: 'fil_per_tera_24h',
     // 悬停明细：NV29（FIP-0118）之后区块奖励按权重拆三股——共识流（矿工实收）/服务流/销毁，
     // 此处展示近24h三流已发生额 + 各占合计的比例 + 合计（24h铸造量），并给出跳转奖励流向卡的入口。
-    // 两网分支：本网未激活 NV29（nv29_epoch <= 0，如主网）时不摆三行 0，只给一句说明。
+    // 两网分支：判据是「本网是否**已激活** NV29」，而不是「是否已排期」——
+    // 主网 nv29_epoch 已排到 6470279，但当前高度还没到，此时 TotalMintedReward
+    // （NV29 才引入的计数器）恒 0，摆三行会显示「合计 0」。故用当前高度与激活高度比较。
+    // 未激活时不摆三行 0，只给一句说明。
     // 返回数组即按 meta.tsx 既有 <ul> 渲染；占比在 render 里用合计现算，合计为 0 时不显示占比。
     tipContent: (dataSource: Record<string, any>) => {
       const nv29 = Number(dataSource?.nv29_epoch || 0)
+      const height = Number(dataSource?.latest_height || 0)
+      const nv29Active = nv29 > 0 && height >= nv29
       const viewEntry = {
         title: 'reward_stream_view',
         href: '/statistics/charts#block_reward_streams',
@@ -114,7 +119,7 @@ export const home_meta = [
           </span>
         )
       }
-      if (!(nv29 > 0)) {
+      if (!nv29Active) {
         return [
           { title: 'reward_stream_nv29_inactive' },
           viewEntry,
