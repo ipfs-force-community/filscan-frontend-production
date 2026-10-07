@@ -73,10 +73,33 @@ function Meta() {
           const value = (dataSource && dataSource[dataIndex]) || ''
           let renderDom = value
           let tipContent
-          if (item.tipContent && Array.isArray(item.tipContent)) {
+          // tipContent 既支持静态数组，也支持按 dataSource 动态生成（函数）：用于两网分支，
+          // 未激活 NV29 时只给一句说明，激活后给出三流明细；函数返回值优先。
+          const resolvedTipContent =
+            typeof item.tipContent === 'function'
+              ? item.tipContent(dataSource)
+              : item.tipContent
+          if (resolvedTipContent && Array.isArray(resolvedTipContent)) {
             tipContent = (
               <ul className="w-fit px-2 pt-2">
-                {item.tipContent.map((tipItem: any) => {
+                {resolvedTipContent.map((tipItem: any) => {
+                  // 无 dataIndex 的行：纯文案（如未激活说明）或跳转入口链接
+                  if (tipItem.dataIndex === undefined) {
+                    return (
+                      <li key={tipItem.title} className="mb-2.5">
+                        {tipItem.href ? (
+                          <Link
+                            href={tipItem.href}
+                            className="cursor-pointer text-blue-500 hover:underline"
+                          >
+                            {tr(tipItem.title)}
+                          </Link>
+                        ) : (
+                          <span className="w-fit">{tr(tipItem.title)}</span>
+                        )}
+                      </li>
+                    )
+                  }
                   let tipValue = dataSource[tipItem.dataIndex]
                   if (tipItem.render) {
                     tipValue = tipItem.render(tipValue, dataSource)
@@ -92,6 +115,8 @@ function Meta() {
                 })}
               </ul>
             )
+          } else if (resolvedTipContent) {
+            tipContent = resolvedTipContent
           }
           if (data) {
             renderDom = render && render(value, { ...data, ...contractData })

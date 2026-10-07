@@ -86,6 +86,62 @@ export const home_meta = [
     title: 'fil_per_tera_24h',
     tip: 'fil_per_tera_24h_tip',
     dataIndex: 'fil_per_tera_24h',
+    // 悬停明细：NV29（FIP-0118）之后区块奖励按权重拆三股——共识流（矿工实收）/服务流/销毁，
+    // 此处展示近24h三流已发生额 + 各占合计的比例 + 合计（24h铸造量），并给出跳转奖励流向卡的入口。
+    // 两网分支：本网未激活 NV29（nv29_epoch <= 0，如主网）时不摆三行 0，只给一句说明。
+    // 返回数组即按 meta.tsx 既有 <ul> 渲染；占比在 render 里用合计现算，合计为 0 时不显示占比。
+    tipContent: (dataSource: Record<string, any>) => {
+      const nv29 = Number(dataSource?.nv29_epoch || 0)
+      const viewEntry = {
+        title: 'reward_stream_view',
+        href: '/statistics/charts#block_reward_streams',
+      }
+      const renderAmount = (text: string | number, ds: Record<string, any>) => {
+        const total = Number(ds?.reward_stream_total_24h || 0)
+        const value = Number(text)
+        const percent =
+          total > 0 && isFinite(value) && isFinite(total)
+            ? ((value / total) * 100).toFixed(1) + '%'
+            : ''
+        return (
+          <span>
+            {formatNumber(text, 2)} FIL
+            {percent ? (
+              <span className="ml-2 text-xs opacity-70">{percent}</span>
+            ) : null}
+          </span>
+        )
+      }
+      if (!(nv29 > 0)) {
+        return [
+          { title: 'reward_stream_nv29_inactive' },
+          viewEntry,
+        ]
+      }
+      return [
+        {
+          title: 'reward_stream_miner',
+          dataIndex: 'reward_stream_miner_24h',
+          render: renderAmount,
+        },
+        {
+          title: 'reward_stream_service',
+          dataIndex: 'reward_stream_service_24h',
+          render: renderAmount,
+        },
+        {
+          title: 'reward_stream_burn',
+          dataIndex: 'reward_stream_burn_24h',
+          render: renderAmount,
+        },
+        {
+          title: 'reward_stream_total',
+          dataIndex: 'reward_stream_total_24h',
+          render: renderAmount,
+        },
+        viewEntry,
+      ]
+    },
     render: (v: any) => {
       const [show, unit] = formatFilNum(v, false, false, 4).split(' ')
       return (
