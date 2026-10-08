@@ -1,51 +1,25 @@
 /** @format */
 
 import { Translation } from '@/components/hooks/Translation'
-import { formatFil, formatNumber, isIndent } from '@/utils'
 import classNames from 'classnames'
-import Link from 'next/link'
-import Copy from '@/components/copy'
-import { BrowserView, MobileView } from '@/components/device-detect'
-import CopySvgMobile from '@/assets/images/icon-copy.svg'
 import Table from '@/packages/Table'
+import {
+  recipientColumns,
+  RecipientSummary,
+  RewardStreamLedger,
+} from './rewardRecipients'
 import styles from './RewardLedgerSection.module.scss'
 
-/** 字段缺失的统一占位（契约 F：缺失一律显示 `--`，不得把 undefined 渲染成 0）。 */
-export const DASH = '--'
-
-/** 金额（attoFIL 字符串）→ FIL 展示；缺失 ⇒ `--`。 */
-export function ledgerFil(v: any): string {
-  if (v === undefined || v === null || v === '') return DASH
-  return String(formatNumber(formatFil(v, 'FIL'), 2))
-}
-
-/** 金额 + 单位 FIL；缺失 ⇒ `--`（不带单位）。 */
-function filWithUnit(v: any): string {
-  if (v === undefined || v === null || v === '') return DASH
-  return `${ledgerFil(v)} FIL`
-}
-
-export interface LedgerRecipient {
-  address?: string
-  share_pct?: string
-  /** 待提取（应收），attoFIL 字符串。 */
-  pending_claim?: string
-  /** 本期已提取（已付），attoFIL 字符串；后端零值给 `"0"`。 */
-  claimed_period?: string
-}
-
-/**
- * 后端方法 `RewardStreamLedger`（契约 E）响应形状。
- * 金额字段一律 attoFIL 十进制字符串。
- */
-export interface RewardStreamLedger {
-  epoch?: number
-  nv29?: boolean
-  pending_claim?: string
-  claimed_period?: string
-  current_split?: { miner?: string; service?: string; burn?: string }
-  recipients?: LedgerRecipient[]
-}
+// 公共层（列定义 / 地址单元 / 金额格式化 / 取数）落在 ./rewardRecipients，这里只保留卡体结构。
+export {
+  DASH,
+  ledgerFil,
+  filWithUnit,
+  recipientColumns,
+  RecipientSummary,
+  useRewardLedger,
+} from './rewardRecipients'
+export type { LedgerRecipient, RewardStreamLedger } from './rewardRecipients'
 
 interface Props {
   ledger?: RewardStreamLedger | null
@@ -55,16 +29,16 @@ interface Props {
   className?: string
 }
 
-/** 排行表只展示前 10 名（用户 2026-10-08 拍板）。 */
+/** 排行表只展示前 10 名（用户 2026-10-08 拍板）；全量排行页展示全部。 */
 const RANK_LIMIT = 10
 
 /**
- * 「区块奖励分配」卡体：仿「合约排行」的服务受益方排行表（只显示前 10 名）。
+ * 服务受益方排行卡体：仿「合约排行」的排行表（只显示前 10 名）。
  *   副标题：共 N 个受益方 · 待提取（奖励池欠服务方）总额 X FIL；
- *   表格：排名 / 受益地址 / 份额 / 已付 / 应收（列头复用既有 i18n key）；
+ *   表格：排名 / 受益地址 / 份额 / 已收 / 应收（列定义与金额格式化取自 ./rewardRecipients，唯一一份）；
  *   表下一行：弱化色口径说明。
  *
- * 2026-10-08 拍板：三股占比 / 合计 / 当前分账比例与统计页「区块奖励流向」卡重复，已全部删除。
+ * 标题由宿主渲染（首页/统计页各一），本组件不含任何跳转链接。
  * 未激活 NV29（active 为 false / ledger 为空）⇒ 不渲染表体（返回 null，由宿主显示未激活文案）。
  * 字段缺失一律显示 `--`。
  */
@@ -83,69 +57,13 @@ export function RewardLedgerSection({
 
   const recipients = Array.isArray(ledger.recipients) ? ledger.recipients : []
   const rows = recipients.slice(0, RANK_LIMIT)
-
-  // 受益地址列：照抄 contents/contract.tsx 的 contract_address 渲染（link_text + Copy）。
-  const addressCell = (text: any) => {
-    if (!text) return DASH
-    return (
-      <span className="flex items-center gap-x-2">
-        <BrowserView>
-          <Link className="link_text" href={`/address/${text}`}>
-            {isIndent(text, 5, 4)}
-          </Link>
-          <Copy text={text} />
-        </BrowserView>
-        <MobileView>
-          <span className="copy-row">
-            <Link className="link_text" href={`/address/${text}`}>
-              {isIndent(text, 5, 4)}
-            </Link>
-            <Copy text={text} icon={<CopySvgMobile />} className="copy" />
-          </span>
-        </MobileView>
-      </span>
-    )
-  }
-
-  const columns = [
-    {
-      title: tr('reward_stream_rec_rank'),
-      dataIndex: 'rank',
-      width: '10%',
-      render: (_: any, __: any, index: number) => (
-        <span className="rank_icon">{index + 1}</span>
-      ),
-    },
-    {
-      title: tr('reward_stream_rec_address'),
-      dataIndex: 'address',
-      render: (text: any) => addressCell(text),
-    },
-    {
-      title: tr('reward_stream_rec_share'),
-      dataIndex: 'share_pct',
-      render: (text: any) =>
-        text === undefined || text === null || text === '' ? DASH : `${text}%`,
-    },
-    {
-      title: tr('reward_stream_rec_claimed'),
-      dataIndex: 'claimed_period',
-      render: (text: any) => filWithUnit(text),
-    },
-    {
-      title: tr('reward_stream_rec_receivable'),
-      dataIndex: 'pending_claim',
-      render: (text: any) => filWithUnit(text),
-    },
-  ]
+  const columns = recipientColumns(tr)
 
   return (
     <div className={classNames(styles.wrap, className)}>
       {/* 副标题（仿 contract_list_total 的位置）：共 N 个受益方 · 待提取（奖励池欠服务方）总额 X FIL */}
       <div className={styles.sub}>
-        {tr('reward_stream_rec_count', { value: recipients.length })}
-        {' · '}
-        {tr('reward_stream_pending_claim')} {filWithUnit(ledger?.pending_claim)}
+        <RecipientSummary tr={tr} ledger={ledger} />
       </div>
       <div className={styles.tableWrap}>
         <Table

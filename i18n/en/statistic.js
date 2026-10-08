@@ -69,20 +69,20 @@ const statistic = {
   reward_stream_service: 'Service Stream',
   reward_stream_burn: 'Burn',
   reward_stream_nv29_line: 'Since NV29 block rewards are split by weight',
-  block_reward_split: 'Block Reward Allocation',
+  block_reward_split: 'Service Reward Ranking',
   block_trend_tip:
-    'Miner actual receipts (consensus stream) only; see Block Reward Allocation for the service stream and burn',
+    'Miner actual receipts (consensus stream) only; see Block Reward Streams for the service stream and burn',
   block_reward_per_TiB_tip:
-    'Miner actual receipts (consensus stream) only; see Block Reward Allocation for the service stream and burn',
+    'Miner actual receipts (consensus stream) only; see Block Reward Streams for the service stream and burn',
   reward_stream_pending_claim: 'Pending Claim (Owed to Service Providers)',
   reward_stream_rec_address: 'Recipient',
   reward_stream_rec_share: 'Share',
   reward_stream_rec_rank: 'Rank',
-  reward_stream_rec_claimed: 'Paid',
+  reward_stream_rec_claimed: 'Received',
   reward_stream_rec_receivable: 'Receivable',
   reward_stream_rec_count: '{{value}} recipients',
   reward_stream_rec_note:
-    'Paid = amount claimed in the current period (rolling per period); Receivable = pending claim (the reward pool owes it to service providers)',
+    'Received = amount claimed in the current period (rolling per period); Receivable = pending claim (the reward pool owes it to service providers)',
   reward_stream_nv29_inactive:
     'NV29 is not yet active on this network; block rewards still go entirely to miners',
   block_reward_per_TiB: 'Output Efficiency',

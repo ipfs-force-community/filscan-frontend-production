@@ -1,0 +1,185 @@
+/** @format */
+
+import { apiUrl } from '@/contents/apiUrl'
+import { formatFil, formatNumber, isIndent } from '@/utils'
+import Copy from '@/components/copy'
+import { BrowserView, MobileView } from '@/components/device-detect'
+import CopySvgMobile from '@/assets/images/icon-copy.svg'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import useAxiosData from '@/store/useAxiosData'
+import {
+  USE_FAKE_REWARD_LEDGER,
+  fakeRewardStreamLedgerResponse,
+} from './rewardStreamLedgerFake'
+
+/**
+ * 服务受益方排行表公共层（NV29/FIP-0118）——**唯一一份实现**：
+ *   列定义（recipientColumns）、地址单元、金额格式化、取数（useRewardLedger）都在这里，
+ *   首页卡（前 10 名，RewardLedgerSection）、统计页卡、全量排行页（/reward/rank）都消费它。
+ * 目的：列 / 取数只能有一处定义，避免三处各写一份导致口径漂移。
+ */
+
+/** 字段缺失的统一占位（契约 F：缺失一律显示 `--`，不得把 undefined 渲染成 0）。 */
+export const DASH = '--'
+
+/** 金额（attoFIL 字符串）→ FIL 展示；缺失 ⇒ `--`。 */
+export function ledgerFil(v: any): string {
+  if (v === undefined || v === null || v === '') return DASH
+  return String(formatNumber(formatFil(v, 'FIL'), 2))
+}
+
+/** 金额 + 单位 FIL；缺失 ⇒ `--`（不带单位）。 */
+export function filWithUnit(v: any): string {
+  if (v === undefined || v === null || v === '') return DASH
+  return `${ledgerFil(v)} FIL`
+}
+
+export interface LedgerRecipient {
+  address?: string
+  share_pct?: string
+  /** 待提取（应收），attoFIL 字符串。 */
+  pending_claim?: string
+  /** 本期已提取（已收），attoFIL 字符串；后端零值给 `"0"`。 */
+  claimed_period?: string
+}
+
+/**
+ * 后端方法 `RewardStreamLedger`（契约 E）响应形状。
+ * 金额字段一律 attoFIL 十进制字符串。
+ */
+export interface RewardStreamLedger {
+  epoch?: number
+  nv29?: boolean
+  pending_claim?: string
+  claimed_period?: string
+  current_split?: { miner?: string; service?: string; burn?: string }
+  recipients?: LedgerRecipient[]
+}
+
+/** 受益地址单元：照抄 contents/contract.tsx 的 contract_address 渲染（link_text + Copy）。 */
+function addressCell(text: any) {
+  if (!text) return DASH
+  return (
+    <span className="flex items-center gap-x-2">
+      <BrowserView>
+        <Link className="link_text" href={`/address/${text}`}>
+          {isIndent(text, 5, 4)}
+        </Link>
+        <Copy text={text} />
+      </BrowserView>
+      <MobileView>
+        <span className="copy-row">
+          <Link className="link_text" href={`/address/${text}`}>
+            {isIndent(text, 5, 4)}
+          </Link>
+          <Copy text={text} icon={<CopySvgMobile />} className="copy" />
+        </span>
+      </MobileView>
+    </span>
+  )
+}
+
+/**
+ * 服务受益方排行表列定义：排名 / 受益地址 / 份额 / 已收 / 应收。
+ * @param tr       宿主 ns 的翻译函数
+ * @param rankBase 排名基数：名次 = `rankBase + index + 1`（默认 0）。
+ *                 全量排行页每页传 `(page-1)*pageLimit`，保证名次全局连续（第 2 页第 1 行 = pageLimit+1）。
+ */
+export function recipientColumns(tr: any, rankBase = 0) {
+  return [
+    {
+      title: tr('reward_stream_rec_rank'),
+      dataIndex: 'rank',
+      width: '10%',
+      render: (_: any, __: any, index: number) => (
+        <span className="rank_icon">{rankBase + index + 1}</span>
+      ),
+    },
+    {
+      title: tr('reward_stream_rec_address'),
+      dataIndex: 'address',
+      render: (text: any) => addressCell(text),
+    },
+    {
+      title: tr('reward_stream_rec_share'),
+      dataIndex: 'share_pct',
+      render: (text: any) =>
+        text === undefined || text === null || text === '' ? DASH : `${text}%`,
+    },
+    {
+      title: tr('reward_stream_rec_claimed'),
+      dataIndex: 'claimed_period',
+      render: (text: any) => filWithUnit(text),
+    },
+    {
+      title: tr('reward_stream_rec_receivable'),
+      dataIndex: 'pending_claim',
+      render: (text: any) => filWithUnit(text),
+    },
+  ]
+}
+
+/**
+ * 副标题「共 N 个受益方 · 待提取（奖励池欠服务方） X FIL」——卡与全量页共用同一份拼法，
+ * 保证两处文案与数值完全一致（N = 全部受益方数，X = ledger.pending_claim）。
+ */
+export function RecipientSummary({
+  tr,
+  ledger,
+}: {
+  tr: any
+  ledger?: RewardStreamLedger | null
+}) {
+  const recipients =
+    ledger?.recipients && Array.isArray(ledger.recipients)
+      ? ledger.recipients
+      : []
+  return (
+    <>
+      {tr('reward_stream_rec_count', { value: recipients.length })}
+      {' · '}
+      {tr('reward_stream_pending_claim')} {filWithUnit(ledger?.pending_claim)}
+    </>
+  )
+}
+
+/**
+ * 取数：后端 jsonrpc `RewardStreamLedger`（apiUrl.reward_stream_ledger）。
+ * 唯一一份取数实现；保留 `USE_FAKE_REWARD_LEDGER` 分支（默认关闭）供本地渲染验证。
+ * 取数失败 ⇒ `ledger` 为 null（不抛错，由调用方按「未激活」兜底，绝不让页面崩）。
+ * @param options.auto 是否挂载即取（默认 true）。首页卡由 useInterval 立即触发并每 5 分钟刷新，
+ *                     故传 `{ auto: false }` 避免挂载时同一接口被请求两次（本仓取消键是 `method:url`，会互相取消）。
+ */
+export function useRewardLedger(options?: { auto?: boolean }) {
+  const { axiosData } = useAxiosData()
+  const [ledger, setLedger] = useState<RewardStreamLedger | null>(null)
+  const [loading, setLoading] = useState(false)
+  const auto = options?.auto !== false
+
+  useEffect(() => {
+    if (auto) load()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const load = async () => {
+    // 后端 RewardStreamLedger 部署前，本地渲染验证走 Fake（默认关闭）
+    if (USE_FAKE_REWARD_LEDGER) {
+      setLedger(fakeRewardStreamLedgerResponse().data)
+      return
+    }
+    setLoading(true)
+    try {
+      const result: any = await axiosData(apiUrl.reward_stream_ledger)
+      // 兼容网关外壳 {code,msg,data:{…}} 与直出 ledger 两种形状
+      setLedger(result?.data ?? result?.result ?? result ?? null)
+    } catch (e) {
+      // 取数失败 ⇒ ledger 为空：调用方按未激活兜底，不显示成 0，也不整块崩
+      setLedger(null)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return { ledger, loading, reload: load }
+}

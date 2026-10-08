@@ -13,15 +13,11 @@ import {
   USE_FAKE_HOME_ALLOCATION,
   fakeHomeAllocationData,
 } from './homeAllocationFake'
-import {
-  USE_FAKE_REWARD_LEDGER,
-  fakeRewardStreamLedgerResponse,
-} from '@/src/nv29/rewardStreamLedgerFake'
-import { RewardStreamLedger } from '@/src/nv29/RewardLedgerSection'
+import { useRewardLedger } from '@/src/nv29/rewardRecipients'
 
-// 首页「区块奖励分配」容器：取数（home_meta，判定 NV29 是否激活）+ 标题（含「查看奖励流向」链接），
+// 首页「服务奖励排行」容器：取数（home_meta，判定 NV29 是否激活）+ 标题 + 右上角箭头（→ /reward/rank 全量页），
 // 块体（服务受益方排行表，前 10 名）在 RewardAllocationBlock。
-// 表数据来自后端新方法 RewardStreamLedger（契约 E），单独取一次，与 home_meta 互不影响。
+// 表数据来自后端新方法 RewardStreamLedger（契约 E），取数走公共层 useRewardLedger（唯一一份实现）。
 // 取数失败不抛错：保持空数据，块内按「未激活」/「字段缺失」分支兜底，绝不让首页因该块崩掉。
 export default function RewardAllocation({
   className,
@@ -31,11 +27,14 @@ export default function RewardAllocation({
   const { tr } = Translation({ ns: 'home' })
   const { axiosData } = useAxiosData()
   const [data, setData] = useState<Record<string, any>>({})
-  const [ledger, setLedger] = useState<RewardStreamLedger | null>(null)
+  // auto: false —— 本卡由 useInterval 立即触发并每 5 分钟刷新，
+  // 避免挂载时与 hook 自身的 effect 各请求一次同一接口（会互相取消）。
+  const { ledger, reload: reloadLedger } = useRewardLedger({ auto: false })
 
   useInterval(
     () => {
       load()
+      reloadLedger()
     },
     5 * 60 * 1000,
   )
@@ -60,20 +59,6 @@ export default function RewardAllocation({
         setData({})
       }
     }
-
-    // 表数据：后端 RewardStreamLedger 部署前本地渲染验证走 Fake（默认关闭）。
-    if (USE_FAKE_REWARD_LEDGER) {
-      setLedger(fakeRewardStreamLedgerResponse().data)
-      return
-    }
-    try {
-      const result: any = await axiosData(apiUrl.reward_stream_ledger)
-      // 兼容网关外壳 {code,msg,data:{…}} 与直出 ledger 两种形状
-      setLedger(result?.data ?? result?.result ?? result ?? null)
-    } catch (e) {
-      // 取数失败 ⇒ ledger 为空：表按契约 F 显示 `--`（不显示成 0，也不整块崩）
-      setLedger(null)
-    }
   }
 
   return (
@@ -85,14 +70,11 @@ export default function RewardAllocation({
     >
       <div className="mb-3 flex items-center justify-between">
         <div className="font-HarmonyOS text-lg font-semibold">
-          {tr('reward_stream_alloc_title')}
+          {tr('reward_stream_rank_title')}
         </div>
-        <Link
-          className="flex items-center gap-x-1"
-          href="/statistics/charts#block_reward_streams"
-        >
-          <span className="link_text text-xs">{tr('reward_stream_view')}</span>
-          <GoIcon className="cursor-pointer" width={16} height={16} />
+        {/* 右上角箭头 → 全量服务奖励排行页（第一名到最后一名），与首页合约排行同款 */}
+        <Link href="/reward/rank">
+          <GoIcon className="cursor-pointer" width={18} height={18} />
         </Link>
       </div>
       <RewardAllocationBlock data={data} ledger={ledger} />
