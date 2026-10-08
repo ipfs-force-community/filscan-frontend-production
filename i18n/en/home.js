@@ -28,19 +28,17 @@ const home = {
   reward_stream_alloc_title: 'Block Reward Allocation',
   reward_stream_alloc_tip:
     'Total of the three streams = miner rewards + service stream (reward pool pending claim) + burn, i.e. the cumulative minted amount. Before NV29 activation this equals miner rewards. See the "Block Reward Allocation" card for the breakdown.',
-  reward_stream_alloc_total: 'Total Minted (Sum)',
-  reward_stream_alloc_24h: 'Last 24h share (stacked bar)',
-  reward_stream_alloc_acc: 'Cumulative (since NV29 activation)',
-  reward_stream_alloc_24h_total: 'Last 24h Minted (Sum)',
-  reward_stream_alloc_desc:
-    'The service stream is accrued in the reward pool and claimed by service providers later; the burn is the portion burned at mint time.',
   reward_stream_pending_claim: 'Pending Claim (Owed to Service Providers)',
-  reward_stream_split_schedule:
-    'Current Split (On-chain Schedule; may differ from the measured 24h share)',
   reward_stream_recipients: 'Recipients',
   reward_stream_rec_address: 'Address',
   reward_stream_rec_share: 'Share',
   reward_stream_rec_pending: 'Pending',
+  reward_stream_rec_rank: 'Rank',
+  reward_stream_rec_claimed: 'Paid',
+  reward_stream_rec_receivable: 'Receivable',
+  reward_stream_rec_count: '{{value}} recipients',
+  reward_stream_rec_note:
+    'Paid = amount claimed in the current period (rolling per period); Receivable = pending claim (the reward pool owes it to service providers)',
   gas_in_32g: '24H Gas Cost for Sealing 32GiB sectors/TiB',
   gas_in_32g_meta:'Gas Used of a 32GiB Sector',
   gas_in_32g_tip:'Gas used of Sealing a 32GiB Sector in the last 24 hours',

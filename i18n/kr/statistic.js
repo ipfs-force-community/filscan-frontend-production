@@ -68,20 +68,23 @@ const statistic = {
   reward_stream_burn: '소각',
   reward_stream_nv29_line: 'NV29부터 블록 보상은 가중치에 따라 분배됩니다',
   block_reward_split: '블록 보상 분배',
-  reward_stream_split_total: '합계',
-  reward_stream_split_desc:
-    '선택한 기간 내 세 가지 흐름의 합계: 마이너 몫은 컨센서스 스트림, 서비스 스트림은 보상 풀에 적립되어 추후 청구되며, 소각은 발행 시점에 소각됩니다.',
   block_trend_tip:
     '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 「블록 보상 분배」를 참고하세요',
   block_reward_per_TiB_tip:
     '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 「블록 보상 분배」를 참고하세요',
   reward_stream_pending_claim: '미청구(서비스 제공자에게 지급될 금액)',
-  reward_stream_split_schedule:
-    '현재 분배 비율(온체인 일정, 최근 24시간 실측 비중과 다를 수 있음)',
   reward_stream_recipients: '수혜자 내역',
   reward_stream_rec_address: '주소',
   reward_stream_rec_share: '지분',
   reward_stream_rec_pending: '미지급',
+  reward_stream_rec_rank: '순위',
+  reward_stream_rec_claimed: '지급액',
+  reward_stream_rec_receivable: '미수금',
+  reward_stream_rec_count: '수혜자 {{value}}개',
+  reward_stream_rec_note:
+    '지급액은 이번 기간에 청구된 금액(기간별 갱신)이고, 미수금은 미청구 금액(보상 풀이 서비스 제공자에게 지급할 금액)입니다',
+  reward_stream_nv29_inactive:
+    '이 네트워크에서는 NV29가 아직 활성화되지 않아 블록 보상이 여전히 전액 마이너에게 지급됩니다',
   block_reward_per_TiB: '생산 효율',
   acc_block_rewards: '누적 블록 보상',
   active_nodes: '액티브한 노드 수',

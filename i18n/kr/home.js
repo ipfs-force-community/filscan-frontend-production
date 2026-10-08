@@ -31,19 +31,17 @@ const home = {
   reward_stream_alloc_title: '블록 보상 분배',
   reward_stream_alloc_tip:
     '세 갈래 합계 = 마이너 실수령 + 서비스 스트림(보상 풀 미청구) + 소각, 즉 누적 발행량입니다. NV29 미활성 네트워크에서는 마이너 실수령과 같습니다. 상세 내역은 "블록 보상 분배" 카드에서 확인하세요.',
-  reward_stream_alloc_total: '누적 발행량(합계)',
-  reward_stream_alloc_24h: '최근 24시간 비중(누적 막대)',
-  reward_stream_alloc_acc: '누적(NV29 활성화 이후)',
-  reward_stream_alloc_24h_total: '최근 24시간 발행량(합계)',
-  reward_stream_alloc_desc:
-    '서비스 스트림은 보상 풀에 적립되어 서비스 제공자가 나중에 청구(Claim)하는 금액이고, 소각은 발행 시점에 곧바로 태워지는 부분입니다.',
   reward_stream_pending_claim: '미청구(서비스 제공자에게 지급될 금액)',
-  reward_stream_split_schedule:
-    '현재 분배 비율(온체인 일정, 최근 24시간 실측 비중과 다를 수 있음)',
   reward_stream_recipients: '수혜자 내역',
   reward_stream_rec_address: '주소',
   reward_stream_rec_share: '지분',
   reward_stream_rec_pending: '미지급',
+  reward_stream_rec_rank: '순위',
+  reward_stream_rec_claimed: '지급액',
+  reward_stream_rec_receivable: '미수금',
+  reward_stream_rec_count: '수혜자 {{value}}개',
+  reward_stream_rec_note:
+    '지급액은 이번 기간에 청구된 금액(기간별 갱신)이고, 미수금은 미청구 금액(보상 풀이 서비스 제공자에게 지급할 금액)입니다',
   gas_in_32g: ' 최근 24시간 동안 1TiB 용량의 32GiB 섹터를 봉인하기 위해 필요한 가스입니다',
   gas_in_32g_meta:'32GiB 섹터의 가스 소비량',
   gas_in_32g_tip: '최근 24시간 동안 밀봉된 32G 섹터당 소비된 가스량(TB당)',

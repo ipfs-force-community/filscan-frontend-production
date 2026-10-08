@@ -1,15 +1,14 @@
 /** @format */
 
 import { Translation } from '@/components/hooks/Translation'
-import { formatFil, formatNumber } from '@/utils'
-import { useState } from 'react'
+import { formatFil, formatNumber, isIndent } from '@/utils'
 import classNames from 'classnames'
+import Link from 'next/link'
+import Copy from '@/components/copy'
+import { BrowserView, MobileView } from '@/components/device-detect'
+import CopySvgMobile from '@/assets/images/icon-copy.svg'
+import Table from '@/packages/Table'
 import styles from './RewardLedgerSection.module.scss'
-
-/** 三股配色（与首页/统计页既有三流色一致）。 */
-export const MINER_COLOR = '#1C6AFD'
-export const SERVICE_COLOR = '#4ACAB4'
-export const BURN_COLOR = '#F8CD4D'
 
 /** 字段缺失的统一占位（契约 F：缺失一律显示 `--`，不得把 undefined 渲染成 0）。 */
 export const DASH = '--'
@@ -20,21 +19,24 @@ export function ledgerFil(v: any): string {
   return String(formatNumber(formatFil(v, 'FIL'), 2))
 }
 
-/** 百分比（后端已给 "50.0" 形态）→ "50.0%"；缺失 ⇒ `--`。 */
-export function ledgerPct(v: any): string {
+/** 金额 + 单位 FIL；缺失 ⇒ `--`（不带单位）。 */
+function filWithUnit(v: any): string {
   if (v === undefined || v === null || v === '') return DASH
-  return `${v}%`
+  return `${ledgerFil(v)} FIL`
 }
 
 export interface LedgerRecipient {
   address?: string
   share_pct?: string
+  /** 待提取（应收），attoFIL 字符串。 */
   pending_claim?: string
+  /** 本期已提取（已付），attoFIL 字符串；后端零值给 `"0"`。 */
+  claimed_period?: string
 }
 
 /**
  * 后端方法 `RewardStreamLedger`（契约 E）响应形状。
- * 金额字段一律 attoFIL 十进制字符串；`current_split` 为当前评估权重百分比（一位小数）。
+ * 金额字段一律 attoFIL 十进制字符串。
  */
 export interface RewardStreamLedger {
   epoch?: number
@@ -53,15 +55,18 @@ interface Props {
   className?: string
 }
 
+/** 排行表只展示前 10 名（用户 2026-10-08 拍板）。 */
+const RANK_LIMIT = 10
+
 /**
- * 区块奖励分配「新增三项」（契约 F1），首页块与统计页卡共用：
- *   1) 待提取（奖励池欠服务方）= ledger.pending_claim；
- *   2) 当前分账比例（链上日程）= ledger.current_split —— **与「近24h实测占比」是两个口径**，
- *      文案分开写（本行标题自带「链上日程」，24h 实测占比另由宿主块标注）；
- *   3) 受益方明细（地址 / 份额 / 待付）= ledger.recipients，默认展开、可折叠。
+ * 「区块奖励分配」卡体：仿「合约排行」的服务受益方排行表（只显示前 10 名）。
+ *   副标题：共 N 个受益方 · 待提取（奖励池欠服务方）总额 X FIL；
+ *   表格：排名 / 受益地址 / 份额 / 已付 / 应收（列头复用既有 i18n key）；
+ *   表下一行：弱化色口径说明。
  *
- * 未激活 NV29 ⇒ 不渲染任何一项（返回 null，宿主保持既有单一文案）。
- * 字段缺失 ⇒ 逐项显示 `--`。
+ * 2026-10-08 拍板：三股占比 / 合计 / 当前分账比例与统计页「区块奖励流向」卡重复，已全部删除。
+ * 未激活 NV29（active 为 false / ledger 为空）⇒ 不渲染表体（返回 null，由宿主显示未激活文案）。
+ * 字段缺失一律显示 `--`。
  */
 export function RewardLedgerSection({
   ledger,
@@ -70,94 +75,89 @@ export function RewardLedgerSection({
   className,
 }: Props) {
   const { tr } = Translation({ ns })
-  const [open, setOpen] = useState(true)
 
+  // active 为 false（或未传且 ledger.nv29 不为 true）**或 ledger 为空** ⇒ 不渲染表体，
+  // 由宿主显示未激活文案（统计页未激活/取数失败分支；首页由高度判定，ledger 缺失时不渲染）。
   const isActive = active === undefined ? ledger?.nv29 === true : active
-  if (!isActive) return null
+  if (!isActive || !ledger) return null
 
-  const split = ledger?.current_split
-  const recipients = ledger?.recipients
-  const rows: Array<LedgerRecipient | null> = Array.isArray(recipients)
-    ? recipients.length > 0
-      ? recipients
-      : [null]
-    : [null]
+  const recipients = Array.isArray(ledger.recipients) ? ledger.recipients : []
+  const rows = recipients.slice(0, RANK_LIMIT)
+
+  // 受益地址列：照抄 contents/contract.tsx 的 contract_address 渲染（link_text + Copy）。
+  const addressCell = (text: any) => {
+    if (!text) return DASH
+    return (
+      <span className="flex items-center gap-x-2">
+        <BrowserView>
+          <Link className="link_text" href={`/address/${text}`}>
+            {isIndent(text, 5, 4)}
+          </Link>
+          <Copy text={text} />
+        </BrowserView>
+        <MobileView>
+          <span className="copy-row">
+            <Link className="link_text" href={`/address/${text}`}>
+              {isIndent(text, 5, 4)}
+            </Link>
+            <Copy text={text} icon={<CopySvgMobile />} className="copy" />
+          </span>
+        </MobileView>
+      </span>
+    )
+  }
+
+  const columns = [
+    {
+      title: tr('reward_stream_rec_rank'),
+      dataIndex: 'rank',
+      width: '10%',
+      render: (_: any, __: any, index: number) => (
+        <span className="rank_icon">{index + 1}</span>
+      ),
+    },
+    {
+      title: tr('reward_stream_rec_address'),
+      dataIndex: 'address',
+      render: (text: any) => addressCell(text),
+    },
+    {
+      title: tr('reward_stream_rec_share'),
+      dataIndex: 'share_pct',
+      render: (text: any) =>
+        text === undefined || text === null || text === '' ? DASH : `${text}%`,
+    },
+    {
+      title: tr('reward_stream_rec_claimed'),
+      dataIndex: 'claimed_period',
+      render: (text: any) => filWithUnit(text),
+    },
+    {
+      title: tr('reward_stream_rec_receivable'),
+      dataIndex: 'pending_claim',
+      render: (text: any) => filWithUnit(text),
+    },
+  ]
 
   return (
     <div className={classNames(styles.wrap, className)}>
-      <div className={styles.pendingRow}>
-        <span className={styles.pendingLabel}>
-          {tr('reward_stream_pending_claim')}
-        </span>
-        <span className={styles.pendingValue}>
-          {ledgerFil(ledger?.pending_claim)}
-          <span className={styles.unit}> FIL</span>
-        </span>
+      {/* 副标题（仿 contract_list_total 的位置）：共 N 个受益方 · 待提取（奖励池欠服务方）总额 X FIL */}
+      <div className={styles.sub}>
+        {tr('reward_stream_rec_count', { value: recipients.length })}
+        {' · '}
+        {tr('reward_stream_pending_claim')} {filWithUnit(ledger?.pending_claim)}
       </div>
-
-      <div className={styles.splitBlock}>
-        <div className={styles.splitTitle}>
-          {tr('reward_stream_split_schedule')}
-        </div>
-        <div className={styles.splitRow}>
-          <span className={styles.splitItem}>
-            <i className={styles.dot} style={{ background: MINER_COLOR }} />
-            {tr('reward_stream_miner')}
-            <b className={styles.splitPct}>{ledgerPct(split?.miner)}</b>
-          </span>
-          <span className={styles.splitItem}>
-            <i className={styles.dot} style={{ background: SERVICE_COLOR }} />
-            {tr('reward_stream_service')}
-            <b className={styles.splitPct}>{ledgerPct(split?.service)}</b>
-          </span>
-          <span className={styles.splitItem}>
-            <i className={styles.dot} style={{ background: BURN_COLOR }} />
-            {tr('reward_stream_burn')}
-            <b className={styles.splitPct}>{ledgerPct(split?.burn)}</b>
-          </span>
-        </div>
+      <div className={styles.tableWrap}>
+        <Table
+          key="reward_recipient_rank"
+          className="-mt-2.5"
+          total={0}
+          data={rows}
+          columns={columns}
+          loading={false}
+        />
       </div>
-
-      <div className={styles.recBlock}>
-        <button
-          type="button"
-          className={styles.recToggle}
-          onClick={() => setOpen((v) => !v)}
-        >
-          {tr('reward_stream_recipients')}
-          <span className={styles.caret}>{open ? '▾' : '▸'}</span>
-        </button>
-        {open && (
-          <table className={styles.recTable}>
-            <thead>
-              <tr>
-                <th className={styles.recThLeft}>
-                  {tr('reward_stream_rec_address')}
-                </th>
-                <th className={styles.recThRight}>
-                  {tr('reward_stream_rec_share')}
-                </th>
-                <th className={styles.recThRight}>
-                  {tr('reward_stream_rec_pending')}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r, i) => (
-                <tr key={r?.address || i}>
-                  <td className={styles.recTdLeft}>{r?.address || DASH}</td>
-                  <td className={styles.recTdRight}>
-                    {ledgerPct(r?.share_pct)}
-                  </td>
-                  <td className={styles.recTdRight}>
-                    {ledgerFil(r?.pending_claim)} FIL
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      <div className={styles.note}>{tr('reward_stream_rec_note')}</div>
     </div>
   )
 }
