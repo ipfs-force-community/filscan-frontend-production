@@ -73,10 +73,8 @@ const statistic = {
   block_reward_per_TiB_tip:
     '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 「블록 보상 분배」를 참고하세요',
   reward_stream_pending_claim: '미청구(서비스 제공자에게 지급될 금액)',
-  reward_stream_recipients: '수혜자 내역',
-  reward_stream_rec_address: '주소',
+  reward_stream_rec_address: '수혜 주소',
   reward_stream_rec_share: '지분',
-  reward_stream_rec_pending: '미지급',
   reward_stream_rec_rank: '순위',
   reward_stream_rec_claimed: '지급액',
   reward_stream_rec_receivable: '미수금',

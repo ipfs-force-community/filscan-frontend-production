@@ -32,10 +32,8 @@ const home = {
   reward_stream_alloc_tip:
     '세 갈래 합계 = 마이너 실수령 + 서비스 스트림(보상 풀 미청구) + 소각, 즉 누적 발행량입니다. NV29 미활성 네트워크에서는 마이너 실수령과 같습니다. 상세 내역은 "블록 보상 분배" 카드에서 확인하세요.',
   reward_stream_pending_claim: '미청구(서비스 제공자에게 지급될 금액)',
-  reward_stream_recipients: '수혜자 내역',
-  reward_stream_rec_address: '주소',
+  reward_stream_rec_address: '수혜 주소',
   reward_stream_rec_share: '지분',
-  reward_stream_rec_pending: '미지급',
   reward_stream_rec_rank: '순위',
   reward_stream_rec_claimed: '지급액',
   reward_stream_rec_receivable: '미수금',

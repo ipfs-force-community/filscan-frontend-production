@@ -47,10 +47,8 @@ const home = {
   reward_stream_alloc_tip:
     '三股合计＝矿工实收＋服务流（奖励池待提取）＋销毁，即累计铸造量；未激活 NV29 的网该值等于矿工实收。三股明细见首页与「区块奖励分配」卡。',
   reward_stream_pending_claim: '待提取（奖励池欠服务方）',
-  reward_stream_recipients: '受益方明细',
-  reward_stream_rec_address: '地址',
+  reward_stream_rec_address: '受益地址',
   reward_stream_rec_share: '份额',
-  reward_stream_rec_pending: '待付',
   reward_stream_rec_rank: '排名',
   reward_stream_rec_claimed: '已付',
   reward_stream_rec_receivable: '应收',

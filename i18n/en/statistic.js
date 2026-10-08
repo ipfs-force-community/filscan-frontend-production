@@ -75,10 +75,8 @@ const statistic = {
   block_reward_per_TiB_tip:
     'Miner actual receipts (consensus stream) only; see Block Reward Allocation for the service stream and burn',
   reward_stream_pending_claim: 'Pending Claim (Owed to Service Providers)',
-  reward_stream_recipients: 'Recipients',
-  reward_stream_rec_address: 'Address',
+  reward_stream_rec_address: 'Recipient',
   reward_stream_rec_share: 'Share',
-  reward_stream_rec_pending: 'Pending',
   reward_stream_rec_rank: 'Rank',
   reward_stream_rec_claimed: 'Paid',
   reward_stream_rec_receivable: 'Receivable',
