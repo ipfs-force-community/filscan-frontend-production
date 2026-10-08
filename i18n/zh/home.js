@@ -46,6 +46,8 @@ const home = {
   reward_stream_alloc_title: '区块奖励分配',
   reward_stream_alloc_total: '累计铸造量（合计）',
   reward_stream_alloc_24h: '近24h占比（堆叠条）',
+  reward_stream_alloc_acc: '累计（自 NV29 激活）',
+  reward_stream_alloc_24h_total: '近24h铸造量（合计）',
   reward_stream_alloc_desc:
     '服务流是记在奖励池、由服务方事后提取（Claim）的钱；销毁是铸造时即烧掉的部分。',
   reward_stream_pending_claim: '待提取（奖励池欠服务方）',

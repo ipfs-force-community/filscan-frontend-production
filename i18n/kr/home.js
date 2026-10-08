@@ -31,6 +31,8 @@ const home = {
   reward_stream_alloc_title: '블록 보상 분배',
   reward_stream_alloc_total: '누적 발행량(합계)',
   reward_stream_alloc_24h: '최근 24시간 비중(누적 막대)',
+  reward_stream_alloc_acc: '누적(NV29 활성화 이후)',
+  reward_stream_alloc_24h_total: '최근 24시간 발행량(합계)',
   reward_stream_alloc_desc:
     '서비스 스트림은 보상 풀에 적립되어 서비스 제공자가 나중에 청구(Claim)하는 금액이고, 소각은 발행 시점에 곧바로 태워지는 부분입니다.',
   reward_stream_pending_claim: '미청구(서비스 제공자에게 지급될 금액)',

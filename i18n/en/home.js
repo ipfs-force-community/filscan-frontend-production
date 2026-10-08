@@ -28,6 +28,8 @@ const home = {
   reward_stream_alloc_title: 'Block Reward Allocation',
   reward_stream_alloc_total: 'Total Minted (Sum)',
   reward_stream_alloc_24h: 'Last 24h share (stacked bar)',
+  reward_stream_alloc_acc: 'Cumulative (since NV29 activation)',
+  reward_stream_alloc_24h_total: 'Last 24h Minted (Sum)',
   reward_stream_alloc_desc:
     'The service stream is accrued in the reward pool and claimed by service providers later; the burn is the portion burned at mint time.',
   reward_stream_pending_claim: 'Pending Claim (Owed to Service Providers)',
