@@ -72,15 +72,13 @@ const statistic = {
     '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 「블록 보상 흐름」을 참고하세요',
   block_reward_per_TiB_tip:
     '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 「블록 보상 흐름」을 참고하세요',
-  reward_stream_pending_claim: '미청구(서비스 제공자에게 지급될 금액)',
   reward_stream_rec_address: '수혜 주소',
   reward_stream_rec_share: '지분',
   reward_stream_rec_rank: '순위',
   reward_stream_rec_claimed: '수령액',
   reward_stream_rec_receivable: '미수금',
-  reward_stream_rec_count: '수혜자 {{value}}개',
   reward_stream_rec_note:
-    '수령액은 이번 기간에 청구된 금액(기간별 갱신)이고, 미수금은 미청구 금액(보상 풀이 서비스 제공자에게 지급할 금액)입니다',
+    '수령액은 이번 기간에 청구된 금액(기간별 갱신)이고, 미수금은 아직 청구하지 않은 금액입니다',
   reward_stream_nv29_inactive:
     '이 네트워크에서는 NV29가 아직 활성화되지 않아 블록 보상이 여전히 전액 마이너에게 지급됩니다',
   block_reward_per_TiB: '생산 효율',

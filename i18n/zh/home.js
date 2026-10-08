@@ -47,15 +47,13 @@ const home = {
   reward_stream_rank_title: '服务奖励排行',
   reward_stream_alloc_tip:
     '三股合计＝矿工实收＋服务流（奖励池待提取）＋销毁，即累计铸造量；未激活 NV29 的网该值等于矿工实收。三股明细见首页与「区块奖励流向」卡。',
-  reward_stream_pending_claim: '待提取（奖励池欠服务方）',
   reward_stream_rec_address: '受益地址',
   reward_stream_rec_share: '份额',
   reward_stream_rec_rank: '排名',
   reward_stream_rec_claimed: '已收',
   reward_stream_rec_receivable: '应收',
-  reward_stream_rec_count: '共 {{value}} 个受益方',
   reward_stream_rec_note:
-    '已收＝本期已提取（随期滚动）；应收＝待提取（奖励池欠服务方）',
+    '已收＝本期已提取（随期滚动）；应收＝待提取金额',
   gas_in_32g: '24小时32G扇区封装每T所需Gas',
   gas_in_32g_meta: '32GiB扇区Gas消耗',
   gas_in_32g_tip: '近24小时密封32G扇区每T所要消耗的Gas值',

@@ -3,11 +3,7 @@
 import { Translation } from '@/components/hooks/Translation'
 import classNames from 'classnames'
 import Table from '@/packages/Table'
-import {
-  recipientColumns,
-  RecipientSummary,
-  RewardStreamLedger,
-} from './rewardRecipients'
+import { recipientColumns, RewardStreamLedger } from './rewardRecipients'
 import styles from './RewardLedgerSection.module.scss'
 
 // 公共层（列定义 / 地址单元 / 金额格式化 / 取数）落在 ./rewardRecipients，这里只保留卡体结构。
@@ -16,7 +12,6 @@ export {
   ledgerFil,
   filWithUnit,
   recipientColumns,
-  RecipientSummary,
   useRewardLedger,
 } from './rewardRecipients'
 export type { LedgerRecipient, RewardStreamLedger } from './rewardRecipients'
@@ -34,7 +29,6 @@ const RANK_LIMIT = 10
 
 /**
  * 服务受益方排行卡体：仿「合约排行」的排行表（只显示前 10 名）。
- *   副标题：共 N 个受益方 · 待提取（奖励池欠服务方）总额 X FIL；
  *   表格：排名 / 受益地址 / 份额 / 已收 / 应收（列定义与金额格式化取自 ./rewardRecipients，唯一一份）；
  *   表下一行：弱化色口径说明。
  *
@@ -61,10 +55,6 @@ export function RewardLedgerSection({
 
   return (
     <div className={classNames(styles.wrap, className)}>
-      {/* 副标题（仿 contract_list_total 的位置）：共 N 个受益方 · 待提取（奖励池欠服务方）总额 X FIL */}
-      <div className={styles.sub}>
-        <RecipientSummary tr={tr} ledger={ledger} />
-      </div>
       <div className={styles.tableWrap}>
         <Table
           key="reward_recipient_rank"

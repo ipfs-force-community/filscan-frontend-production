@@ -32,15 +32,13 @@ const home = {
   reward_stream_rank_title: '서비스 보상 순위',
   reward_stream_alloc_tip:
     '세 갈래 합계 = 마이너 실수령 + 서비스 스트림(보상 풀 미청구) + 소각, 즉 누적 발행량입니다. NV29 미활성 네트워크에서는 마이너 실수령과 같습니다. 상세 내역은 "블록 보상 흐름" 카드에서 확인하세요.',
-  reward_stream_pending_claim: '미청구(서비스 제공자에게 지급될 금액)',
   reward_stream_rec_address: '수혜 주소',
   reward_stream_rec_share: '지분',
   reward_stream_rec_rank: '순위',
   reward_stream_rec_claimed: '수령액',
   reward_stream_rec_receivable: '미수금',
-  reward_stream_rec_count: '수혜자 {{value}}개',
   reward_stream_rec_note:
-    '수령액은 이번 기간에 청구된 금액(기간별 갱신)이고, 미수금은 미청구 금액(보상 풀이 서비스 제공자에게 지급할 금액)입니다',
+    '수령액은 이번 기간에 청구된 금액(기간별 갱신)이고, 미수금은 아직 청구하지 않은 금액입니다',
   gas_in_32g: ' 최근 24시간 동안 1TiB 용량의 32GiB 섹터를 봉인하기 위해 필요한 가스입니다',
   gas_in_32g_meta:'32GiB 섹터의 가스 소비량',
   gas_in_32g_tip: '최근 24시간 동안 밀봉된 32G 섹터당 소비된 가스량(TB당)',

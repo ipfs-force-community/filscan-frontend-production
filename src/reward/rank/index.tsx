@@ -6,11 +6,7 @@ import { observer } from 'mobx-react'
 import { useMemo, useState } from 'react'
 import classNames from 'classnames'
 import { pageLimit } from '@/utils'
-import {
-  recipientColumns,
-  RecipientSummary,
-  useRewardLedger,
-} from '@/src/nv29/rewardRecipients'
+import { recipientColumns, useRewardLedger } from '@/src/nv29/rewardRecipients'
 import styles from './index.module.scss'
 
 // 服务奖励排行（全量）：从第一名到最后一名。
@@ -57,9 +53,6 @@ export default observer(() => {
         </div>
       ) : (
         <>
-          <div className="text_des mx-2.5 text-xs">
-            <RecipientSummary tr={tr} ledger={ledger} />
-          </div>
           <div
             className={classNames(
               'card_shadow border_color mt-4 rounded-xl border p-5',

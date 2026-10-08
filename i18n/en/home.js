@@ -29,15 +29,13 @@ const home = {
   reward_stream_rank_title: 'Service Reward Ranking',
   reward_stream_alloc_tip:
     'Total of the three streams = miner rewards + service stream (reward pool pending claim) + burn, i.e. the cumulative minted amount. Before NV29 activation this equals miner rewards. See the "Block Reward Streams" card for the breakdown.',
-  reward_stream_pending_claim: 'Pending Claim (Owed to Service Providers)',
   reward_stream_rec_address: 'Recipient',
   reward_stream_rec_share: 'Share',
   reward_stream_rec_rank: 'Rank',
   reward_stream_rec_claimed: 'Received',
   reward_stream_rec_receivable: 'Receivable',
-  reward_stream_rec_count: '{{value}} recipients',
   reward_stream_rec_note:
-    'Received = amount claimed in the current period (rolling per period); Receivable = pending claim (the reward pool owes it to service providers)',
+    'Received = amount claimed in this period (rolling); Receivable = pending claim amount',
   gas_in_32g: '24H Gas Cost for Sealing 32GiB sectors/TiB',
   gas_in_32g_meta:'Gas Used of a 32GiB Sector',
   gas_in_32g_tip:'Gas used of Sealing a 32GiB Sector in the last 24 hours',

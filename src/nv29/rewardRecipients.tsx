@@ -121,30 +121,6 @@ export function recipientColumns(tr: any, rankBase = 0) {
 }
 
 /**
- * 副标题「共 N 个受益方 · 待提取（奖励池欠服务方） X FIL」——卡与全量页共用同一份拼法，
- * 保证两处文案与数值完全一致（N = 全部受益方数，X = ledger.pending_claim）。
- */
-export function RecipientSummary({
-  tr,
-  ledger,
-}: {
-  tr: any
-  ledger?: RewardStreamLedger | null
-}) {
-  const recipients =
-    ledger?.recipients && Array.isArray(ledger.recipients)
-      ? ledger.recipients
-      : []
-  return (
-    <>
-      {tr('reward_stream_rec_count', { value: recipients.length })}
-      {' · '}
-      {tr('reward_stream_pending_claim')} {filWithUnit(ledger?.pending_claim)}
-    </>
-  )
-}
-
-/**
  * 取数：后端 jsonrpc `RewardStreamLedger`（apiUrl.reward_stream_ledger）。
  * 唯一一份取数实现；保留 `USE_FAKE_REWARD_LEDGER` 分支（默认关闭）供本地渲染验证。
  * 取数失败 ⇒ `ledger` 为 null（不抛错，由调用方按「未激活」兜底，绝不让页面崩）。
