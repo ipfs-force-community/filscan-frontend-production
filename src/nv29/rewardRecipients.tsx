@@ -137,12 +137,24 @@ export function recipientColumns(tr: any, rankBase = 0) {
       },
     },
     {
-      title: tr('reward_stream_rec_claimed'),
+      // 口径说明从卡片底部小字搬到列头问号里（用户 2026-10-08 拍板）：悬停「已收」「应收」列头的
+      // 问号弹出解释（站点既有 Tooltip 样式，icon 用包内默认的 tip 图标）。
+      title: (
+        <span className="inline-flex items-center gap-x-1">
+          {tr('reward_stream_rec_claimed')}
+          <Tooltip context={tr('reward_stream_rec_claimed_tip')} />
+        </span>
+      ),
       dataIndex: 'claimed_period',
       render: (text: any) => filWithUnit(text),
     },
     {
-      title: tr('reward_stream_rec_receivable'),
+      title: (
+        <span className="inline-flex items-center gap-x-1">
+          {tr('reward_stream_rec_receivable')}
+          <Tooltip context={tr('reward_stream_rec_receivable_tip')} />
+        </span>
+      ),
       dataIndex: 'pending_claim',
       render: (text: any) => filWithUnit(text),
     },

@@ -24,11 +24,10 @@ const home = {
   reward_stream_burn: 'Burn',
   reward_stream_total: 'Total (24h Minted)',
   reward_stream_nv29_inactive: 'NV29 is not yet active on this network; block rewards still go entirely to miners',
-  reward_stream_view: 'View Reward Streams',
   reward_stream_alloc_title: 'Block Reward Allocation',
   reward_stream_rank_title: 'Service Reward Ranking',
   reward_stream_alloc_tip:
-    'Total of the three streams = miner rewards + service stream (reward pool pending claim) + burn, i.e. the cumulative minted amount. Before NV29 activation this equals miner rewards. See the "Block Reward Streams" card for the breakdown.',
+    'Total of the three streams = miner rewards + service stream (reward pool pending claim) + burn, i.e. the cumulative minted amount. Before NV29 activation this equals miner rewards. The three streams are listed in this card.',
   reward_stream_rec_address: 'Recipient',
   reward_stream_rec_share: 'Share',
   reward_stream_rec_rank: 'Rank',
@@ -37,8 +36,10 @@ const home = {
   reward_stream_rec_removed: 'Removed stream',
   reward_stream_rec_removed_tip:
     'This reward stream was removed (or the address was replaced): it is no longer in the current share table, so its share shows 0%. The amount here is a carry-over balance owed from earlier periods and can still be claimed.',
-  reward_stream_rec_note:
-    'Received = amount claimed in this period (rolling); Receivable = pending claim amount',
+  reward_stream_rec_claimed_tip:
+    'Claimed this period: what this recipient has already claimed from the reward pool in the current period (rolling, not cumulative).',
+  reward_stream_rec_receivable_tip:
+    'Claimable: FIL this recipient can withdraw from the reward pool now but has not claimed yet (including carry-over arrears).',
   gas_in_32g: '24H Gas Cost for Sealing 32GiB sectors/TiB',
   gas_in_32g_meta:'Gas Used of a 32GiB Sector',
   gas_in_32g_tip:'Gas used of Sealing a 32GiB Sector in the last 24 hours',

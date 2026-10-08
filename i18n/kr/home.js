@@ -27,11 +27,10 @@ const home = {
   reward_stream_burn: '소각',
   reward_stream_total: '합계(24시간 발행량)',
   reward_stream_nv29_inactive: '이 네트워크에서는 NV29가 아직 활성화되지 않아 블록 보상이 여전히 전액 마이너에게 지급됩니다',
-  reward_stream_view: '보상 흐름 보기',
   reward_stream_alloc_title: '블록 보상 분배',
   reward_stream_rank_title: '서비스 보상 순위',
   reward_stream_alloc_tip:
-    '세 갈래 합계 = 마이너 실수령 + 서비스 스트림(보상 풀 미청구) + 소각, 즉 누적 발행량입니다. NV29 미활성 네트워크에서는 마이너 실수령과 같습니다. 상세 내역은 "블록 보상 흐름" 카드에서 확인하세요.',
+    '세 갈래 합계 = 마이너 실수령 + 서비스 스트림(보상 풀 미청구) + 소각, 즉 누적 발행량입니다. NV29 미활성 네트워크에서는 마이너 실수령과 같습니다. 세 갈래 내역은 이 카드에서 확인할 수 있습니다.',
   reward_stream_rec_address: '수혜 주소',
   reward_stream_rec_share: '지분',
   reward_stream_rec_rank: '순위',
@@ -40,8 +39,10 @@ const home = {
   reward_stream_rec_removed: '제거된 스트림',
   reward_stream_rec_removed_tip:
     '이 보상 스트림은 제거되었습니다(또는 주소가 교체됨): 현재 지분표에 없으므로 지분이 0%로 표시됩니다. 여기의 금액은 이전 기간에 발생한 미지급 이월 잔액이며, 아직 청구할 수 있습니다.',
-  reward_stream_rec_note:
-    '수령액은 이번 기간에 청구된 금액(기간별 갱신)이고, 미수금은 아직 청구하지 않은 금액입니다',
+  reward_stream_rec_claimed_tip:
+    '이번 기간 수령액: 해당 수혜자가 이번 기간에 보상 풀에서 이미 청구한 금액입니다(기간별 갱신, 누적치 아님).',
+  reward_stream_rec_receivable_tip:
+    '청구 가능액: 해당 수혜자가 지금 보상 풀에서 인출할 수 있지만 아직 청구하지 않은 FIL입니다(이월된 미지급분 포함).',
   gas_in_32g: ' 최근 24시간 동안 1TiB 용량의 32GiB 섹터를 봉인하기 위해 필요한 가스입니다',
   gas_in_32g_meta:'32GiB 섹터의 가스 소비량',
   gas_in_32g_tip: '최근 24시간 동안 밀봉된 32G 섹터당 소비된 가스량(TB당)',

@@ -69,9 +69,9 @@ const statistic = {
   reward_stream_nv29_line: 'NV29부터 블록 보상은 가중치에 따라 분배됩니다',
   block_reward_split: '서비스 보상 순위',
   block_trend_tip:
-    '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 「블록 보상 흐름」을 참고하세요',
+    '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 홈의 「블록 보상 분배」 카드를 참고하세요',
   block_reward_per_TiB_tip:
-    '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 「블록 보상 흐름」을 참고하세요',
+    '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 홈의 「블록 보상 분배」 카드를 참고하세요',
   reward_stream_rec_address: '수혜 주소',
   reward_stream_rec_share: '지분',
   reward_stream_rec_rank: '순위',
@@ -80,8 +80,10 @@ const statistic = {
   reward_stream_rec_removed: '제거된 스트림',
   reward_stream_rec_removed_tip:
     '이 보상 스트림은 제거되었습니다(또는 주소가 교체됨): 현재 지분표에 없으므로 지분이 0%로 표시됩니다. 여기의 금액은 이전 기간에 발생한 미지급 이월 잔액이며, 아직 청구할 수 있습니다.',
-  reward_stream_rec_note:
-    '수령액은 이번 기간에 청구된 금액(기간별 갱신)이고, 미수금은 아직 청구하지 않은 금액입니다',
+  reward_stream_rec_claimed_tip:
+    '이번 기간 수령액: 해당 수혜자가 이번 기간에 보상 풀에서 이미 청구한 금액입니다(기간별 갱신, 누적치 아님).',
+  reward_stream_rec_receivable_tip:
+    '청구 가능액: 해당 수혜자가 지금 보상 풀에서 인출할 수 있지만 아직 청구하지 않은 FIL입니다(이월된 미지급분 포함).',
   reward_stream_nv29_inactive:
     '이 네트워크에서는 NV29가 아직 활성화되지 않아 블록 보상이 여전히 전액 마이너에게 지급됩니다',
   block_reward_per_TiB: '생산 효율',

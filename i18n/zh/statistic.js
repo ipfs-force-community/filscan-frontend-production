@@ -74,8 +74,8 @@ const statistic = {
   reward_stream_burn: '销毁',
   reward_stream_nv29_line: 'NV29 起区块奖励按权重拆分',
   block_reward_split: '服务奖励排行',
-  block_trend_tip: '仅矿工实收（共识流）；服务流与销毁见「区块奖励流向」',
-  block_reward_per_TiB_tip: '仅矿工实收（共识流）；服务流与销毁见「区块奖励流向」',
+  block_trend_tip: '仅矿工实收（共识流）；服务流与销毁见首页「区块奖励分配」卡',
+  block_reward_per_TiB_tip: '仅矿工实收（共识流）；服务流与销毁见首页「区块奖励分配」卡',
   reward_stream_rec_address: '受益地址',
   reward_stream_rec_share: '份额',
   reward_stream_rec_rank: '排名',
@@ -84,8 +84,10 @@ const statistic = {
   reward_stream_rec_removed: '已移除流',
   reward_stream_rec_removed_tip:
     '该奖励流已被移除（或地址被替换）：它已不在当前份额表里，所以份额显示 0%；这里的金额是此前欠下、仍可提取的结转余额。',
-  reward_stream_rec_note:
-    '已收＝本期已提取（随期滚动）；应收＝待提取金额',
+  reward_stream_rec_claimed_tip:
+    '本期已提取：该受益方在本期已从奖励池提取（Claim）的金额，随期滚动，不是历史累计。',
+  reward_stream_rec_receivable_tip:
+    '待提取金额：该受益方当前可从奖励池提取、但尚未提取的 FIL（含此前结转的欠款）。',
   reward_stream_nv29_inactive: '本网尚未激活 NV29，区块奖励仍全额给矿工',
   block_reward_per_TiB: '产出效率',
   acc_block_rewards: '累计区块奖励',

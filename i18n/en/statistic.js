@@ -71,9 +71,9 @@ const statistic = {
   reward_stream_nv29_line: 'Since NV29 block rewards are split by weight',
   block_reward_split: 'Service Reward Ranking',
   block_trend_tip:
-    'Miner actual receipts (consensus stream) only; see Block Reward Streams for the service stream and burn',
+    'Miner actual receipts (consensus stream) only; see the Block Reward Allocation card on the home page for the service stream and burn',
   block_reward_per_TiB_tip:
-    'Miner actual receipts (consensus stream) only; see Block Reward Streams for the service stream and burn',
+    'Miner actual receipts (consensus stream) only; see the Block Reward Allocation card on the home page for the service stream and burn',
   reward_stream_rec_address: 'Recipient',
   reward_stream_rec_share: 'Share',
   reward_stream_rec_rank: 'Rank',
@@ -82,8 +82,10 @@ const statistic = {
   reward_stream_rec_removed: 'Removed stream',
   reward_stream_rec_removed_tip:
     'This reward stream was removed (or the address was replaced): it is no longer in the current share table, so its share shows 0%. The amount here is a carry-over balance owed from earlier periods and can still be claimed.',
-  reward_stream_rec_note:
-    'Received = amount claimed in this period (rolling); Receivable = pending claim amount',
+  reward_stream_rec_claimed_tip:
+    'Claimed this period: what this recipient has already claimed from the reward pool in the current period (rolling, not cumulative).',
+  reward_stream_rec_receivable_tip:
+    'Claimable: FIL this recipient can withdraw from the reward pool now but has not claimed yet (including carry-over arrears).',
   reward_stream_nv29_inactive:
     'NV29 is not yet active on this network; block rewards still go entirely to miners',
   block_reward_per_TiB: 'Output Efficiency',

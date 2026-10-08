@@ -97,10 +97,6 @@ export const home_meta = [
       const nv29 = Number(dataSource?.nv29_epoch || 0)
       const height = Number(dataSource?.latest_height || 0)
       const nv29Active = nv29 > 0 && height >= nv29
-      const viewEntry = {
-        title: 'reward_stream_view',
-        href: '/statistics/charts#block_reward_streams',
-      }
       const renderAmount = (text: string | number, ds: Record<string, any>) => {
         const total = Number(ds?.reward_stream_total_24h || 0)
         const value = Number(text)
@@ -120,10 +116,7 @@ export const home_meta = [
         )
       }
       if (!nv29Active) {
-        return [
-          { title: 'reward_stream_nv29_inactive' },
-          viewEntry,
-        ]
+        return [{ title: 'reward_stream_nv29_inactive' }]
       }
       return [
         {
@@ -146,7 +139,6 @@ export const home_meta = [
           dataIndex: 'reward_stream_total_24h',
           render: renderAmount,
         },
-        viewEntry,
       ]
     },
     render: (v: any) => {

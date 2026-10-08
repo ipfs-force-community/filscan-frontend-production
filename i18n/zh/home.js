@@ -42,11 +42,10 @@ const home = {
   reward_stream_burn: '销毁',
   reward_stream_total: '合计（24h铸造量）',
   reward_stream_nv29_inactive: '本网尚未激活 NV29，区块奖励仍全额给矿工',
-  reward_stream_view: '查看奖励流向',
   reward_stream_alloc_title: '区块奖励分配',
   reward_stream_rank_title: '服务奖励排行',
   reward_stream_alloc_tip:
-    '三股合计＝矿工实收＋服务流（奖励池待提取）＋销毁，即累计铸造量；未激活 NV29 的网该值等于矿工实收。三股明细见首页与「区块奖励流向」卡。',
+    '三股合计＝矿工实收＋服务流（奖励池待提取）＋销毁，即累计铸造量；未激活 NV29 的网该值等于矿工实收。三股明细见本卡三行。',
   reward_stream_rec_address: '受益地址',
   reward_stream_rec_share: '份额',
   reward_stream_rec_rank: '排名',
@@ -55,8 +54,10 @@ const home = {
   reward_stream_rec_removed: '已移除流',
   reward_stream_rec_removed_tip:
     '该奖励流已被移除（或地址被替换）：它已不在当前份额表里，所以份额显示 0%；这里的金额是此前欠下、仍可提取的结转余额。',
-  reward_stream_rec_note:
-    '已收＝本期已提取（随期滚动）；应收＝待提取金额',
+  reward_stream_rec_claimed_tip:
+    '本期已提取：该受益方在本期已从奖励池提取（Claim）的金额，随期滚动，不是历史累计。',
+  reward_stream_rec_receivable_tip:
+    '待提取金额：该受益方当前可从奖励池提取、但尚未提取的 FIL（含此前结转的欠款）。',
   gas_in_32g: '24小时32G扇区封装每T所需Gas',
   gas_in_32g_meta: '32GiB扇区Gas消耗',
   gas_in_32g_tip: '近24小时密封32G扇区每T所要消耗的Gas值',

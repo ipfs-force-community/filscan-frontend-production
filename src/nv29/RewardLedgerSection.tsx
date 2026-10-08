@@ -30,7 +30,7 @@ const RANK_LIMIT = 10
 /**
  * 服务受益方排行卡体：仿「合约排行」的排行表（只显示前 10 名）。
  *   表格：排名 / 受益地址 / 份额 / 已收 / 应收（列定义与金额格式化取自 ./rewardRecipients，唯一一份）；
- *   表下一行：弱化色口径说明。
+ *   口径说明不再摆在卡内小字里，已移到「已收」「应收」两个列头的问号（悬停弹出）。
  *
  * 标题由宿主渲染（首页/统计页各一），本组件不含任何跳转链接。
  * 未激活 NV29（active 为 false / ledger 为空）⇒ 不渲染表体（返回 null，由宿主显示未激活文案）。
@@ -65,7 +65,6 @@ export function RewardLedgerSection({
           loading={false}
         />
       </div>
-      <div className={styles.note}>{tr('reward_stream_rec_note')}</div>
     </div>
   )
 }

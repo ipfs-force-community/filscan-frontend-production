@@ -23,6 +23,9 @@ interface Props {
   className?: string
 }
 
+// ⚠ 已从统计页下线（2026-10-08 用户裁定：「区块奖励流向」与「服务奖励排行」是同一件事的两种画法，只留排行表）。
+//   组件本体、contents/statistic.tsx 的 reward_streams 配置与 Fake 均保留未删；
+//   恢复方式：把 pages/statistics/charts/index.tsx 里的挂载点与侧栏入口加回去即可。
 // 区块奖励流向（NV29/FIP-0118）：矿工 / 服务流 / 销毁 三股，堆叠柱展示份额构成。
 // 字段口径与现有统计曲线一致（attoFIL 十进制字符串，展示时 ÷1e18 转 FIL）。
 export default observer((props: Props) => {

@@ -69,7 +69,6 @@ export default observer(() => {
               current={current}
               onChange={handleChange}
             />
-            <div className={styles.note}>{tr('reward_stream_rec_note')}</div>
           </div>
         </>
       )}

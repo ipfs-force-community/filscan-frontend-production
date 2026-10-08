@@ -24,7 +24,6 @@ const home = {
   reward_stream_burn: 'バーン',
   reward_stream_total: '合計（24時間の発行量）',
   reward_stream_nv29_inactive: '本ネットワークでは NV29 がまだ有効化されていないため、ブロック報酬は依然として全額マイナーに付与されます',
-  reward_stream_view: '報酬の流れを見る',
   gas_in_32g: '32GiBディスクセクターGas消耗 ',
   gas_in_32g_tip:'密閉の32Gディスクセクター每にT消耗必要なGas値',
   add_power_in_32g: '32GiBディスクセクターの新たに増加する計算力コスト ',

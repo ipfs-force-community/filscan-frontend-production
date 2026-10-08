@@ -5,7 +5,6 @@ import { Menu_Info } from '@/contents/type'
 import { getSvgIcon } from '@/svgsIcon'
 import PowerTrend from '@/src/statistics/Trend'
 import BlockRewardTrend from '@/src/statistics/BlockRewardTrend'
-import RewardStreams from '@/src/statistics/RewardStreams'
 import RewardSplit from '@/src/statistics/RewardSplit'
 import BlockRewardPer from '@/src/statistics/BlockRewardPer'
 import ActiveNodeTrend from '@/src/statistics/ActiveNodeTrend'
@@ -147,7 +146,8 @@ export default observer(() => {
               </div>
             </div>
           )}
-          {/* 区块奖励流向卡锚点 block_reward_streams 归在 blockChain 分组下渲染 */}
+          {/* 「区块奖励流向」图卡已于 2026-10-08 下线（用户裁定：与「服务奖励排行」重复）。
+              锚点 block_reward_streams 仍留在上面的 hash 判据里 —— 老链接/书签照样落在这组区块上。 */}
           {(hash.startsWith('blockChain') ||
             hash === 'block_reward_streams' ||
             hash === 'reward_split') && (
@@ -166,12 +166,6 @@ export default observer(() => {
                 className={styles['statistics-target']}
               >
                 <BlockRewardTrend />
-              </div>
-              <div
-                id="block_reward_streams"
-                className={styles['statistics-target']}
-              >
-                <RewardStreams />
               </div>
               <div id="reward_split" className={styles['statistics-target']}>
                 <RewardSplit />
