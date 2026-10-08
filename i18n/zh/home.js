@@ -58,6 +58,9 @@ const home = {
   reward_stream_rec_zero_share: '无当前份额',
   reward_stream_rec_zero_share_tip:
     '该受益方仍在服务流的份额表里，但当前份额为 0%（该流这一轮没有给它分配权重），所以没有新的应得；这里的金额是此前结转下来、仍可提取的欠款。',
+  reward_stream_rec_departed: '本期已离场',
+  reward_stream_rec_departed_tip:
+    '本期已离场：该受益方在本周期内曾持有份额，现已不在链上份额表里（被移出或换址）。份额显示 0.00%，金额保留其离开时未提取的结转。离开高度 {{left_epoch}}；离开前份额 {{last_share_pct}}%。',
   reward_stream_rec_claimed_tip:
     '当期已收：该受益方在当前链上周期（主网 91 天 / 测试网 1 天）已从奖励池提取的金额；随周期滚动，不是历史累计。',
   reward_stream_rec_receivable_tip:

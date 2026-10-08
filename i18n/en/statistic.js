@@ -85,6 +85,9 @@ const statistic = {
   reward_stream_rec_zero_share: 'No current share',
   reward_stream_rec_zero_share_tip:
     'This recipient is still listed in the service stream share table but its current share is 0% (the stream allocated it no weight this round), so nothing new accrues. The amount here is a carry-over balance owed from earlier periods and can still be claimed.',
+  reward_stream_rec_departed: 'Left this period',
+  reward_stream_rec_departed_tip:
+    'Left this period: this recipient held a share during the current period but is no longer in the on-chain share table (removed or re-addressed). Its share shows 0.00% and the amount keeps the carry-over it had not claimed when it left. Left at epoch {{left_epoch}}; share before leaving {{last_share_pct}}%.',
   reward_stream_rec_claimed_tip:
     'Claimed (current period): what this recipient has already withdrawn from the reward pool in the current chain period (91 days on mainnet, 1 day on testnet). Rolls over each period; not a cumulative total.',
   reward_stream_rec_receivable_tip:

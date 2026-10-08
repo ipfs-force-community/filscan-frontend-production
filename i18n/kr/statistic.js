@@ -83,6 +83,9 @@ const statistic = {
   reward_stream_rec_zero_share: '현재 지분 없음',
   reward_stream_rec_zero_share_tip:
     '이 수혜자는 서비스 스트림 지분표에 남아 있지만 현재 지분이 0%입니다(이번 라운드에 가중치가 배정되지 않음). 따라서 새로 받을 몫은 없고, 여기의 금액은 이전 기간에 발생한 미지급 이월 잔액이며 아직 청구할 수 있습니다.',
+  reward_stream_rec_departed: '이번 기간 이탈',
+  reward_stream_rec_departed_tip:
+    '이번 기간 이탈: 이 수혜자는 이번 기간에 지분을 보유했지만 이제 온체인 지분표에 없습니다(제거 또는 주소 변경). 지분은 0.00%로 표시되며, 금액은 이탈 시점에 미청구로 남은 이월분입니다. 이탈 높이 {{left_epoch}}; 이탈 전 지분 {{last_share_pct}}%.',
   reward_stream_rec_claimed_tip:
     '당기 수령액: 해당 수혜자가 현재 체인 기간(메인넷 91일 / 테스트넷 1일)에 보상 풀에서 이미 인출한 금액입니다. 기간마다 갱신되며 누적치가 아닙니다.',
   reward_stream_rec_receivable_tip:

@@ -24,6 +24,11 @@ import {
 /** 字段缺失的统一占位（契约 F：缺失一律显示 `--`，不得把 undefined 渲染成 0）。 */
 export const DASH = '--'
 
+/** 动态拼接用的缺失占位：缺字段一律 `--`（绝不让 undefined 进到 Tooltip 文案里）。 */
+function dash(v: any): string {
+  return v === undefined || v === null || v === '' ? DASH : String(v)
+}
+
 /** 金额（attoFIL 字符串）→ FIL 展示；缺失 ⇒ `--`。 */
 export function ledgerFil(v: any): string {
   if (v === undefined || v === null || v === '') return DASH
@@ -61,6 +66,16 @@ export interface LedgerRecipient {
    * 同样要在份额列给一句说明，否则同为 0.00% 的两行会出现「一个带说明、一个不带」。
    */
   zero_share?: boolean
+  /**
+   * 后端标记的「本期已离场」收款人（与 removed_stream / zero_share 互斥，且在份额列**优先级最高**）。
+   * 语义：本周期内曾持有份额，现已不在链上份额表里（被移出或换址）。份额显示 0.00%，
+   * 金额保留其离开时未提取的结转；悬停小标记时附「离开高度 / 离开前份额」动态说明。
+   */
+  departed?: boolean
+  /** 离场高度（本期已离场的离开高度）；缺失 ⇒ 悬停说明里以 `--` 兜底。 */
+  left_epoch?: number
+  /** 离开前份额（本期已离场的离开前份额，百分比数字字符串）；缺失 ⇒ 悬停说明里以 `--` 兜底。 */
+  last_share_pct?: string
 }
 
 /**
@@ -134,26 +149,41 @@ export function recipientColumns(tr: any, rankBase = 0) {
       render: (text: any, record: any) => {
         const pct =
           text === undefined || text === null || text === '' ? DASH : `${text}%`
-        // 份额为 0% 却仍有欠款的两种成因，各跟一个弱化小标记（虚线下划线暗示可悬停、悬停弹说明）：
-        //   ① removed_stream：只在「已移除流」的遗留欠款里（流被移除或地址被替换）；
-        //   ② zero_share：流还在份额表里，但这一轮没给它分配权重（份额就是 0）。
-        // 两种都必须在页面上被解释 —— 否则同为 0.00% 的两行会出现「一个带说明、一个不带」。
-        const marker = record?.removed_stream
+        // 份额为 0% 却有说明的三种成因，各跟一个弱化小标记（虚线下划线暗示可悬停、悬停弹说明）：
+        //   ① departed（优先级最高，且与后两者互斥）：本期已离场 —— 本周期内曾持有份额，现已不在链上份额表里；
+        //   ② removed_stream：只在「已移除流」的遗留欠款里（流被移除或地址被替换）；
+        //   ③ zero_share：流还在份额表里，但这一轮没给它分配权重（份额就是 0）。
+        // 三种都必须在页面上被解释 —— 否则同为 0.00% 的行会出现「一个带说明、一个不带」。
+        // 三者互斥、命中即止，不叠加。departed 的说明含动态值（离开高度 / 离开前份额）。
+        const marker: {
+          label: string
+          tip: string
+          values?: Record<string, string>
+        } | null = record?.departed
           ? {
-              label: 'reward_stream_rec_removed',
-              tip: 'reward_stream_rec_removed_tip',
+              label: 'reward_stream_rec_departed',
+              tip: 'reward_stream_rec_departed_tip',
+              values: {
+                left_epoch: dash(record?.left_epoch),
+                last_share_pct: dash(record?.last_share_pct),
+              },
             }
-          : record?.zero_share
+          : record?.removed_stream
             ? {
-                label: 'reward_stream_rec_zero_share',
-                tip: 'reward_stream_rec_zero_share_tip',
+                label: 'reward_stream_rec_removed',
+                tip: 'reward_stream_rec_removed_tip',
               }
-            : null
+            : record?.zero_share
+              ? {
+                  label: 'reward_stream_rec_zero_share',
+                  tip: 'reward_stream_rec_zero_share_tip',
+                }
+              : null
         if (!marker) return pct
         return (
           <span className="inline-flex items-center gap-x-1">
             <span>{pct}</span>
-            <Tooltip context={tr(marker.tip)} icon={false}>
+            <Tooltip context={tr(marker.tip, marker.values)} icon={false}>
               <span className="cursor-help text-[10px] underline decoration-dotted opacity-60">
                 {tr(marker.label)}
               </span>
