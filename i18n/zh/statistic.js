@@ -84,6 +84,9 @@ const statistic = {
   reward_stream_rec_removed: '已移除流',
   reward_stream_rec_removed_tip:
     '该奖励流已被移除（或地址被替换）：它已不在当前份额表里，所以份额显示 0%；这里的金额是此前欠下、仍可提取的结转余额。',
+  reward_stream_rec_zero_share: '无当前份额',
+  reward_stream_rec_zero_share_tip:
+    '该受益方仍在服务流的份额表里，但当前份额为 0%（该流这一轮没有给它分配权重），所以没有新的应得；这里的金额是此前结转下来、仍可提取的欠款。',
   reward_stream_rec_claimed_tip:
     '本期已提取：该受益方在本期已从奖励池提取（Claim）的金额，随期滚动，不是历史累计。',
   reward_stream_rec_receivable_tip:

@@ -80,6 +80,9 @@ const statistic = {
   reward_stream_rec_removed: '제거된 스트림',
   reward_stream_rec_removed_tip:
     '이 보상 스트림은 제거되었습니다(또는 주소가 교체됨): 현재 지분표에 없으므로 지분이 0%로 표시됩니다. 여기의 금액은 이전 기간에 발생한 미지급 이월 잔액이며, 아직 청구할 수 있습니다.',
+  reward_stream_rec_zero_share: '현재 지분 없음',
+  reward_stream_rec_zero_share_tip:
+    '이 수혜자는 서비스 스트림 지분표에 남아 있지만 현재 지분이 0%입니다(이번 라운드에 가중치가 배정되지 않음). 따라서 새로 받을 몫은 없고, 여기의 금액은 이전 기간에 발생한 미지급 이월 잔액이며 아직 청구할 수 있습니다.',
   reward_stream_rec_claimed_tip:
     '이번 기간 수령액: 해당 수혜자가 이번 기간에 보상 풀에서 이미 청구한 금액입니다(기간별 갱신, 누적치 아님).',
   reward_stream_rec_receivable_tip:

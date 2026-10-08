@@ -51,6 +51,12 @@ export interface LedgerRecipient {
    * 份额列会显示 0%，但仍可提取结转余额 —— 份额单元格附「已移除流」小标记 + 悬停说明。
    */
   removed_stream?: boolean
+  /**
+   * 后端标记的「仍在活跃份额表里、但份额为 0」的收款人（与 removed_stream 互斥）。
+   * 链上确实存在这种行（2026-10-09 cali：流还在、份额被置 0，应得转成 payable）——
+   * 同样要在份额列给一句说明，否则同为 0.00% 的两行会出现「一个带说明、一个不带」。
+   */
+  zero_share?: boolean
 }
 
 /**
@@ -116,24 +122,32 @@ export function recipientColumns(tr: any, rankBase = 0) {
       render: (text: any, record: any) => {
         const pct =
           text === undefined || text === null || text === '' ? DASH : `${text}%`
-        // 已移除流的遗留欠款收款人：份额为 0%，仍可提取结转余额 —— 在百分比文本后紧跟一个
-        // 弱化的小标记（虚线下划线暗示可悬停），悬停弹出说明；其余行保持只显示百分比。
-        if (record?.removed_stream === true) {
-          return (
-            <span className="inline-flex items-center gap-x-1">
-              <span>{pct}</span>
-              <Tooltip
-                context={tr('reward_stream_rec_removed_tip')}
-                icon={false}
-              >
-                <span className="cursor-help text-[10px] underline decoration-dotted opacity-60">
-                  {tr('reward_stream_rec_removed')}
-                </span>
-              </Tooltip>
-            </span>
-          )
-        }
-        return pct
+        // 份额为 0% 却仍有欠款的两种成因，各跟一个弱化小标记（虚线下划线暗示可悬停、悬停弹说明）：
+        //   ① removed_stream：只在「已移除流」的遗留欠款里（流被移除或地址被替换）；
+        //   ② zero_share：流还在份额表里，但这一轮没给它分配权重（份额就是 0）。
+        // 两种都必须在页面上被解释 —— 否则同为 0.00% 的两行会出现「一个带说明、一个不带」。
+        const marker = record?.removed_stream
+          ? {
+              label: 'reward_stream_rec_removed',
+              tip: 'reward_stream_rec_removed_tip',
+            }
+          : record?.zero_share
+            ? {
+                label: 'reward_stream_rec_zero_share',
+                tip: 'reward_stream_rec_zero_share_tip',
+              }
+            : null
+        if (!marker) return pct
+        return (
+          <span className="inline-flex items-center gap-x-1">
+            <span>{pct}</span>
+            <Tooltip context={tr(marker.tip)} icon={false}>
+              <span className="cursor-help text-[10px] underline decoration-dotted opacity-60">
+                {tr(marker.label)}
+              </span>
+            </Tooltip>
+          </span>
+        )
       },
     },
     {

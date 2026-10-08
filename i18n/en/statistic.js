@@ -82,6 +82,9 @@ const statistic = {
   reward_stream_rec_removed: 'Removed stream',
   reward_stream_rec_removed_tip:
     'This reward stream was removed (or the address was replaced): it is no longer in the current share table, so its share shows 0%. The amount here is a carry-over balance owed from earlier periods and can still be claimed.',
+  reward_stream_rec_zero_share: 'No current share',
+  reward_stream_rec_zero_share_tip:
+    'This recipient is still listed in the service stream share table but its current share is 0% (the stream allocated it no weight this round), so nothing new accrues. The amount here is a carry-over balance owed from earlier periods and can still be claimed.',
   reward_stream_rec_claimed_tip:
     'Claimed this period: what this recipient has already claimed from the reward pool in the current period (rolling, not cumulative).',
   reward_stream_rec_receivable_tip:
