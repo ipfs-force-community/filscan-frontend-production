@@ -4,6 +4,7 @@
 import Banner from '@/components/banner'
 import MobileBanner from '@/components/mobile/home/banner'
 import Meta from '@/src/home/meta'
+import RewardAllocation from '@/src/home/RewardAllocation'
 import Gas from '@/src/statistics/Gas'
 import Rank from '@/src/rank'
 import Link from 'next/link'
@@ -69,6 +70,10 @@ function Home(props: any) {
               </MobileView>
               <Gas className={'!h-[210px] w-full'} />
             </div>
+          </div>
+          {/* 区块奖励分配（NV29 三股）：紧邻上方网络数据区；未激活 NV29 时块内只给一句说明 */}
+          <div className="mt-5">
+            <RewardAllocation />
           </div>
           <div className="box-column mt-12 flex h-[400px] justify-between gap-x-5">
             <Trend origin="home" className={'!h-full w-full flex-1'} />

@@ -6,6 +6,7 @@ import { getSvgIcon } from '@/svgsIcon'
 import PowerTrend from '@/src/statistics/Trend'
 import BlockRewardTrend from '@/src/statistics/BlockRewardTrend'
 import RewardStreams from '@/src/statistics/RewardStreams'
+import RewardSplit from '@/src/statistics/RewardSplit'
 import BlockRewardPer from '@/src/statistics/BlockRewardPer'
 import ActiveNodeTrend from '@/src/statistics/ActiveNodeTrend'
 import Link from 'next/link'
@@ -36,6 +37,8 @@ export default observer(() => {
       'fevm_trend',
       'blockChain',
       'blockChain_power',
+      'block_reward_streams',
+      'reward_split',
       'fil_overview',
     ]
     if (hashArr.includes(hash) && typeof window !== 'undefined') {
@@ -146,7 +149,8 @@ export default observer(() => {
           )}
           {/* 区块奖励流向卡锚点 block_reward_streams 归在 blockChain 分组下渲染 */}
           {(hash.startsWith('blockChain') ||
-            hash === 'block_reward_streams') && (
+            hash === 'block_reward_streams' ||
+            hash === 'reward_split') && (
             <div>
               <div id="blockChain_power">
                 <PowerTrend />
@@ -168,6 +172,9 @@ export default observer(() => {
                 className={styles['statistics-target']}
               >
                 <RewardStreams />
+              </div>
+              <div id="reward_split" className={styles['statistics-target']}>
+                <RewardSplit />
               </div>
               <div
                 id="blockChain_reward_per"

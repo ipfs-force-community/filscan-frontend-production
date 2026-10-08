@@ -18,6 +18,7 @@ import Image from '@/packages/image'
 import DropDown from '@/packages/customDrop'
 import ShowText from '@/packages/showText'
 import AccountLink from '@/components/accountLink'
+import { humanizeMethodName } from '@/utils/methodName'
 
 //储存池概览 账户余额 & 有效算力
 export const account_balance = {
@@ -583,6 +584,9 @@ export const message_detail = {
       dataIndex: 'method',
       width: '20%',
       title: 'method',
+      // 内部转账的方法名同样做人话映射（NV29 奖励流方法），未命中原样显示。
+      render: (text: string, _data: any, tr: any) =>
+        humanizeMethodName(text, tr),
     },
   ],
   trans: [
@@ -694,6 +698,9 @@ export const message_detail = {
       dataIndex: 'method_name',
       title: 'method_name',
       type: ['message_basic'],
+      // 显示层人话映射：NV29 奖励流的 9 个方法名 → 中文/英文/韩文标签；未命中原样显示。
+      render: (text: string, _data: any, tr: any) =>
+        humanizeMethodName(text, tr),
     },
     // //Transaction
     {

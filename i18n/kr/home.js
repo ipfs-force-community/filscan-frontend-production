@@ -28,6 +28,11 @@ const home = {
   reward_stream_total: '합계(24시간 발행량)',
   reward_stream_nv29_inactive: '이 네트워크에서는 NV29가 아직 활성화되지 않아 블록 보상이 여전히 전액 마이너에게 지급됩니다',
   reward_stream_view: '보상 흐름 보기',
+  reward_stream_alloc_title: '블록 보상 분배',
+  reward_stream_alloc_total: '누적 발행량(합계)',
+  reward_stream_alloc_24h: '최근 24시간 비중(누적 막대)',
+  reward_stream_alloc_desc:
+    '서비스 스트림은 보상 풀에 적립되어 서비스 제공자가 나중에 청구(Claim)하는 금액이고, 소각은 발행 시점에 곧바로 태워지는 부분입니다.',
   gas_in_32g: ' 최근 24시간 동안 1TiB 용량의 32GiB 섹터를 봉인하기 위해 필요한 가스입니다',
   gas_in_32g_meta:'32GiB 섹터의 가스 소비량',
   gas_in_32g_tip: '최근 24시간 동안 밀봉된 32G 섹터당 소비된 가스량(TB당)',

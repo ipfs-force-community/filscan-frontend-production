@@ -168,6 +168,16 @@ const detail = {
   amount: 'Value',
   method: 'Method',
   topic: 'Topics',
+  // NV29 reward-stream method names → human labels (display-layer mapping, see utils/methodName.ts)
+  method_ClaimExported: 'Claim Rewards (Service Stream)',
+  method_SetWeightRecordsExported: 'Set Stream Weight Records',
+  method_StepWeightRecordsExported: 'Step Stream Weight Records',
+  method_RegisterStreamExported: 'Register Reward Stream',
+  method_RemoveStreamExported: 'Remove Reward Stream',
+  method_SetDistributionExported: 'Set Reward Distribution',
+  method_SetSharesExported: 'Set Reward Shares',
+  method_ReplaceAddressExported: 'Replace Stream Address',
+  method_CancelPendingExported: 'Cancel Pending Reward Write',
 
   //通证转移
   message_ERC20Trans: 'Tokens Transferred',

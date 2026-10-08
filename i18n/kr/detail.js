@@ -165,6 +165,16 @@ const detail = {
   amount: '액수',
   method: '메소드',
   topic: '토픽',
+  // NV29 보상 스트림 메소드명 → 사람이 읽는 라벨 (표시 계층 매핑, utils/methodName.ts 참고)
+  method_ClaimExported: '보상 청구(서비스 스트림)',
+  method_SetWeightRecordsExported: '보상 스트림 가중치 기록 설정',
+  method_StepWeightRecordsExported: '보상 스트림 가중치 기록 단계 진행',
+  method_RegisterStreamExported: '보상 스트림 등록',
+  method_RemoveStreamExported: '보상 스트림 제거',
+  method_SetDistributionExported: '보상 분배 방식 설정',
+  method_SetSharesExported: '보상 지분 설정',
+  method_ReplaceAddressExported: '보상 스트림 주소 교체',
+  method_CancelPendingExported: '대기 중인 보상 쓰기 취소',
   //通证转移
   message_ERC20Trans: '토큰 전송',
   message_NftTrans: 'NFT 전송',

@@ -69,6 +69,14 @@ const statistic = {
   reward_stream_service: 'Service Stream',
   reward_stream_burn: 'Burn',
   reward_stream_nv29_line: 'Since NV29 block rewards are split by weight',
+  block_reward_split: 'Block Reward Allocation',
+  reward_stream_split_total: 'Total',
+  reward_stream_split_desc:
+    'Summed over the selected window: the miner share is the consensus stream, the service stream accrues in the reward pool pending claim, and the burn is burned at mint time.',
+  block_trend_tip:
+    'Miner actual receipts (consensus stream) only; see Block Reward Allocation for the service stream and burn',
+  block_reward_per_TiB_tip:
+    'Miner actual receipts (consensus stream) only; see Block Reward Allocation for the service stream and burn',
   block_reward_per_TiB: 'Output Efficiency',
   active_nodes: 'Active Storage Providers',
   active_miner_count: 'Node Counts',

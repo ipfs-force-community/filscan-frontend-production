@@ -25,6 +25,11 @@ const home = {
   reward_stream_total: 'Total (24h Minted)',
   reward_stream_nv29_inactive: 'NV29 is not yet active on this network; block rewards still go entirely to miners',
   reward_stream_view: 'View Reward Streams',
+  reward_stream_alloc_title: 'Block Reward Allocation',
+  reward_stream_alloc_total: 'Total Minted (Sum)',
+  reward_stream_alloc_24h: 'Last 24h share (stacked bar)',
+  reward_stream_alloc_desc:
+    'The service stream is accrued in the reward pool and claimed by service providers later; the burn is the portion burned at mint time.',
   gas_in_32g: '24H Gas Cost for Sealing 32GiB sectors/TiB',
   gas_in_32g_meta:'Gas Used of a 32GiB Sector',
   gas_in_32g_tip:'Gas used of Sealing a 32GiB Sector in the last 24 hours',

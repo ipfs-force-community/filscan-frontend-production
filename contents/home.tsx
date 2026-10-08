@@ -1,5 +1,6 @@
 /** @format */
 import { formatFil, formatFilNum, formatNumber, unitConversion } from '@/utils'
+import RewardAllocationBlock from '@/src/home/RewardAllocationBlock'
 
 export const home_meta = [
   {
@@ -410,8 +411,19 @@ export const meta_list = [
     },
   }, //全网出块奖励，单位Fil
   {
+    // NV29（FIP-0118）起区块奖励拆三股：矿工实收 / 服务流（奖励池待提取）/ 销毁。
+    // 本项把三股**累计**数字摆到台面上，累计铸造量作合计；近24h 三股占比由块内计算。
+    // 数据源复用首页 TotalIndicators（不新增接口）；未激活 NV29 的网只显示一句说明（块内判定）。
+    title: 'reward_stream_alloc_title',
+    dataIndex: 'reward_stream_alloc',
+    render: (v: any, record: any) => <RewardAllocationBlock data={record} />,
+  }, //区块奖励分配（NV29 三股累计 + 合计 + 近24h占比）
+  {
     title: 'win_count_reward',
     dataIndex: 'win_count_reward',
+    // 挂上此前四语都补了却 unused 的 win_count_reward_tip（解释该指标为「近24h实收口径」，
+    // 旧口径是协议固定毛值）——挂比删更能说明口径变化，故选挂上。
+    tip: 'win_count_reward_tip',
     render: (v: any) => {
       return (
         <span>

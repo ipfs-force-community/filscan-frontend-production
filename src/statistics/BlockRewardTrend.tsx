@@ -1,6 +1,7 @@
 /** @format */
 import { apiUrl } from '@/contents/apiUrl'
 import EChart from '@/components/echarts'
+import Tooltip from '@/packages/tooltip'
 import { Translation } from '@/components/hooks/Translation'
 import { block_rewards, timeList } from '@/contents/statistic'
 import { formatDateTime, formatFil, formatFilNum } from '@/utils'
@@ -190,6 +191,7 @@ export default observer((props: Props) => {
       >
         <div className="w-fit min-w-[120px] font-HarmonyOS text-lg font-semibold ">
           {tr('block_trend')}
+          <Tooltip context={tr('block_trend_tip')} />
         </div>
         <Segmented
           defaultValue={interval}

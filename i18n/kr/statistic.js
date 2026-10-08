@@ -67,6 +67,14 @@ const statistic = {
   reward_stream_service: '서비스 스트림',
   reward_stream_burn: '소각',
   reward_stream_nv29_line: 'NV29부터 블록 보상은 가중치에 따라 분배됩니다',
+  block_reward_split: '블록 보상 분배',
+  reward_stream_split_total: '합계',
+  reward_stream_split_desc:
+    '선택한 기간 내 세 가지 흐름의 합계: 마이너 몫은 컨센서스 스트림, 서비스 스트림은 보상 풀에 적립되어 추후 청구되며, 소각은 발행 시점에 소각됩니다.',
+  block_trend_tip:
+    '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 「블록 보상 분배」를 참고하세요',
+  block_reward_per_TiB_tip:
+    '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 「블록 보상 분배」를 참고하세요',
   block_reward_per_TiB: '생산 효율',
   acc_block_rewards: '누적 블록 보상',
   active_nodes: '액티브한 노드 수',

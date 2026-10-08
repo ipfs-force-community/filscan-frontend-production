@@ -164,6 +164,16 @@ const detail = {
   amount: '价值',
   method: '方法',
   topic: '主题',
+  //NV29 奖励流方法名的人话标签（显示层映射，见 utils/methodName.ts）
+  method_ClaimExported: '提取奖励（服务流）',
+  method_SetWeightRecordsExported: '设置奖励流权重记录',
+  method_StepWeightRecordsExported: '推进奖励流权重记录',
+  method_RegisterStreamExported: '注册奖励流',
+  method_RemoveStreamExported: '移除奖励流',
+  method_SetDistributionExported: '设置奖励分配方式',
+  method_SetSharesExported: '设置奖励份额',
+  method_ReplaceAddressExported: '替换奖励流地址',
+  method_CancelPendingExported: '取消待处理的奖励写入',
   //通证转移
   message_ERC20Trans: '通证转移',
   message_NftTrans: 'NFTs 转移',

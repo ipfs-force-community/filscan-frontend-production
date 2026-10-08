@@ -73,6 +73,12 @@ const statistic = {
   reward_stream_service: '服务流',
   reward_stream_burn: '销毁',
   reward_stream_nv29_line: 'NV29 起区块奖励按权重拆分',
+  block_reward_split: '区块奖励分配',
+  reward_stream_split_total: '合计',
+  reward_stream_split_desc:
+    '按所选窗口内三流求和：矿工实收为共识流，服务流记在奖励池待提取，销毁为铸造时即销毁。',
+  block_trend_tip: '仅矿工实收（共识流）；服务流与销毁见「区块奖励分配」',
+  block_reward_per_TiB_tip: '仅矿工实收（共识流）；服务流与销毁见「区块奖励分配」',
   block_reward_per_TiB: '产出效率',
   acc_block_rewards: '累计区块奖励',
   active_nodes: '活跃节点数',

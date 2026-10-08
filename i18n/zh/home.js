@@ -43,6 +43,11 @@ const home = {
   reward_stream_total: '合计（24h铸造量）',
   reward_stream_nv29_inactive: '本网尚未激活 NV29，区块奖励仍全额给矿工',
   reward_stream_view: '查看奖励流向',
+  reward_stream_alloc_title: '区块奖励分配',
+  reward_stream_alloc_total: '累计铸造量（合计）',
+  reward_stream_alloc_24h: '近24h占比（堆叠条）',
+  reward_stream_alloc_desc:
+    '服务流是记在奖励池、由服务方事后提取（Claim）的钱；销毁是铸造时即烧掉的部分。',
   gas_in_32g: '24小时32G扇区封装每T所需Gas',
   gas_in_32g_meta: '32GiB扇区Gas消耗',
   gas_in_32g_tip: '近24小时密封32G扇区每T所要消耗的Gas值',
