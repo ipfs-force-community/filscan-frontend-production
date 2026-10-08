@@ -42,8 +42,12 @@ export function filWithUnit(v: any): string {
 export interface LedgerRecipient {
   address?: string
   share_pct?: string
-  /** 待提取（应收），attoFIL 字符串。 */
+  /** 待提取总额（应收 = 当期 + 跨周期），attoFIL 字符串。 */
   pending_claim?: string
+  /** 当期应收＝本期应计 − 本期已提（链上 Accrued 口径），attoFIL 字符串。 */
+  pending_claim_current?: string
+  /** 跨周期应收＝此前各期已结算未提取的结转（链上 Payable，含已移除流遗留），attoFIL 字符串。 */
+  pending_claim_carried?: string
   /** 本期已提取（已收），attoFIL 字符串；后端零值给 `"0"`。 */
   claimed_period?: string
   /**
@@ -96,7 +100,9 @@ function addressCell(text: any) {
 }
 
 /**
- * 服务受益方排行表列定义：排名 / 受益地址 / 份额 / 已收 / 应收。
+ * 服务受益方排行表列定义：排名 / 受益地址 / 份额（当期） / 当期已收 / 当期应收 / 跨周期应收。
+ * 金额分「当期」「跨周期」两套（2026-10-09 用户裁定）：链上只有当期份额（Shares）与当期已提（ClaimedPeriod），
+ * 跨周期能拿到的只有「此前各期已结算未提取」的结转（Payable）；跨周期**已收**需要另建 Claim 历史索引，暂缺。
  * @param tr       宿主 ns 的翻译函数
  * @param rankBase 排名基数：名次 = `rankBase + index + 1`（默认 0）。
  *                 全量排行页每页传 `(page-1)*pageLimit`，保证名次全局连续（第 2 页第 1 行 = pageLimit+1）。
@@ -117,7 +123,13 @@ export function recipientColumns(tr: any, rankBase = 0) {
       render: (text: any) => addressCell(text),
     },
     {
-      title: tr('reward_stream_rec_share'),
+      // 份额只有当期口径（链上 Shares = "the current period's complete recipient allocation"）
+      title: (
+        <span className="inline-flex items-center gap-x-1">
+          {tr('reward_stream_rec_share')}
+          <Tooltip context={tr('reward_stream_rec_share_tip')} />
+        </span>
+      ),
       dataIndex: 'share_pct',
       render: (text: any, record: any) => {
         const pct =
@@ -165,11 +177,21 @@ export function recipientColumns(tr: any, rankBase = 0) {
     {
       title: (
         <span className="inline-flex items-center gap-x-1">
+          {tr('reward_stream_rec_pending_current')}
+          <Tooltip context={tr('reward_stream_rec_pending_current_tip')} />
+        </span>
+      ),
+      dataIndex: 'pending_claim_current',
+      render: (text: any) => filWithUnit(text),
+    },
+    {
+      title: (
+        <span className="inline-flex items-center gap-x-1">
           {tr('reward_stream_rec_receivable')}
           <Tooltip context={tr('reward_stream_rec_receivable_tip')} />
         </span>
       ),
-      dataIndex: 'pending_claim',
+      dataIndex: 'pending_claim_carried',
       render: (text: any) => filWithUnit(text),
     },
   ]

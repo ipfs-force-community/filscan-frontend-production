@@ -50,8 +50,8 @@ const home = {
   reward_stream_rec_address: '受益地址',
   reward_stream_rec_share: '份额',
   reward_stream_rec_rank: '排名',
-  reward_stream_rec_claimed: '已收',
-  reward_stream_rec_receivable: '应收',
+  reward_stream_rec_claimed: '当期已收',
+  reward_stream_rec_receivable: '跨周期应收',
   reward_stream_rec_removed: '已移除流',
   reward_stream_rec_removed_tip:
     '该奖励流已被移除（或地址被替换）：它已不在当前份额表里，所以份额显示 0%；这里的金额是此前欠下、仍可提取的结转余额。',
@@ -59,9 +59,14 @@ const home = {
   reward_stream_rec_zero_share_tip:
     '该受益方仍在服务流的份额表里，但当前份额为 0%（该流这一轮没有给它分配权重），所以没有新的应得；这里的金额是此前结转下来、仍可提取的欠款。',
   reward_stream_rec_claimed_tip:
-    '本期已提取：该受益方在本期已从奖励池提取（Claim）的金额，随期滚动，不是历史累计。',
+    '当期已收：该受益方在当前链上周期（主网 91 天 / 测试网 1 天）已从奖励池提取的金额；随周期滚动，不是历史累计。',
   reward_stream_rec_receivable_tip:
-    '待提取金额：该受益方当前可从奖励池提取、但尚未提取的 FIL（含此前结转的欠款）。',
+    '跨周期应收：此前各周期已结算、但至今仍未提取的结转欠款（链上 Payable），已移除流的遗留欠款也计入这里。',
+  reward_stream_rec_pending_current: '当期应收',
+  reward_stream_rec_pending_current_tip:
+    '当期应收：本期应计（链上 Accrued × 当期份额）减去本期已提取后的余额，不小于 0。',
+  reward_stream_rec_share_tip:
+    '当期份额：该受益方在当前链上周期分配到的份额（share ÷ 1e18）。份额只有当期口径，不做跨周期累计。',
   gas_in_32g: '24小时32G扇区封装每T所需Gas',
   gas_in_32g_meta: '32GiB扇区Gas消耗',
   gas_in_32g_tip: '近24小时密封32G扇区每T所要消耗的Gas值',

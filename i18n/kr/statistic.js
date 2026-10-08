@@ -75,8 +75,8 @@ const statistic = {
   reward_stream_rec_address: '수혜 주소',
   reward_stream_rec_share: '지분',
   reward_stream_rec_rank: '순위',
-  reward_stream_rec_claimed: '수령액',
-  reward_stream_rec_receivable: '미수금',
+  reward_stream_rec_claimed: '당기 수령액',
+  reward_stream_rec_receivable: '이월 미수금',
   reward_stream_rec_removed: '제거된 스트림',
   reward_stream_rec_removed_tip:
     '이 보상 스트림은 제거되었습니다(또는 주소가 교체됨): 현재 지분표에 없으므로 지분이 0%로 표시됩니다. 여기의 금액은 이전 기간에 발생한 미지급 이월 잔액이며, 아직 청구할 수 있습니다.',
@@ -84,9 +84,14 @@ const statistic = {
   reward_stream_rec_zero_share_tip:
     '이 수혜자는 서비스 스트림 지분표에 남아 있지만 현재 지분이 0%입니다(이번 라운드에 가중치가 배정되지 않음). 따라서 새로 받을 몫은 없고, 여기의 금액은 이전 기간에 발생한 미지급 이월 잔액이며 아직 청구할 수 있습니다.',
   reward_stream_rec_claimed_tip:
-    '이번 기간 수령액: 해당 수혜자가 이번 기간에 보상 풀에서 이미 청구한 금액입니다(기간별 갱신, 누적치 아님).',
+    '당기 수령액: 해당 수혜자가 현재 체인 기간(메인넷 91일 / 테스트넷 1일)에 보상 풀에서 이미 인출한 금액입니다. 기간마다 갱신되며 누적치가 아닙니다.',
   reward_stream_rec_receivable_tip:
-    '청구 가능액: 해당 수혜자가 지금 보상 풀에서 인출할 수 있지만 아직 청구하지 않은 FIL입니다(이월된 미지급분 포함).',
+    '이월 미수금: 이전 기간에 정산되었지만 아직 인출되지 않은 이월 잔액입니다(온체인 Payable). 제거된 스트림의 잔여분도 여기에 포함됩니다.',
+  reward_stream_rec_pending_current: '당기 미수금',
+  reward_stream_rec_pending_current_tip:
+    '당기 미수금: 이번 기간 발생액(온체인 Accrued x 당기 지분)에서 이번 기간 인출분을 뺀 값입니다(최소 0).',
+  reward_stream_rec_share_tip:
+    '당기 지분: 해당 수혜자가 현재 체인 기간에 배정받은 지분입니다(share / 1e18). 지분은 당기 기준이며 기간 간 누적하지 않습니다.',
   reward_stream_nv29_inactive:
     '이 네트워크에서는 NV29가 아직 활성화되지 않아 블록 보상이 여전히 전액 마이너에게 지급됩니다',
   block_reward_per_TiB: '생산 효율',

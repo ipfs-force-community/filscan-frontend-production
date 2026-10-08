@@ -32,8 +32,8 @@ const home = {
   reward_stream_rec_address: 'Recipient',
   reward_stream_rec_share: 'Share',
   reward_stream_rec_rank: 'Rank',
-  reward_stream_rec_claimed: 'Received',
-  reward_stream_rec_receivable: 'Receivable',
+  reward_stream_rec_claimed: 'Claimed (current)',
+  reward_stream_rec_receivable: 'Receivable (carried)',
   reward_stream_rec_removed: 'Removed stream',
   reward_stream_rec_removed_tip:
     'This reward stream was removed (or the address was replaced): it is no longer in the current share table, so its share shows 0%. The amount here is a carry-over balance owed from earlier periods and can still be claimed.',
@@ -41,9 +41,14 @@ const home = {
   reward_stream_rec_zero_share_tip:
     'This recipient is still listed in the service stream share table but its current share is 0% (the stream allocated it no weight this round), so nothing new accrues. The amount here is a carry-over balance owed from earlier periods and can still be claimed.',
   reward_stream_rec_claimed_tip:
-    'Claimed this period: what this recipient has already claimed from the reward pool in the current period (rolling, not cumulative).',
+    'Claimed (current period): what this recipient has already withdrawn from the reward pool in the current chain period (91 days on mainnet, 1 day on testnet). Rolls over each period; not a cumulative total.',
   reward_stream_rec_receivable_tip:
-    'Claimable: FIL this recipient can withdraw from the reward pool now but has not claimed yet (including carry-over arrears).',
+    'Carried-over receivable: amounts settled in prior periods but still unclaimed (on-chain Payable). Leftovers from removed streams are included here.',
+  reward_stream_rec_pending_current: 'Current receivable',
+  reward_stream_rec_pending_current_tip:
+    'Current receivable: this period accrual (on-chain Accrued x current share) minus what was claimed this period, floored at 0.',
+  reward_stream_rec_share_tip:
+    'Current share: this recipient share in the current chain period (share / 1e18). Share is period-scoped and is never accumulated across periods.',
   gas_in_32g: '24H Gas Cost for Sealing 32GiB sectors/TiB',
   gas_in_32g_meta:'Gas Used of a 32GiB Sector',
   gas_in_32g_tip:'Gas used of Sealing a 32GiB Sector in the last 24 hours',
