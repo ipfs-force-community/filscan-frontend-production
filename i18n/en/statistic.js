@@ -74,11 +74,11 @@ const statistic = {
     'Miner actual receipts (consensus stream) only; see Block Reward Streams for the service stream and burn',
   block_reward_per_TiB_tip:
     'Miner actual receipts (consensus stream) only; see Block Reward Streams for the service stream and burn',
-  reward_stream_rec_address: 'Recipient',
-  reward_stream_rec_share: 'Share',
+  reward_stream_rec_address: 'Beneficiary',
+  reward_stream_rec_share: 'Current share',
   reward_stream_rec_rank: 'Rank',
   reward_stream_rec_claimed: 'Claimed (current)',
-  reward_stream_rec_receivable: 'Receivable (carried)',
+  reward_stream_rec_receivable: 'Total receivable',
   reward_stream_rec_removed: 'Removed stream',
   reward_stream_rec_removed_tip:
     'This reward stream was removed (or the address was replaced): it is no longer in the current share table, so its share shows 0%. The amount here is a carry-over balance owed from earlier periods and can still be claimed.',
@@ -91,7 +91,7 @@ const statistic = {
   reward_stream_rec_claimed_tip:
     'Claimed (current period): what this recipient has already withdrawn from the reward pool in the current chain period (91 days on mainnet, 1 day on testnet). Rolls over each period; not a cumulative total.',
   reward_stream_rec_receivable_tip:
-    'Carried-over receivable: amounts settled in prior periods but still unclaimed (on-chain Payable). Leftovers from removed streams are included here.',
+    'Total receivable: everything this recipient is still owed and has not withdrawn - the current period accrual not yet claimed plus carry-over settled in prior periods (on-chain Payable), including leftovers from removed streams.',
   reward_stream_rec_pending_current: 'Current receivable',
   reward_stream_rec_pending_current_tip:
     'Current receivable: this period accrual (on-chain Accrued x current share) minus what was claimed this period, floored at 0.',

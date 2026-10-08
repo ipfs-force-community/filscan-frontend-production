@@ -76,11 +76,11 @@ const statistic = {
   block_reward_split: '服务奖励排行',
   block_trend_tip: '仅矿工实收（共识流）；服务流与销毁见「区块奖励流向」',
   block_reward_per_TiB_tip: '仅矿工实收（共识流）；服务流与销毁见「区块奖励流向」',
-  reward_stream_rec_address: '受益地址',
-  reward_stream_rec_share: '份额',
-  reward_stream_rec_rank: '排名',
+  reward_stream_rec_address: '收益地址',
+  reward_stream_rec_share: '当期份额',
+  reward_stream_rec_rank: '排行',
   reward_stream_rec_claimed: '当期已收',
-  reward_stream_rec_receivable: '跨周期应收',
+  reward_stream_rec_receivable: '累计应收',
   reward_stream_rec_removed: '已移除流',
   reward_stream_rec_removed_tip:
     '该奖励流已被移除（或地址被替换）：它已不在当前份额表里，所以份额显示 0%；这里的金额是此前欠下、仍可提取的结转余额。',
@@ -93,7 +93,7 @@ const statistic = {
   reward_stream_rec_claimed_tip:
     '当期已收：该受益方在当前链上周期（主网 91 天 / 测试网 1 天）已从奖励池提取的金额；随周期滚动，不是历史累计。',
   reward_stream_rec_receivable_tip:
-    '跨周期应收：此前各周期已结算、但至今仍未提取的结转欠款（链上 Payable），已移除流的遗留欠款也计入这里。',
+    '累计应收：该受益方至今仍未提取的全部欠款——本周期应计尚未提取的部分 + 此前各周期已结算并结转下来的欠款（链上 Payable）；已移除流的遗留欠款也计入这里。',
   reward_stream_rec_pending_current: '当期应收',
   reward_stream_rec_pending_current_tip:
     '当期应收：本期应计（链上 Accrued × 当期份额）减去本期已提取后的余额，不小于 0。',

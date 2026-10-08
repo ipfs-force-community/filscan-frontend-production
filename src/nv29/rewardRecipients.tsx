@@ -221,7 +221,9 @@ export function recipientColumns(tr: any, rankBase = 0) {
           <Tooltip context={tr('reward_stream_rec_receivable_tip')} />
         </span>
       ),
-      dataIndex: 'pending_claim_carried',
+      // 累计应收＝至今未提取的全部欠款（＝当期应收 + 此前各期结转）＝接口的 pending_claim 总额。
+      // 注意：不是 pending_claim_carried（那只是历史结转那一段）。
+      dataIndex: 'pending_claim',
       render: (text: any) => filWithUnit(text),
     },
   ]
