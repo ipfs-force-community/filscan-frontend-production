@@ -44,7 +44,11 @@ export default function RewardAllocation({
       setData(fakeHomeAllocationData().total_indicators)
     } else {
       try {
-        const result: any = await axiosData(apiUrl.home_meta)
+        // 必须带 flag：本卡的取数与同页 src/home/meta.tsx 的 Meta 卡是**同一个接口**，
+        // 而 useAxiosData 的取消键是 `method:url`（不含 payload）——不带 flag 会把
+        // 先发起的那条（Meta）取消掉，导致「全网有效算力/扇区新增成本/质押量/产出效率」
+        // 四项拿不到值，unitConversion(undefined) 直接渲染成 `0 Byte` / `0 FIL/TiB`。
+        const result: any = await axiosData(apiUrl.home_meta, {}, { flag: 'reward_alloc' })
         setData(result?.total_indicators || {})
       } catch (e) {
         // 取数失败（网络/后端异常）→ 交给块内未激活分支兜底，绝不 500

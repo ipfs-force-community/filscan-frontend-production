@@ -167,7 +167,13 @@ export default observer((props: Props) => {
     // 后端 RewardStreams 接口部署前，本地渲染验证走 Fake（见 rewardStreamsFake.ts，默认关闭）
     const result: any = USE_FAKE_REWARD_STREAMS
       ? fakeRewardStreamsResponse(inter)
-      : await axiosData(apiUrl.static_reward_streams, { interval: inter })
+      // 必须带 flag：同页 src/statistics/RewardStreams.tsx 的三流曲线卡调的是**同一个接口**，
+      // useAxiosData 的取消键是 `method:url`（不含 payload）——不带 flag 两者会互相取消。
+      : await axiosData(
+          apiUrl.static_reward_streams,
+          { interval: inter },
+          { flag: 'reward_split' },
+        )
 
     // 兼容网关外壳 {code,msg,data:{…}} 与直出 {…} 两种形状
     const payload = result?.data ?? result ?? {}
