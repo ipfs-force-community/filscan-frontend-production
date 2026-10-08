@@ -27,7 +27,10 @@ export default observer(() => {
   // 名次基数：第 2 页从 pageLimit + 1 开始（全局连续，不受分页切断）
   const rankBase = (current - 1) * pageLimit
   const pageData = recipients.slice(rankBase, rankBase + pageLimit)
-  const columns = useMemo(() => recipientColumns(tr, rankBase), [tr, rankBase])
+  const columns = useMemo(
+    () => recipientColumns(tr, rankBase, ledger?.claimed_since_epoch),
+    [tr, rankBase, ledger?.claimed_since_epoch],
+  )
 
   // 客户端分页：只更新当前页，数据切片在本地完成，不重新取数。
   const handleChange = (pagination: any) => {

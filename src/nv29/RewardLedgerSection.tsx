@@ -51,7 +51,7 @@ export function RewardLedgerSection({
 
   const recipients = Array.isArray(ledger.recipients) ? ledger.recipients : []
   const rows = recipients.slice(0, RANK_LIMIT)
-  const columns = recipientColumns(tr)
+  const columns = recipientColumns(tr, 0, ledger.claimed_since_epoch)
 
   return (
     <div className={classNames(styles.wrap, className)}>

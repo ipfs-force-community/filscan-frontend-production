@@ -92,6 +92,10 @@ const statistic = {
     '本期已离场：该受益方在本周期内曾持有份额，现已不在链上份额表里（被移出或换址）。份额显示 0.00%，金额保留其离开时未提取的结转。离开高度 {{left_epoch}}；离开前份额 {{last_share_pct}}%。',
   reward_stream_rec_claimed_tip:
     '当期已收：该受益方在当前链上周期（主网 91 天 / 测试网 1 天）已从奖励池提取的金额；随周期滚动，不是历史累计。',
+  reward_stream_rec_claimed_total: '累计已收',
+  reward_stream_rec_claimed_total_tip:
+    '累计已收：该受益方至今已从奖励池提取的全部金额（按周期归集；不是只算当期）。',
+  reward_stream_rec_claimed_total_since: '自高度 {{since}} 起有效',
   reward_stream_rec_receivable_tip:
     '累计应收：该受益方至今仍未提取的全部欠款——本周期应计尚未提取的部分 + 此前各周期已结算并结转下来的欠款（链上 Payable）；已移除流的遗留欠款也计入这里。',
   reward_stream_rec_pending_current: '当期应收',

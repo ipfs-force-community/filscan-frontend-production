@@ -88,6 +88,10 @@ const statistic = {
     '이번 기간 이탈: 이 수혜자는 이번 기간에 지분을 보유했지만 이제 온체인 지분표에 없습니다(제거 또는 주소 변경). 지분은 0.00%로 표시되며, 금액은 이탈 시점에 미청구로 남은 이월분입니다. 이탈 높이 {{left_epoch}}; 이탈 전 지분 {{last_share_pct}}%.',
   reward_stream_rec_claimed_tip:
     '당기 수령액: 해당 수혜자가 현재 체인 기간(메인넷 91일 / 테스트넷 1일)에 보상 풀에서 이미 인출한 금액입니다. 기간마다 갱신되며 누적치가 아닙니다.',
+  reward_stream_rec_claimed_total: '누적 수령액',
+  reward_stream_rec_claimed_total_tip:
+    '누적 수령액: 해당 수혜자가 지금까지 보상 풀에서 인출한 전체 금액입니다(기간별 집계, 당기만이 아님).',
+  reward_stream_rec_claimed_total_since: '높이 {{since}}부터 유효',
   reward_stream_rec_receivable_tip:
     '누적 미수금: 해당 수혜자가 아직 인출하지 않은 전체 미지급액입니다 - 이번 기간 발생액 중 미청구분과 이전 기간에 정산되어 이월된 잔액(온체인 Payable)을 합한 값이며, 제거된 스트림의 잔여분도 포함됩니다.',
   reward_stream_rec_pending_current: '당기 미수금',

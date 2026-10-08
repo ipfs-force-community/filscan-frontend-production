@@ -90,6 +90,10 @@ const statistic = {
     'Left this period: this recipient held a share during the current period but is no longer in the on-chain share table (removed or re-addressed). Its share shows 0.00% and the amount keeps the carry-over it had not claimed when it left. Left at epoch {{left_epoch}}; share before leaving {{last_share_pct}}%.',
   reward_stream_rec_claimed_tip:
     'Claimed (current period): what this recipient has already withdrawn from the reward pool in the current chain period (91 days on mainnet, 1 day on testnet). Rolls over each period; not a cumulative total.',
+  reward_stream_rec_claimed_total: 'Total claimed',
+  reward_stream_rec_claimed_total_tip:
+    'Total claimed: everything this beneficiary has withdrawn from the reward pool to date (aggregated by period; not just the current period).',
+  reward_stream_rec_claimed_total_since: 'Valid since epoch {{since}}',
   reward_stream_rec_receivable_tip:
     'Total receivable: everything this recipient is still owed and has not withdrawn - the current period accrual not yet claimed plus carry-over settled in prior periods (on-chain Payable), including leftovers from removed streams.',
   reward_stream_rec_pending_current: 'Current receivable',

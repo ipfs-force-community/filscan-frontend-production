@@ -44,6 +44,20 @@ export function filWithUnit(v: any): string {
   return `${ledgerFil(v)} FIL`
 }
 
+/**
+ * 「累计已收」列头说明：口径固定；`claimed_since_epoch > 0` 时在末尾追加「自高度 X 起有效」。
+ * 归集从采集件上线才开始（主网激活前上线则等于完整）；`0`/缺失 = 无数据/未知 ⇒ 不附该句。
+ * 高度占位值缺失一律 `--`（dash 兜底）。
+ */
+function claimedTotalTip(tr: any, claimedSinceEpoch?: number) {
+  const base = tr('reward_stream_rec_claimed_total_tip')
+  const since = Number(claimedSinceEpoch)
+  if (!Number.isFinite(since) || since <= 0) return base
+  return `${base} ${tr('reward_stream_rec_claimed_total_since', {
+    since: dash(claimedSinceEpoch),
+  })}`
+}
+
 export interface LedgerRecipient {
   address?: string
   share_pct?: string
@@ -55,6 +69,11 @@ export interface LedgerRecipient {
   pending_claim_carried?: string
   /** 本期已提取（已收），attoFIL 字符串；后端零值给 `"0"`。 */
   claimed_period?: string
+  /**
+   * 累计已收：该受益方**至今**从奖励池提取的全部金额（按周期归集，不是只算当期），attoFIL 字符串。
+   * 后端可能回 `null` = 未知 ⇒ 列内渲染 `--`（**绝不**渲染成 0.00 FIL：未知与零必须区分）。
+   */
+  claimed_total?: string | null
   /**
    * 后端标记的「已移除流遗留欠款收款人」（契约：true 表示该地址只出现在已移除流的遗留欠款里）。
    * 份额列会显示 0%，但仍可提取结转余额 —— 份额单元格附「已移除流」小标记 + 悬停说明。
@@ -87,6 +106,11 @@ export interface RewardStreamLedger {
   nv29?: boolean
   pending_claim?: string
   claimed_period?: string
+  /**
+   * 累计已收的归集起始高度：归集从采集件上线才开始（主网激活前上线则等于完整）。
+   * `0` = 无数据/未知 ⇒ 列头说明**不附**「自高度 X 起有效」；仅 `> 0` 时附。
+   */
+  claimed_since_epoch?: number
   current_split?: { miner?: string; service?: string; burn?: string }
   recipients?: LedgerRecipient[]
 }
@@ -121,8 +145,14 @@ function addressCell(text: any) {
  * @param tr       宿主 ns 的翻译函数
  * @param rankBase 排名基数：名次 = `rankBase + index + 1`（默认 0）。
  *                 全量排行页每页传 `(page-1)*pageLimit`，保证名次全局连续（第 2 页第 1 行 = pageLimit+1）。
+ * @param claimedSinceEpoch 响应级 `claimed_since_epoch`（归集起始高度）。`> 0` 时「累计已收」列头
+ *                 说明末尾附「自高度 X 起有效」；`0`/缺失 = 无数据/未知，不附该句。
  */
-export function recipientColumns(tr: any, rankBase = 0) {
+export function recipientColumns(
+  tr: any,
+  rankBase = 0,
+  claimedSinceEpoch?: number,
+) {
   return [
     {
       title: tr('reward_stream_rec_rank'),
@@ -212,6 +242,18 @@ export function recipientColumns(tr: any, rankBase = 0) {
         </span>
       ),
       dataIndex: 'pending_claim_current',
+      render: (text: any) => filWithUnit(text),
+    },
+    {
+      // 累计已收（至今全部已提取，按周期归集）；`null` = 未知 ⇒ `--`，绝不渲染成 0.00 FIL。
+      // 列头说明按响应级 claimed_since_epoch 决定是否附「自高度 X 起有效」。
+      title: (
+        <span className="inline-flex items-center gap-x-1">
+          {tr('reward_stream_rec_claimed_total')}
+          <Tooltip context={claimedTotalTip(tr, claimedSinceEpoch)} />
+        </span>
+      ),
+      dataIndex: 'claimed_total',
       render: (text: any) => filWithUnit(text),
     },
     {
