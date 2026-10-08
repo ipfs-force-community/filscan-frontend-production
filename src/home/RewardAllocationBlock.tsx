@@ -34,7 +34,10 @@ export default function RewardAllocationBlock({ data = {}, className }: Props) {
     )
   }
 
-  const fil = (v: any) => formatNumber(formatFil(v || 0, 'FIL'), 2)
+  // 注意：后端新字段（reward_stream_*_total）与本前端不是同时上线时，
+  // 老后端不返回这些字段 ⇒ 必须显示 '--' 而不是 0.00 FIL（0 会被读成"服务流一分钱没有"，是错的）。
+  const fil = (v: any) =>
+    v === undefined || v === null ? '--' : formatNumber(formatFil(v, 'FIL'), 2)
   const total24 = Number(data?.reward_stream_total_24h || 0)
   const pct = (v: any) =>
     total24 > 0 ? ((Number(v || 0) / total24) * 100).toFixed(1) + '%' : '--'
