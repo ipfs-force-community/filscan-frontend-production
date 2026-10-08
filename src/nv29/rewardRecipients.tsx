@@ -27,6 +27,9 @@ export const DASH = '--'
 /** 金额（attoFIL 字符串）→ FIL 展示；缺失 ⇒ `--`。 */
 export function ledgerFil(v: any): string {
   if (v === undefined || v === null || v === '') return DASH
+  // 零值统一成两位小数：formatFil 对 0 会走 4 位（'0.0000'），而 formatNumber 对 0 直接原样返回，
+  // 与同列其它金额（最多两位小数）看起来不一致 —— 这里显式归一。
+  if (Number(v) === 0) return '0.00'
   return String(formatNumber(formatFil(v, 'FIL'), 2))
 }
 
