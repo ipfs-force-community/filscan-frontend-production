@@ -26,6 +26,8 @@ const home = {
   reward_stream_nv29_inactive: 'NV29 is not yet active on this network; block rewards still go entirely to miners',
   reward_stream_view: 'View Reward Streams',
   reward_stream_alloc_title: 'Block Reward Allocation',
+  reward_stream_alloc_tip:
+    'Total of the three streams = miner rewards + service stream (reward pool pending claim) + burn, i.e. the cumulative minted amount. Before NV29 activation this equals miner rewards. See the "Block Reward Allocation" card for the breakdown.',
   reward_stream_alloc_total: 'Total Minted (Sum)',
   reward_stream_alloc_24h: 'Last 24h share (stacked bar)',
   reward_stream_alloc_acc: 'Cumulative (since NV29 activation)',

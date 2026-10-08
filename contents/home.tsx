@@ -1,6 +1,5 @@
 /** @format */
 import { formatFil, formatFilNum, formatNumber, unitConversion } from '@/utils'
-import RewardAllocationBlock from '@/src/home/RewardAllocationBlock'
 
 export const home_meta = [
   {
@@ -411,13 +410,27 @@ export const meta_list = [
     },
   }, //全网出块奖励，单位Fil
   {
-    // NV29（FIP-0118）起区块奖励拆三股：矿工实收 / 服务流（奖励池待提取）/ 销毁。
-    // 本项把三股**累计**数字摆到台面上，累计铸造量作合计；近24h 三股占比由块内计算。
-    // 数据源复用首页 TotalIndicators（不新增接口）；未激活 NV29 的网只显示一句说明（块内判定）。
+    // NV29（FIP-0118）起区块奖励拆三股（矿工实收 / 服务流待提取 / 销毁）。本格只放**三股合计**这一个数
+    // （= 累计铸造量，契约 A2 的 reward_stream_minted_total），与左边「全网出块奖励（矿工实收）」并列即可读出三股关系。
+    // ⚠️ 硬规矩：「全网指标」是一面**数字墙**，每格只能是一个数字——严禁把块级组件（如
+    // RewardAllocationBlock）塞进某一格：整块面板会在网格里铺开，把整行撑到 700px+、后续卡片被挤到很远
+    // （用户 2026-10-08 指出「红框里的网页完全不应该出现在这里，这里只能是一个数字」）。
+    // 三股明细的落点是首页 RewardAllocation 卡与统计页 BlockChain→区块奖励分配 卡（#reward_split）。
+    // 机检：ops/check_meta_tiles.js（本墙与首页 home_meta 都不得出现大写开头的 JSX 组件标签）。
     title: 'reward_stream_alloc_title',
-    dataIndex: 'reward_stream_alloc',
-    render: (v: any, record: any) => <RewardAllocationBlock data={record} />,
-  }, //区块奖励分配（NV29 三股累计 + 合计 + 近24h占比）
+    tip: 'reward_stream_alloc_tip',
+    dataIndex: 'reward_stream_minted_total',
+    render: (v: any) => {
+      // 后端老版本没有该字段时显示 '--'，不渲染成 0（沿用 34227b46 的防呆约定）
+      if (v === undefined || v === null || v === '') return '--'
+      return (
+        <span>
+          <span>{Number(formatFil(v, 'FIL')).toLocaleString() + ' '}</span>
+          <span className="unit">{'FIL'}</span>
+        </span>
+      )
+    },
+  }, //区块奖励分配（三股合计＝累计铸造量；明细见首页与统计页的区块奖励分配卡）
   {
     title: 'win_count_reward',
     dataIndex: 'win_count_reward',

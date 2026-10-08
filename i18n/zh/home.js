@@ -44,6 +44,8 @@ const home = {
   reward_stream_nv29_inactive: '本网尚未激活 NV29，区块奖励仍全额给矿工',
   reward_stream_view: '查看奖励流向',
   reward_stream_alloc_title: '区块奖励分配',
+  reward_stream_alloc_tip:
+    '三股合计＝矿工实收＋服务流（奖励池待提取）＋销毁，即累计铸造量；未激活 NV29 的网该值等于矿工实收。三股明细见首页与「区块奖励分配」卡。',
   reward_stream_alloc_total: '累计铸造量（合计）',
   reward_stream_alloc_24h: '近24h占比（堆叠条）',
   reward_stream_alloc_acc: '累计（自 NV29 激活）',

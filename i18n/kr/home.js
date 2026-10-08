@@ -29,6 +29,8 @@ const home = {
   reward_stream_nv29_inactive: '이 네트워크에서는 NV29가 아직 활성화되지 않아 블록 보상이 여전히 전액 마이너에게 지급됩니다',
   reward_stream_view: '보상 흐름 보기',
   reward_stream_alloc_title: '블록 보상 분배',
+  reward_stream_alloc_tip:
+    '세 갈래 합계 = 마이너 실수령 + 서비스 스트림(보상 풀 미청구) + 소각, 즉 누적 발행량입니다. NV29 미활성 네트워크에서는 마이너 실수령과 같습니다. 상세 내역은 "블록 보상 분배" 카드에서 확인하세요.',
   reward_stream_alloc_total: '누적 발행량(합계)',
   reward_stream_alloc_24h: '최근 24시간 비중(누적 막대)',
   reward_stream_alloc_acc: '누적(NV29 활성화 이후)',
