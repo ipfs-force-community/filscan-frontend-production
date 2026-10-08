@@ -4,6 +4,8 @@ import Copy from '@/components/copy'
 import { Translation } from '@/components/hooks/Translation'
 import { TransMethod, apiUrl, tokenName } from '@/contents/apiUrl'
 import { address_detail, address_tabs } from '@/contents/detail'
+import { getProtocolActorInfo } from '@/contents/protocolActors'
+import ProtocolActorNote from '@/src/nv29/ProtocolActorNote'
 import Content from '@/packages/content'
 import Segmented from '@/packages/segmented'
 import AccountChange from '@/src/detail/accountChange'
@@ -255,6 +257,12 @@ export default () => {
   if (loading) {
     return <Loading />
   }
+  // NV29（FIP-0118）协议合约地址标签：SWA/SRA（常量表见 contents/protocolActors.ts）。
+  // 只匹配 FEVM(0x) 形态；地址页若以 f0/f4 形态访问需链上解析，当前接口未提供，故不展示。
+  const protocolActor =
+    getProtocolActorInfo(typeof address === 'string' ? address : null) ||
+    getProtocolActorInfo(data?.account_basic?.eth_address) ||
+    getProtocolActorInfo(data?.eth_address)
   return (
     <div className={classNames(styles.address, 'main_contain')}>
       <div
@@ -299,6 +307,7 @@ export default () => {
             )}
         </BrowserView>
       </div>
+      <ProtocolActorNote actor={protocolActor} />
       <div
         className={classNames(
           'card_shadow border_color flex items-center rounded-xl border p-7',

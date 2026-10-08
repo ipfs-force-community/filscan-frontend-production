@@ -19,12 +19,19 @@ export const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || ''
 // 此处统一按 NEXT_PUBLIC_STATIC_URL 配置重写：
 //   - 配置 CDN/OSS 前缀 → 替换为对应前缀（如 https://cdn.filscan.io/fvm_manage/xxx）
 //   - 留空（本地）→ 去掉 OSS 域名前缀，变为相对路径（如 /banner/xxx，由本地 public 提供）
-const OSS_URL_PREFIX_RE = /^https:\/\/filscan-v2\.oss-(?:cn-hongkong|accelerate)\.aliyuncs\.com\/fvm_manage/
+const OSS_URL_PREFIX_RE =
+  /^https:\/\/filscan-v2\.oss-(?:cn-hongkong|accelerate)\.aliyuncs\.com\/fvm_manage/
 
 export function resolveStaticUrl(url?: string): string {
   if (!url) return ''
   // 本地相对路径 / data:/ blob: 等直接返回
-  if (url.startsWith('/') || url.startsWith('data:') || url.startsWith('blob:')) return url
+  if (
+    url.startsWith('/') ||
+    url.startsWith('data:') ||
+    url.startsWith('blob:')
+  ) {
+    return url
+  }
   const matched = url.match(OSS_URL_PREFIX_RE)
   if (matched) {
     return staticUrl + url.slice(matched[0].length)
@@ -99,6 +106,9 @@ export const apiUrl: API | any = {
   static_fil_chart: mainUrl + '/FilCompose',
   static_block_trend: mainUrl + '/BlockRewardTrend',
   static_reward_streams: mainUrl + '/RewardStreams',
+  // NV29（FIP-0118）奖励流台账：待提取 / 当期已提取 / 当前评估分账比例 / 受益方明细
+  // （后端 jsonrpc 方法 RewardStreamLedger，契约 E）。
+  reward_stream_ledger: mainUrl + '/RewardStreamLedger',
   static_active_miner: mainUrl + '/ActiveMinerTrend',
   static_message_trend: mainUrl + '/MessageCountTrend',
   rank_pool: mainUrl + '/OwnerRank',

@@ -4,9 +4,15 @@ import { Translation } from '@/components/hooks/Translation'
 import { formatFil, formatNumber } from '@/utils'
 import classNames from 'classnames'
 import styles from './RewardAllocation.module.scss'
+import {
+  RewardLedgerSection,
+  RewardStreamLedger,
+} from '@/src/nv29/RewardLedgerSection'
 
 interface Props {
   data?: Record<string, any>
+  /** 后端新方法 RewardStreamLedger（契约 E/F1）的响应；缺失时三项显示 `--`。 */
+  ledger?: RewardStreamLedger | null
   className?: string
 }
 
@@ -18,9 +24,15 @@ const COLORS: Record<string, string> = {
 
 // 首页「区块奖励分配」块（NV29/FIP-0118 三股）。
 // 数据源复用首页 TotalIndicators（不新增接口）；两网分支由 nv29_epoch/latest_height 判定：
-//   未激活 ⇒ 只给一句「本网尚未升级 NV29」，不列服务流/销毁两行；
-//   激活   ⇒ 列出三股累计数字 + 累计铸造量合计 + 近24h 占比（atoFIL ÷1e18 后展示）。
-export default function RewardAllocationBlock({ data = {}, className }: Props) {
+//   未激活 ⇒ 只给一句「本网尚未升级 NV29」，不列服务流/销毁两行、也不显示 F1 三项；
+//   激活   ⇒ 列出三股累计数字 + 累计铸造量合计 + 近24h 占比（atoFIL ÷1e18 后展示），
+//            以及契约 F1 新增三项（待提取 / 当前分账比例（链上日程）/ 受益方明细），
+//            后三者数据源为后端新方法 RewardStreamLedger，字段缺失一律显示 `--`。
+export default function RewardAllocationBlock({
+  data = {},
+  ledger,
+  className,
+}: Props) {
   const { tr } = Translation({ ns: 'home' })
   const nv29 = Number(data?.nv29_epoch || 0)
   const height = Number(data?.latest_height || 0)
@@ -100,6 +112,9 @@ export default function RewardAllocationBlock({ data = {}, className }: Props) {
         </li>
       </ul>
       <div className={styles.note}>{tr('reward_stream_alloc_desc')}</div>
+      {/* F1 新增三项：待提取 / 当前分账比例（链上日程）/ 受益方明细。
+          active=高度判定（与上方三股同源）；ledger 缺失时三项显示 `--`。 */}
+      <RewardLedgerSection ledger={ledger} ns="home" active={nv29Active} />
     </div>
   )
 }

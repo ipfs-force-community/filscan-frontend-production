@@ -13,6 +13,11 @@ const detail = {
   all_method: '全部方法',
   account: '一般账户',
   account_title: '账户',
+  reward_stream_protocol_badge: 'NV29 协议地址',
+  reward_stream_protocol_swa:
+    'SWA —— 服务流权重管理合约，负责区块奖励流的权重配置（NV29/FIP-0118）',
+  reward_stream_protocol_sra:
+    'SRA —— 服务流分配合约，负责服务流受益方份额的写入（NV29/FIP-0118）',
   owner_address: 'Owner地址',
   owned_miners: '名下节点',
   owned_active_miners: '名下活跃节点',

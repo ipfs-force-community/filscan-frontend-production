@@ -12,7 +12,7 @@ const home = {
   latest_height: '최신 블록 높이',
   latest_block_time: '최신 블록 시간',
   total_blocks: '전체 블록 생성 수',
-  total_rewards: '전체 블록 보상',
+  total_rewards: '전체 블록 보상(마이너 실수령)',
   total_quality_power: '전체 유효 체굴파워',
   total_quality_power_tip: '현재 전체 유효 컴퓨팅 파워(유효 저장 공간)의 총합',
   base_fee: '현재 기본 요금',
@@ -33,6 +33,13 @@ const home = {
   reward_stream_alloc_24h: '최근 24시간 비중(누적 막대)',
   reward_stream_alloc_desc:
     '서비스 스트림은 보상 풀에 적립되어 서비스 제공자가 나중에 청구(Claim)하는 금액이고, 소각은 발행 시점에 곧바로 태워지는 부분입니다.',
+  reward_stream_pending_claim: '미청구(서비스 제공자에게 지급될 금액)',
+  reward_stream_split_schedule:
+    '현재 분배 비율(온체인 일정, 최근 24시간 실측 비중과 다를 수 있음)',
+  reward_stream_recipients: '수혜자 내역',
+  reward_stream_rec_address: '주소',
+  reward_stream_rec_share: '지분',
+  reward_stream_rec_pending: '미지급',
   gas_in_32g: ' 최근 24시간 동안 1TiB 용량의 32GiB 섹터를 봉인하기 위해 필요한 가스입니다',
   gas_in_32g_meta:'32GiB 섹터의 가스 소비량',
   gas_in_32g_tip: '최근 24시간 동안 밀봉된 32G 섹터당 소비된 가스량(TB당)',

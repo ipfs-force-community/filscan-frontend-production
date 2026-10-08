@@ -75,6 +75,13 @@ const statistic = {
     '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 「블록 보상 분배」를 참고하세요',
   block_reward_per_TiB_tip:
     '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 「블록 보상 분배」를 참고하세요',
+  reward_stream_pending_claim: '미청구(서비스 제공자에게 지급될 금액)',
+  reward_stream_split_schedule:
+    '현재 분배 비율(온체인 일정, 최근 24시간 실측 비중과 다를 수 있음)',
+  reward_stream_recipients: '수혜자 내역',
+  reward_stream_rec_address: '주소',
+  reward_stream_rec_share: '지분',
+  reward_stream_rec_pending: '미지급',
   block_reward_per_TiB: '생산 효율',
   acc_block_rewards: '누적 블록 보상',
   active_nodes: '액티브한 노드 수',

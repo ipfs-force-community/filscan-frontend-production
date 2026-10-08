@@ -11,6 +11,11 @@ const detail = {
   owner_title_tip: 'The data of mine pool is collected from the data of nodes.',
   account: 'Account',
   account_title: 'Account',
+  reward_stream_protocol_badge: 'NV29 Protocol Address',
+  reward_stream_protocol_swa:
+    'SWA — Stream Weight Administrator; manages the reward-stream weight configuration (NV29/FIP-0118)',
+  reward_stream_protocol_sra:
+    'SRA — Service Stream distribution actor; writes the recipient share map of the service stream (NV29/FIP-0118)',
 
   owner_address: 'Owner Address',
   owned_miners: 'Nodes',

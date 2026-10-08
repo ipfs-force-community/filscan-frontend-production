@@ -13,6 +13,14 @@ import {
   USE_FAKE_REWARD_STREAMS,
   fakeRewardStreamsResponse,
 } from './rewardStreamsFake'
+import {
+  RewardLedgerSection,
+  RewardStreamLedger,
+} from '@/src/nv29/RewardLedgerSection'
+import {
+  USE_FAKE_REWARD_LEDGER,
+  fakeRewardStreamLedgerResponse,
+} from '@/src/nv29/rewardStreamLedgerFake'
 
 interface Props {
   origin?: string
@@ -48,14 +56,18 @@ export function sumRewardStreams(items: any[]): Record<string, number> {
 }
 
 // 纯展示层：给定窗口求和，画堆叠占比条 + 三股数字（含占比）+ 合计 + 口径说明。
+// F1 新增三项（待提取 / 当前分账比例（链上日程）/ 受益方明细）由 RewardLedgerSection 承担，
+// 数据源是后端新方法 RewardStreamLedger（非窗口数据，不随三档时间变化）。
 // 取数在下方 observer 组件完成；两层拆开便于本地用 fixture 直接 SSR 渲染校验。
 export function RewardSplitView({
   sum = EMPTY_SUM,
+  ledger,
   interval = '24h',
   className,
   onIntervalChange,
 }: {
   sum?: Record<string, number>
+  ledger?: RewardStreamLedger | null
   interval?: string
   className?: string
   onIntervalChange?: (value: string) => void
@@ -128,20 +140,25 @@ export function RewardSplitView({
           </li>
         </ul>
         <div className={styles.note}>{tr('reward_stream_split_desc')}</div>
+        {/* F1 新增三项：数据源 RewardStreamLedger；未激活 NV29（ledger.nv29 !== true）时不渲染 */}
+        <RewardLedgerSection ledger={ledger} ns="static" />
       </div>
     </div>
   )
 }
 
-// 取数层：复用 RewardStreams 接口（不新增接口），三档时间复用现有 Segmented 机制。
+// 取数层：复用 RewardStreams 接口（不新增接口），三档时间复用现有 Segmented 机制；
+// F1 三项另取一次后端新方法 RewardStreamLedger（非窗口数据，不随档位变化）。
 export default observer((props: Props) => {
   const { className } = props
   const { axiosData } = useAxiosData()
   const [interval, setInterval] = useState('24h')
   const [sum, setSum] = useState<Record<string, number>>({})
+  const [ledger, setLedger] = useState<RewardStreamLedger | null>(null)
 
   useEffect(() => {
     load()
+    loadLedger()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -157,9 +174,26 @@ export default observer((props: Props) => {
     setSum(sumRewardStreams(payload?.items || []))
   }
 
+  const loadLedger = async () => {
+    // 后端 RewardStreamLedger 部署前，本地渲染验证走 Fake（默认关闭）
+    if (USE_FAKE_REWARD_LEDGER) {
+      setLedger(fakeRewardStreamLedgerResponse().data)
+      return
+    }
+    try {
+      const result: any = await axiosData(apiUrl.reward_stream_ledger)
+      // 兼容网关外壳 {code,msg,data:{…}} 与直出 ledger 两种形状
+      setLedger(result?.data ?? result?.result ?? result ?? null)
+    } catch (e) {
+      // 取数失败 ⇒ 三项不渲染（nv29 未知）；不显示成 0，也不整卡崩
+      setLedger(null)
+    }
+  }
+
   return (
     <RewardSplitView
       sum={sum}
+      ledger={ledger}
       interval={interval}
       className={className}
       onIntervalChange={(value) => {

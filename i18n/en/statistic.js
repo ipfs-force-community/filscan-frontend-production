@@ -77,6 +77,13 @@ const statistic = {
     'Miner actual receipts (consensus stream) only; see Block Reward Allocation for the service stream and burn',
   block_reward_per_TiB_tip:
     'Miner actual receipts (consensus stream) only; see Block Reward Allocation for the service stream and burn',
+  reward_stream_pending_claim: 'Pending Claim (Owed to Service Providers)',
+  reward_stream_split_schedule:
+    'Current Split (On-chain Schedule; may differ from the measured 24h share)',
+  reward_stream_recipients: 'Recipients',
+  reward_stream_rec_address: 'Address',
+  reward_stream_rec_share: 'Share',
+  reward_stream_rec_pending: 'Pending',
   block_reward_per_TiB: 'Output Efficiency',
   active_nodes: 'Active Storage Providers',
   active_miner_count: 'Node Counts',

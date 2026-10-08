@@ -9,7 +9,7 @@ const home = {
   latest_height:'Block Height',
   latest_block_time: 'Latest Block',
   total_blocks:'Total Block',
-  total_rewards: 'Total Block Rewards',
+  total_rewards: 'Total Block Rewards (Miner Received)',
   total_quality_power: 'Network QualityAdjPower',
   total_quality_power_tip:'Total current effective computing power (effective storage space) of the Filecoin network',
   base_fee: 'Base Fee',
@@ -30,6 +30,13 @@ const home = {
   reward_stream_alloc_24h: 'Last 24h share (stacked bar)',
   reward_stream_alloc_desc:
     'The service stream is accrued in the reward pool and claimed by service providers later; the burn is the portion burned at mint time.',
+  reward_stream_pending_claim: 'Pending Claim (Owed to Service Providers)',
+  reward_stream_split_schedule:
+    'Current Split (On-chain Schedule; may differ from the measured 24h share)',
+  reward_stream_recipients: 'Recipients',
+  reward_stream_rec_address: 'Address',
+  reward_stream_rec_share: 'Share',
+  reward_stream_rec_pending: 'Pending',
   gas_in_32g: '24H Gas Cost for Sealing 32GiB sectors/TiB',
   gas_in_32g_meta:'Gas Used of a 32GiB Sector',
   gas_in_32g_tip:'Gas used of Sealing a 32GiB Sector in the last 24 hours',

@@ -12,6 +12,11 @@ const detail = {
   all: '모든 메소드',
   account: '계정',
   account_title: '계정',
+  reward_stream_protocol_badge: 'NV29 프로토콜 주소',
+  reward_stream_protocol_swa:
+    'SWA — 서비스 스트림 가중치 관리 계약으로 블록 보상 스트림의 가중치 구성을 관리합니다 (NV29/FIP-0118)',
+  reward_stream_protocol_sra:
+    'SRA — 서비스 스트림 분배 계약으로 서비스 스트림 수혜자 지분을 기록합니다 (NV29/FIP-0118)',
   owner_address: 'Owner 주소',
   owned_miners: '소유한 노드',
   owned_active_miners: '액티브한 노드',

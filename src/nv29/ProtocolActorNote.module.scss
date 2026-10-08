@@ -1,0 +1,24 @@
+.protocolNote {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin: 0 2.5px 10px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.protocolBadge {
+  flex: 0 0 auto;
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: rgba(28, 106, 253, 0.12);
+  color: #1c6afd;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.protocolDesc {
+  min-width: 0;
+  opacity: 0.75;
+}
