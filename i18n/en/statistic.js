@@ -71,9 +71,9 @@ const statistic = {
   reward_stream_nv29_line: 'Since NV29 block rewards are split by weight',
   block_reward_split: 'Service Reward Ranking',
   block_trend_tip:
-    'Miner actual receipts (consensus stream) only; see the Block Reward Allocation card on the home page for the service stream and burn',
+    'Miner actual receipts (consensus stream) only; see Block Reward Streams for the service stream and burn',
   block_reward_per_TiB_tip:
-    'Miner actual receipts (consensus stream) only; see the Block Reward Allocation card on the home page for the service stream and burn',
+    'Miner actual receipts (consensus stream) only; see Block Reward Streams for the service stream and burn',
   reward_stream_rec_address: 'Recipient',
   reward_stream_rec_share: 'Share',
   reward_stream_rec_rank: 'Rank',

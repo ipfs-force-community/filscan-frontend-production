@@ -5,7 +5,7 @@ import { Menu_Info } from '@/contents/type'
 import { getSvgIcon } from '@/svgsIcon'
 import PowerTrend from '@/src/statistics/Trend'
 import BlockRewardTrend from '@/src/statistics/BlockRewardTrend'
-import RewardSplit from '@/src/statistics/RewardSplit'
+import RewardStreams from '@/src/statistics/RewardStreams'
 import BlockRewardPer from '@/src/statistics/BlockRewardPer'
 import ActiveNodeTrend from '@/src/statistics/ActiveNodeTrend'
 import Link from 'next/link'
@@ -146,8 +146,9 @@ export default observer(() => {
               </div>
             </div>
           )}
-          {/* 「区块奖励流向」图卡已于 2026-10-08 下线（用户裁定：与「服务奖励排行」重复）。
-              锚点 block_reward_streams 仍留在上面的 hash 判据里 —— 老链接/书签照样落在这组区块上。 */}
+          {/* 「区块奖励流向」保留（用户 2026-10-08 二次裁定：这是全网唯一能看到奖励流向的地方）。
+              「服务奖励排行」卡改由首页承载 —— 同页曾与首页那张重复，故本组不再渲染 RewardSplit；
+              hash 判据里仍留着 reward_split，老链接/书签照样落在这组区块上。 */}
           {(hash.startsWith('blockChain') ||
             hash === 'block_reward_streams' ||
             hash === 'reward_split') && (
@@ -167,8 +168,11 @@ export default observer(() => {
               >
                 <BlockRewardTrend />
               </div>
-              <div id="reward_split" className={styles['statistics-target']}>
-                <RewardSplit />
+              <div
+                id="block_reward_streams"
+                className={styles['statistics-target']}
+              >
+                <RewardStreams />
               </div>
               <div
                 id="blockChain_reward_per"

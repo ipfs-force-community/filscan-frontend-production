@@ -554,9 +554,8 @@ export const chartsNav: Array<Menu_Info> = [
         title: 'block_trend',
       },
       {
-        // 区块奖励分配：三流窗口求和（占比 + 三数字 + 合计），数据源复用 RewardStreams 接口。
-        key: 'reward_split',
-        title: 'block_reward_split',
+        key: 'block_reward_streams',
+        title: 'block_reward_streams',
       },
       {
         key: 'blockChain_reward_per',

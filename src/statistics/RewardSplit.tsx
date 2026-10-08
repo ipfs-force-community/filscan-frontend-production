@@ -12,6 +12,9 @@ interface Props {
   className?: string
 }
 
+// ⚠ 已从统计页下线（2026-10-08 用户二次裁定：数据统计页与首页各有一张「服务奖励排行」，两张冲突，只留首页那张）。
+//   组件本体与列定义（src/nv29/rewardRecipients.tsx —— 首页卡与 /reward/rank 全量榜共用）均保留未删；
+//   恢复方式：把 pages/statistics/charts/index.tsx 里的挂载点与侧栏入口加回去即可。
 // 服务奖励排行（NV29/FIP-0118）：标题「服务奖励排行」（i18n 键 block_reward_split）+ 服务受益方排行表（前 10 名），
 // 仿「合约排行」；右上角箭头 → 全量排行页 /reward/rank（第一名到最后一名）。
 // 数据源只有后端方法 RewardStreamLedger（apiUrl.reward_stream_ledger），取数走公共层 useRewardLedger（唯一一份实现）。
