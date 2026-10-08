@@ -37,6 +37,9 @@ const home = {
   reward_stream_rec_rank: '순위',
   reward_stream_rec_claimed: '수령액',
   reward_stream_rec_receivable: '미수금',
+  reward_stream_rec_removed: '제거된 스트림',
+  reward_stream_rec_removed_tip:
+    '이 보상 스트림은 제거되었습니다(또는 주소가 교체됨): 현재 지분표에 없으므로 지분이 0%로 표시됩니다. 여기의 금액은 이전 기간에 발생한 미지급 이월 잔액이며, 아직 청구할 수 있습니다.',
   reward_stream_rec_note:
     '수령액은 이번 기간에 청구된 금액(기간별 갱신)이고, 미수금은 아직 청구하지 않은 금액입니다',
   gas_in_32g: ' 최근 24시간 동안 1TiB 용량의 32GiB 섹터를 봉인하기 위해 필요한 가스입니다',

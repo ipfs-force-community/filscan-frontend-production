@@ -79,6 +79,9 @@ const statistic = {
   reward_stream_rec_rank: 'Rank',
   reward_stream_rec_claimed: 'Received',
   reward_stream_rec_receivable: 'Receivable',
+  reward_stream_rec_removed: 'Removed stream',
+  reward_stream_rec_removed_tip:
+    'This reward stream was removed (or the address was replaced): it is no longer in the current share table, so its share shows 0%. The amount here is a carry-over balance owed from earlier periods and can still be claimed.',
   reward_stream_rec_note:
     'Received = amount claimed in this period (rolling); Receivable = pending claim amount',
   reward_stream_nv29_inactive:

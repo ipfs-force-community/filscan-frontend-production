@@ -81,6 +81,9 @@ const statistic = {
   reward_stream_rec_rank: '排名',
   reward_stream_rec_claimed: '已收',
   reward_stream_rec_receivable: '应收',
+  reward_stream_rec_removed: '已移除流',
+  reward_stream_rec_removed_tip:
+    '该奖励流已被移除（或地址被替换）：它已不在当前份额表里，所以份额显示 0%；这里的金额是此前欠下、仍可提取的结转余额。',
   reward_stream_rec_note:
     '已收＝本期已提取（随期滚动）；应收＝待提取金额',
   reward_stream_nv29_inactive: '本网尚未激活 NV29，区块奖励仍全额给矿工',

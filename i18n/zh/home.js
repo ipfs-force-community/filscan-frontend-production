@@ -52,6 +52,9 @@ const home = {
   reward_stream_rec_rank: '排名',
   reward_stream_rec_claimed: '已收',
   reward_stream_rec_receivable: '应收',
+  reward_stream_rec_removed: '已移除流',
+  reward_stream_rec_removed_tip:
+    '该奖励流已被移除（或地址被替换）：它已不在当前份额表里，所以份额显示 0%；这里的金额是此前欠下、仍可提取的结转余额。',
   reward_stream_rec_note:
     '已收＝本期已提取（随期滚动）；应收＝待提取金额',
   gas_in_32g: '24小时32G扇区封装每T所需Gas',

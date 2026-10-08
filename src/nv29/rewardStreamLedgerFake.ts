@@ -42,7 +42,8 @@ const REAL_RECIPIENTS = [
     address: 't0200206',
     share_pct: '0.00',
     claimed_period: '0',
-    pending_claim: '4062440000000000000000', // 4,062.44 FIL（tombstone 收款人）
+    pending_claim: '4062440000000000000000', // 4,062.44 FIL（tombstone 收款人：已移除流遗留欠款）
+    removed_stream: true, // 后端契约：该地址只出现在已移除流的遗留欠款里 ⇒ 份额列加「已移除流」小标记
   },
   {
     address: 't0199897',

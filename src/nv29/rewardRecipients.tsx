@@ -8,6 +8,7 @@ import CopySvgMobile from '@/assets/images/icon-copy.svg'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import useAxiosData from '@/store/useAxiosData'
+import Tooltip from '@/packages/tooltip'
 import {
   USE_FAKE_REWARD_LEDGER,
   fakeRewardStreamLedgerResponse,
@@ -42,6 +43,11 @@ export interface LedgerRecipient {
   pending_claim?: string
   /** 本期已提取（已收），attoFIL 字符串；后端零值给 `"0"`。 */
   claimed_period?: string
+  /**
+   * 后端标记的「已移除流遗留欠款收款人」（契约：true 表示该地址只出现在已移除流的遗留欠款里）。
+   * 份额列会显示 0%，但仍可提取结转余额 —— 份额单元格附「已移除流」小标记 + 悬停说明。
+   */
+  removed_stream?: boolean
 }
 
 /**
@@ -104,8 +110,28 @@ export function recipientColumns(tr: any, rankBase = 0) {
     {
       title: tr('reward_stream_rec_share'),
       dataIndex: 'share_pct',
-      render: (text: any) =>
-        text === undefined || text === null || text === '' ? DASH : `${text}%`,
+      render: (text: any, record: any) => {
+        const pct =
+          text === undefined || text === null || text === '' ? DASH : `${text}%`
+        // 已移除流的遗留欠款收款人：份额为 0%，仍可提取结转余额 —— 在百分比文本后紧跟一个
+        // 弱化的小标记（虚线下划线暗示可悬停），悬停弹出说明；其余行保持只显示百分比。
+        if (record?.removed_stream === true) {
+          return (
+            <span className="inline-flex items-center gap-x-1">
+              <span>{pct}</span>
+              <Tooltip
+                context={tr('reward_stream_rec_removed_tip')}
+                icon={false}
+              >
+                <span className="cursor-help text-[10px] underline decoration-dotted opacity-60">
+                  {tr('reward_stream_rec_removed')}
+                </span>
+              </Tooltip>
+            </span>
+          )
+        }
+        return pct
+      },
     },
     {
       title: tr('reward_stream_rec_claimed'),
