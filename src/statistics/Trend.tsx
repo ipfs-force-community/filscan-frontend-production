@@ -1,10 +1,11 @@
 /** @format */
 import { apiUrl } from '@/contents/apiUrl'
 import EChart from '@/components/echarts'
+import Tooltip from '@/packages/tooltip'
 import { Translation } from '@/components/hooks/Translation'
 import { power_trend, power_trend_intervals } from '@/contents/statistic'
 import { getSvgIcon } from '@/svgsIcon'
-import { formatDateTime, unitConversion } from '@/utils'
+import { formatDateTime } from '@/utils'
 import {
   DEFAULT_TREND_INTERVAL,
   TREND_INTERVALS,
@@ -163,58 +164,26 @@ export default observer((props: Props) => {
         },
         formatter(v: any) {
           var result = v?.[0]?.data?.showTime || ''
-          // 三条 series 行：有效算力（左轴）/ 可升级算力（1× 档）/ 满倍率算力（10×）（后两者右轴）
+          // 五行：时间 + 有效算力（左轴）/ 原值算力（左轴）/ 可升级算力（右轴）/ 算力增量（右轴，带正负号）
+          // 每行数值随所属系列的单位（series 行用所属轴的定档单位），不再有额外的解释层 extras。
           v.forEach((item: any) => {
             if (item.data) {
+              const amt = Number(item.data.amount)
+              // 算力增量可正可负：正数补一个明确的「+」号
+              const sign =
+                item.seriesName === 'change_quality_adj_power' && amt > 0
+                  ? '+'
+                  : ''
               result +=
                 '<br/>' +
                 item.marker +
                 tr(item.seriesName) +
                 ': ' +
+                sign +
                 item.data.amount +
                 ' ' +
                 item.data.unit
             }
-          })
-          // 解释层（末尾四行 extras，挂在同一点位）：原值算力 / 平均质量倍数 / 算力净增 / 算力损失。
-          // 数值一律从 point 上读取；字段缺失 / NaN 一律跳过，不报错（允许后端字段后发）。
-          const point = v?.[0]?.data
-          const leftUnit = axisUnits[0]
-          // 原值算力（总量 RAW）：与「有效算力」同一量纲基准，用左轴单位便于对照
-          const rawNum = Number(point?.raw)
-          if (
-            point?.raw !== null &&
-            point?.raw !== undefined &&
-            point?.raw !== '' &&
-            isFinite(rawNum)
-          ) {
-            result +=
-              '<br/>' +
-              tr('total_raw_byte_power') +
-              ': ' +
-              scaleToPowerUnitForDisplay(rawNum, leftUnit, 2) +
-              ' ' +
-              leftUnit
-          }
-          // 平均质量倍数 = 有效算力 ÷ 原值算力（保留 2 位小数；raw 为 0 / 缺失不显示）
-          const qaNum = Number(point?.qa)
-          if (isFinite(qaNum) && isFinite(rawNum) && rawNum !== 0) {
-            result +=
-              '<br/>' +
-              tr('avg_multiplier') +
-              ': ' +
-              (qaNum / rawNum).toFixed(2)
-          }
-          // 算力净增 / 损失：已无自己的轴，用 unitConversion 自动按量级定档显示（典型 0.8 / 2.5 PiB）
-          const netRows: Array<[string, any]> = [
-            ['power_increase', point?.inc],
-            ['power_decrease', point?.dec],
-          ]
-          netRows.forEach(([key, val]) => {
-            if (val === null || val === undefined || val === '') return
-            const num = Number(val)
-            if (!isFinite(num)) return
-            result += '<br/>' + tr(key) + ': ' + unitConversion(num, 2)
           })
           return result
         },
@@ -254,12 +223,6 @@ export default observer((props: Props) => {
     list.forEach((value: any) => {
       const { timestamp } = value
       dateList.push(formatDateTime(timestamp, dateLabelFmt))
-      // tooltip 解释层要用的整点字段（附到每个点，供「原值算力/平均质量倍数/净增/损失」四行）
-      const qaPower = value['total_quality_adj_power']
-      const rawPower = value['total_raw_byte_power']
-      // 净增 / 损失已不再占轴：作为原值字节随 point 交给 tooltip，由 unitConversion 自动定档显示
-      const incPower = value['power_increase']
-      const decPower = value['power_decrease']
       power_trend.list.forEach((item: any) => {
         // 同一轴上的系列共用一个单位（按该轴数据量级定档）
         const unit = units[item.yIndex] || units[0]
@@ -271,10 +234,6 @@ export default observer((props: Props) => {
           amount: scaleToPowerUnitForDisplay(rawVal, unit, 2),
           unit,
           showTime: formatDateTime(timestamp, 'YYYY-MM-DD HH:mm'),
-          qa: qaPower,
-          raw: rawPower,
-          inc: incPower,
-          dec: decPower,
         })
       })
     })
@@ -302,7 +261,6 @@ export default observer((props: Props) => {
         name: item.dataIndex,
         color: item.color,
         type: item.type,
-        // 柱状 chip 的悬停说明（原值只有 line 有 tip，这里是 bar）
         tip: item.tip,
       })
       seriesData.push({
@@ -316,10 +274,7 @@ export default observer((props: Props) => {
         itemStyle: {
           color: item.color,
         },
-        barMaxWidth: '30',
-        // 堆叠面积：stack 同名才叠放，area 为 true 时画成面积（由 contents 定义透传）
-        ...(item.stack ? { stack: item.stack } : {}),
-        ...(item.area ? { areaStyle: {} } : {}),
+        // 四线两轴、无面积填充：不透传 stack / areaStyle（一律折线）
         ...(i === 0 && nv29Line ? { markLine: nv29Line } : {}),
       })
     })
@@ -422,6 +377,7 @@ export default observer((props: Props) => {
             )}
           >
             {tr('power')}
+            <Tooltip context={tr('power_trend_tip')} />
           </div>
           <div className="w-fit">
             <BrowserView>
@@ -449,12 +405,6 @@ export default observer((props: Props) => {
               </span>
             </BrowserView>
           </div>
-          <span
-            className="text_des ml-5 text-[11px] font-normal opacity-70"
-            data-testid="power-trend-scope-note"
-          >
-            {tr('power_trend_scope_note')}
-          </span>
         </div>
         <Segmented
           defaultValue={activeInterval}

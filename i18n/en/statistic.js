@@ -17,6 +17,9 @@ const statistic = {
   power_trend_scope_note:
     'Raw byte power = full-multiplier power (10×) + upgradable power (1× tier); the left axis is quality-adjusted power',
   power_trend_nv29_line: 'NV29 activated',
+  // Tooltip for the title's "?" icon: the four measures (4 lines / 2 axes) + one line on full-multiplier power
+  power_trend_tip:
+    'QualityAdjPower = network power after multiplier weighting (left axis); Raw Byte Power = pure disk capacity (left axis); Upgradable power = capacity not yet at full multiplier, it only shrinks (right axis); Power delta = change of QualityAdjPower vs the previous data point, can be positive or negative (right axis). Full-multiplier power = Raw Byte Power − Upgradable power.',
   power_increase_tip:
     'Per-miner power change: upgrading legacy sectors to 10× raises quality-adjusted power without new hardware',
   power_decrease_tip: 'Per-miner power loss (sector termination / expiration)',
@@ -26,7 +29,7 @@ const statistic = {
   power_increase: 'Net Power Increase',
   power_decrease: 'Net Power Decrease',
   total_quality_adj_power: 'QualityAdjPower',
-  change_quality_adj_power: 'QualityAdjPower Fluctuations',
+  change_quality_adj_power: 'Power Delta',
   gas: 'Base Fee Variations',
   base_fee: 'Base Fee',
   gas_in_32g: 'Gas Cost of Sealing a 32GiB Sector',

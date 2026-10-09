@@ -17,6 +17,9 @@ const statistic = {
   power_trend_scope_note:
     '原值算力 ＝ 满倍率算力（10×）＋ 可升级算力（1× 档）；左轴为倍数加权后的有效算力',
   power_trend_nv29_line: 'NV29 激活',
+  // 标题右侧「?」的悬浮解释：四个口径（四线两轴）＋ 满倍率算力一句
+  power_trend_tip:
+    '有效算力＝倍数加权后的全网算力（左轴）；原值算力＝纯硬盘容量（左轴）；可升级算力＝尚未升到满倍率的容量、只会变少（右轴）；算力增量＝相对上一个数据点的有效算力变化，可正可负（右轴）。满倍率算力＝原值算力 − 可升级算力。',
   power_increase_tip:
     '按节点聚合的算力增减：老扇区升到 10× 时，即使没有新增硬件，有效算力也会上升',
   power_decrease_tip: '按节点聚合的算力减少（含扇区终止与到期）',
@@ -25,7 +28,7 @@ const statistic = {
   base_line_power: '基线走势',
   power_increase: '算力净增',
   power_decrease: '算力损失',
-  change_quality_adj_power: '环比有效算力变化',
+  change_quality_adj_power: '算力增量',
   total_quality_adj_power: '有效算力',
   gas: '基础手续费走势',
   base_fee: '基础手续费',
