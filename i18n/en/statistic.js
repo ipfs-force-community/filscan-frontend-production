@@ -128,7 +128,7 @@ const statistic = {
   //chartsnav
   power_multiplier_trend: 'Power multiplier structure',
   full_multiplier_power: 'Full-multiplier power (10×)',
-  pending_upgrade_power: 'Pending upgrade power',
+  pending_upgrade_power: 'Upgradable power (1× tier)',
   power_multiplier_nv29_line:
     'Since NV29 the power multiplier no longer changes with content',
   static_overview: 'Statistics',

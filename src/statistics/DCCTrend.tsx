@@ -23,7 +23,7 @@ interface Props {
 // 两条线不再用 DC/CC（datacap 冻结后该口径失效），字段由 DCTrend 响应直接给出，
 // 口径唯一实现在后端 chain.QualityTierSplit（NV29 前后同式，历史不重算）：
 //   full_multiplier_power  ＝ 满倍率算力（处于 10× 档的等效原始字节）
-//   pending_upgrade_power  ＝ 待升级算力（未达满倍率的等效原始字节）
+//   pending_upgrade_power  ＝ 可升级算力（未达满倍率的等效原始字节，SP 可主动升到 10×）
 // 前端不重算该公式（避免两处口径分叉）；raw / quality_adj_power 仍随响应返回，供查证。
 // 恢复方式（一行）：把 contents/statistic.tsx 的 power_tier_trend 两条线 dataIndex 改回 cc/dc，
 // 并在 i18n 恢复 dc_trend / cc_trend，即回到旧的 CC/DC 口径（组件本体保留，未删）。
@@ -152,7 +152,7 @@ export default observer((props: Props) => {
 
       // 口径唯一实现在后端 chain.QualityTierSplit（NV29 前后同式），前端只渲染：
       //   full_multiplier_power ＝ 满倍率算力（处于 10× 档的等效原始字节）
-      //   pending_upgrade_power ＝ 待升级算力（未达满倍率的等效原始字节）
+      //   pending_upgrade_power ＝ 可升级算力（未达满倍率的等效原始字节，SP 可主动升到 10×）
       power_tier_trend.list.forEach((item: any) => {
         const val = Number(value[item.dataIndex]) || 0
         const [amount, unit] = unitConversion(val, 2)?.split(' ') || []

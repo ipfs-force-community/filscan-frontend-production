@@ -118,7 +118,7 @@ const account = {
   quality_power: '有效算力',
   full_multiplier_power: '满倍率算力',
   raw_power: '原值算力',
-  pending_upgrade_power: '待升级算力',
+  pending_upgrade_power: '可升级算力',
   sector_size: '扇区大小',
   sector_power_change: '扇区变化',
   sector_power_count: 'Sector数量',

@@ -43,7 +43,7 @@ const home = {
   burnt: '破壊された量',
   circulating_percent: '流通率',
   full_multiplier_power: '満倍率計算力',
-  pending_upgrade_power: 'アップグレード待ち計算力',
+  pending_upgrade_power: 'アップグレード可能計算力',
   rank:'ランキング',
   see_more:'See More',
 }

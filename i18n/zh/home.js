@@ -111,7 +111,7 @@ const home = {
   warn_details: '对不起！这是一个无效的字符串',
   go_home: '返回首页',
   full_multiplier_power: '满倍率算力',
-  pending_upgrade_power: '待升级算力',
+  pending_upgrade_power: '可升级算力',
   base_gas: '24h基础手续费走势',
   rank: '排行榜',
   contract_rank: '合约排行',

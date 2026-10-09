@@ -108,7 +108,7 @@ const home = {
   verified_contracts: 'Verified Contracts',
   contract_gas: 'Contract Gas Cost',
   full_multiplier_power: 'Full-multiplier power',
-  pending_upgrade_power: 'Pending upgrade power',
+  pending_upgrade_power: 'Upgradable power',
   see_more: 'See More',
   contract_balance:'Contract Balance'
 

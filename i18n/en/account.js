@@ -117,7 +117,7 @@ const account = {
   quality_power: 'Quality Power',
   full_multiplier_power: 'Full-multiplier power',
   raw_power: 'Raw Power',
-  pending_upgrade_power: 'Pending upgrade power',
+  pending_upgrade_power: 'Upgradable power',
   sector_size: 'Sector Size',
   sector_power_change: 'Sector Change',
   sector_power_count: 'Sector Count',
