@@ -151,7 +151,7 @@ export const power_trend = {
   ],
 }
 
-// 算力走势图的档位（24h / 7d / 30d / 1y；默认档 30d，见 utils/powerTrend.ts 的 DEFAULT_TREND_INTERVAL）
+// 算力走势图的档位（24h / 7d / 30d / 1y；默认档 7d，见 utils/powerTrend.ts 的 DEFAULT_TREND_INTERVAL）
 export const power_trend_intervals = [
   {
     label: '24h',

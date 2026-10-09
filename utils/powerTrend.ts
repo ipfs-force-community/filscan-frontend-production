@@ -144,8 +144,12 @@ export function pickAxisUnits(
   )
 }
 
-/** Trend 的默认档位（30 天；与 contents/statistic.tsx 的 power_trend_intervals 一致） */
-export const DEFAULT_TREND_INTERVAL = '30d'
+/**
+ * Trend 的默认档位（7 天；与 contents/statistic.tsx 的 power_trend_intervals 一致）。
+ * 默认避开 30d：主网 30d 档接口实测约 11s（24h/7d 分别 ~0.2s/~1.1s），
+ * 30d 仍是可选档位，只是不再作为首屏默认（属已登记的既有后端性能问题）。
+ */
+export const DEFAULT_TREND_INTERVAL = '7d'
 
 /** 能画出折线的最少点数（< 2 点画不出线） */
 export const MIN_TREND_POINTS = 2

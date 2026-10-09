@@ -182,8 +182,8 @@ test('unavailableTrendIntervals: 测试网 1y=1 -> 仅 1y 置灰', () => {
   assert.deepEqual(unavailableTrendIntervals(cali), ['1y'])
 })
 
-test('默认档位改为 30d', () => {
-  assert.equal(DEFAULT_TREND_INTERVAL, '30d')
+test('默认档位改为 7d（避开主网 30d 档 ~11s 延迟）', () => {
+  assert.equal(DEFAULT_TREND_INTERVAL, '7d')
 })
 
 test('常量自检：三档单位是 1024 的 4/5/6 次方', () => {
