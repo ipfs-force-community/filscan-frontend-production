@@ -15,7 +15,7 @@ const statistic = {
   power_trend_data_unavailable: '测试网历史数据不足',
   // NV29 解释层：原值算力口径说明 + 激活高度竖线 + 净增/损失提示
   power_trend_scope_note:
-    '原值算力 ＝ 满倍率算力（10×）＋ 可升级算力（1× 档）；左轴为倍数加权后的有效算力',
+    '原值算力 ＝ 满倍率算力（10×）＋ 可升级算力；左轴为倍数加权后的有效算力',
   power_trend_nv29_line: 'NV29 激活',
   // 标题右侧「?」的悬浮解释：四个口径（四线两轴）＋ 满倍率算力一句
   power_trend_tip:
@@ -72,7 +72,7 @@ const statistic = {
   //chartsnav
   power_multiplier_trend: '算力倍数结构走势',
   full_multiplier_power: '满倍率算力（10×）',
-  pending_upgrade_power: '可升级算力（1× 档）',
+  pending_upgrade_power: '可升级算力',
   avg_multiplier: '平均质量倍数',
   power_multiplier_nv29_line: 'NV29 起算力倍数不再随内容变化',
   static_overview: '数据统计',

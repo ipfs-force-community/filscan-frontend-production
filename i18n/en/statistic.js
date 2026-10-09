@@ -15,7 +15,7 @@ const statistic = {
   power_trend_data_unavailable: 'Insufficient testnet historical data',
   // NV29 explanation layer: raw-byte-power definition + activation-height vertical line + growth/loss notes
   power_trend_scope_note:
-    'Raw byte power = full-multiplier power (10×) + upgradable power (1× tier); the left axis is quality-adjusted power',
+    'Raw byte power = full-multiplier power (10×) + upgradable power; the left axis is quality-adjusted power',
   power_trend_nv29_line: 'NV29 activated',
   // Tooltip for the title's "?" icon: the four measures (4 lines / 2 axes) + one line on full-multiplier power
   power_trend_tip:
@@ -138,7 +138,7 @@ const statistic = {
   //chartsnav
   power_multiplier_trend: 'Power multiplier structure',
   full_multiplier_power: 'Full-multiplier power (10×)',
-  pending_upgrade_power: 'Upgradable power (1× tier)',
+  pending_upgrade_power: 'Upgradable power',
   avg_multiplier: 'Average quality multiplier',
   power_multiplier_nv29_line:
     'Since NV29 the power multiplier no longer changes with content',

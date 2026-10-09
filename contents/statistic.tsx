@@ -136,7 +136,7 @@ export const power_trend = {
       color: '#4ACAB4',
     },
     {
-      // 右轴：可升级算力（1× 档，未达满倍率的容量，只会变小；主网 ~143 PiB）
+      // 右轴：可升级算力（未达满倍率的容量，只会变小；主网 ~143 PiB）
       title: 'pending_upgrade_power',
       dataIndex: 'pending_upgrade_power',
       yIndex: 1,
@@ -175,7 +175,7 @@ export const power_trend_intervals = [
     dataIndex: '30d',
   },
   {
-    label: '1y',
+    label: 'year',
     title: 'year',
     value: '1y',
     dataIndex: '1y',

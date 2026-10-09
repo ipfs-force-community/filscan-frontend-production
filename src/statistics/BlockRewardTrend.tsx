@@ -191,7 +191,9 @@ export default observer((props: Props) => {
       >
         <div className="w-fit min-w-[120px] font-HarmonyOS text-lg font-semibold ">
           {tr('block_trend')}
-          <Tooltip context={tr('block_trend_tip')} />
+          <span className="ml-1 inline-flex items-center align-middle [&_svg]:inline-block [&_svg]:align-middle">
+            <Tooltip context={tr('block_trend_tip')} />
+          </span>
         </div>
         <Segmented
           defaultValue={interval}

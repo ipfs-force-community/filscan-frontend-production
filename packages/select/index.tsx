@@ -15,6 +15,8 @@ export default ({
   value,
   suffix,
   optionsCard,
+  disabledKeys,
+  disabledTip,
 }: {
   ns: string
   options?: Array<Option_Item>
@@ -25,6 +27,10 @@ export default ({
   value?: string | undefined
   className?: string
   suffix?: JSX.Element
+  /** 不可选的档位（如测试网 1 年档无历史数据）：置灰且不响应点击；不传 = 行为完全不变 */
+  disabledKeys?: string[]
+  /** 置灰档位的悬停提示（i18n key，走 ns 命名空间）；仅 disabledKeys 命中时生效 */
+  disabledTip?: string
 }) => {
   const { tr } = Translation({ ns })
   const [showLabel, setShowLabel] = useState('')
@@ -66,12 +72,24 @@ export default ({
       >
         {Array.isArray(options) &&
           options?.map((item) => {
+            const isDisabled = !!disabledKeys?.includes(item.value)
             return (
               <li
-                onClick={() => handleClick(item)}
+                onClick={() => {
+                  // 置灰档位（如测试网历史数据不足的 1 年档）：不响应点击，行为与 Segmented 一致
+                  if (isDisabled) return
+                  handleClick(item)
+                }}
                 key={item.value}
-                className={`rounded-[5px] p-2 hover:text-primary ${
-                  item.value === active ? 'bg-bg_hover text-primary' : ''
+                title={isDisabled && disabledTip ? tr(disabledTip) : undefined}
+                className={`rounded-[5px] p-2 ${
+                  isDisabled
+                    ? 'cursor-not-allowed opacity-40'
+                    : 'cursor-pointer hover:text-primary'
+                } ${
+                  item.value === active && !isDisabled
+                    ? 'bg-bg_hover text-primary'
+                    : ''
                 }`}
               >
                 {tr(item.label)}

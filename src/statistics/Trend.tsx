@@ -27,6 +27,7 @@ import styles from './trend.module.scss'
 import classNames from 'classnames'
 import { BrowserView, MobileView } from '@/components/device-detect'
 import useAxiosData from '@/store/useAxiosData'
+import Select from '@/packages/select'
 import Segmented from '@/packages/segmented'
 import useWindow from '@/components/hooks/useWindown'
 import filscanStore from '@/store/modules/filscan'
@@ -377,7 +378,9 @@ export default observer((props: Props) => {
             )}
           >
             {tr('power')}
-            <Tooltip context={tr('power_trend_tip')} />
+            <span className="ml-1 inline-flex items-center align-middle [&_svg]:inline-block [&_svg]:align-middle">
+              <Tooltip context={tr('power_trend_tip')} />
+            </span>
           </div>
           <div className="w-fit">
             <BrowserView>
@@ -406,15 +409,29 @@ export default observer((props: Props) => {
             </BrowserView>
           </div>
         </div>
-        <Segmented
-          defaultValue={activeInterval}
-          data={power_trend_intervals}
-          ns="static"
-          isHash={false}
-          disabledKeys={unavailableIntervals}
-          disabledTip="power_trend_data_unavailable"
-          onChange={(value: string) => changeInterval(value)}
-        />
+        {/* 档位控件按 origin 分岔（产品 2026-10-09 更正）：首页＝下拉（合约交易同款），
+            数据统计页＝原并排 Segmented 按钮；两者共用同一份 interval 状态与
+            changeInterval / unavailableIntervals 逻辑，仅控件本身不同。 */}
+        {origin === 'home' ? (
+          <Select
+            ns="static"
+            options={power_trend_intervals}
+            value={activeInterval}
+            disabledKeys={unavailableIntervals}
+            disabledTip="power_trend_data_unavailable"
+            onChange={(value: string) => changeInterval(value)}
+          />
+        ) : (
+          <Segmented
+            defaultValue={activeInterval}
+            data={power_trend_intervals}
+            ns="static"
+            isHash={false}
+            disabledKeys={unavailableIntervals}
+            disabledTip="power_trend_data_unavailable"
+            onChange={(value: string) => changeInterval(value)}
+          />
+        )}
         {origin === 'home' && (
           <Link href={`/statistics/charts#blockChain`}>
             <MobileView>
