@@ -39,25 +39,25 @@ test('上限常量本身：左轴 EiB、右轴 PiB', () => {
   assert.deepEqual(POWER_TREND_AXIS_UNIT_CAPS, ['EiB', 'PiB'])
 })
 
-test('主网量级：左轴 EiB 不变，右轴即便到 EiB 量级也仍为 PiB（不上探）', () => {
+test('主网量级：左轴 EiB 不变，右轴（原值两档）即便到 EiB 量级也仍为 PiB（不上探）', () => {
   const list = [
     {
       total_quality_adj_power: 12.31 * EiB,
       total_raw_byte_power: 1.38 * EiB,
-      power_increase: 2.4 * EiB,
-      power_decrease: 2.4 * EiB,
+      full_multiplier_power: 1.21 * EiB,
+      pending_upgrade_power: 0.17 * EiB,
     },
   ]
   assert.deepEqual(pickAxisUnits(list), ['EiB', 'PiB'])
 })
 
-test('测试网量级（cali：1.04 PiB / 净增 217 TiB）：左 PiB、右 TiB', () => {
+test('测试网量级（cali：QA 1.03 PiB / 原值两档 105 TiB & 6.8 TiB）：左 PiB、右 TiB', () => {
   const list = [
     {
-      total_quality_adj_power: 1.04 * PiB,
-      total_raw_byte_power: 0.11 * PiB,
-      power_increase: 217 * TiB,
-      power_decrease: 0.5 * TiB,
+      total_quality_adj_power: 1.03 * PiB,
+      total_raw_byte_power: 0.107 * PiB,
+      full_multiplier_power: 105 * TiB,
+      pending_upgrade_power: 6.8 * TiB,
     },
   ]
   assert.deepEqual(pickAxisUnits(list), ['PiB', 'TiB'])
@@ -67,13 +67,12 @@ test('去掉上限时右轴才会取 EiB（证明上限确实在起作用）', (
   const list = [
     {
       total_quality_adj_power: 12.31 * EiB,
-      total_raw_byte_power: 1.38 * EiB,
-      power_increase: 2.4 * EiB,
-      power_decrease: 2.4 * EiB,
+      full_multiplier_power: 1.21 * EiB,
+      pending_upgrade_power: 0.17 * EiB,
     },
   ]
   assert.deepEqual(pickAxisUnits(list, undefined, []), ['EiB', 'EiB'])
-  assert.equal(pickPowerUnit(2.4 * EiB), 'EiB')
+  assert.equal(pickPowerUnit(1.21 * EiB), 'EiB')
 })
 
 test('空数据不报错', () => {

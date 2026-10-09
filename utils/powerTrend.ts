@@ -102,10 +102,10 @@ export function formatPowerAxisTick(
   return `${rounded} ${unit}`
 }
 
-/** 左轴 = 有效算力；右轴 = 算力净增/损失。两个轴各自定档。 */
+/** 左轴 = 有效算力（QA）；右轴 = 原值算力的两档（满倍率 + 可升级）。两个轴各自定档。 */
 export const POWER_TREND_AXIS_FIELDS: string[][] = [
-  ['total_quality_adj_power', 'total_raw_byte_power'],
-  ['power_increase', 'power_decrease'],
+  ['total_quality_adj_power'],
+  ['pending_upgrade_power', 'full_multiplier_power'],
 ]
 
 /** 给定序列里指定字段的最大绝对值（字节）；空数据返回 0 */

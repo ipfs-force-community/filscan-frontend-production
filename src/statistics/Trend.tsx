@@ -4,7 +4,7 @@ import EChart from '@/components/echarts'
 import { Translation } from '@/components/hooks/Translation'
 import { power_trend, power_trend_intervals } from '@/contents/statistic'
 import { getSvgIcon } from '@/svgsIcon'
-import { formatDateTime } from '@/utils'
+import { formatDateTime, unitConversion } from '@/utils'
 import {
   DEFAULT_TREND_INTERVAL,
   TREND_INTERVALS,
@@ -43,8 +43,8 @@ export default observer((props: Props) => {
   const { axiosData } = useAxiosData()
   const [noShow, setNoShow] = useState<Record<string, boolean>>({})
   const [options, setOptions] = useState<any>({})
-  // 轴单位（左轴=堆叠算力（满倍率/可升级），右轴=算力净增/损失），取到数据后按各轴数据量级定档
-  // 初值与改动前写死的 EiB/PiB 一致，主网量级仍会算成 EiB
+  // 轴单位（左轴=有效算力 QA；右轴=原值算力的两档：满倍率 + 可升级），取到数据后按各轴数据量级定档
+  // 初值与上限一致：左轴 EiB、右轴 PiB（上限常量见 utils/powerTrend.ts 的 POWER_TREND_AXIS_UNIT_CAPS）
   const [axisUnits, setAxisUnits] = useState<PowerUnit[]>(['EiB', 'PiB'])
   // 时间区间：默认 30 天；四档常显（测试网历史状态只有约 36h，点数不足的档位置灰）
   const [activeInterval, setActiveInterval] = useState<string>(
@@ -122,7 +122,7 @@ export default observer((props: Props) => {
             color: color.textStyle,
           },
           axisLabel: {
-            // 右轴（算力净增/损失）独立定档
+            // 右轴（原值算力的两档）独立定档
             formatter: (value: number) => formatPowerAxisTick(value, rightUnit),
             textStyle: {
               //  fontSize: this.fontSize,
@@ -163,7 +163,7 @@ export default observer((props: Props) => {
         },
         formatter(v: any) {
           var result = v?.[0]?.data?.showTime || ''
-          // 四条 series 行：可升级算力（1× 档）/ 满倍率算力（10×）/ 算力净增 / 算力损失
+          // 三条 series 行：有效算力（左轴）/ 可升级算力（1× 档）/ 满倍率算力（10×）（后两者右轴）
           v.forEach((item: any) => {
             if (item.data) {
               result +=
@@ -176,29 +176,28 @@ export default observer((props: Props) => {
                 item.data.unit
             }
           })
-          // 解释层（末尾三行）：有效算力 / 原值算力 / 平均质量倍数。
-          // 单位取左轴单位；字段缺失或为 null 就跳过不显示、不报错（允许后端字段后发）。
+          // 解释层（末尾四行 extras，挂在同一点位）：原值算力 / 平均质量倍数 / 算力净增 / 算力损失。
+          // 数值一律从 point 上读取；字段缺失 / NaN 一律跳过，不报错（允许后端字段后发）。
           const point = v?.[0]?.data
           const leftUnit = axisUnits[0]
-          const extra: Array<[string, any]> = [
-            ['total_quality_adj_power', point?.qa],
-            ['total_raw_byte_power', point?.raw],
-          ]
-          extra.forEach(([key, val]) => {
-            if (val === null || val === undefined || val === '') return
-            const num = Number(val)
-            if (!isFinite(num)) return
+          // 原值算力（总量 RAW）：与「有效算力」同一量纲基准，用左轴单位便于对照
+          const rawNum = Number(point?.raw)
+          if (
+            point?.raw !== null &&
+            point?.raw !== undefined &&
+            point?.raw !== '' &&
+            isFinite(rawNum)
+          ) {
             result +=
               '<br/>' +
-              tr(key) +
+              tr('total_raw_byte_power') +
               ': ' +
-              scaleToPowerUnitForDisplay(num, leftUnit, 2) +
+              scaleToPowerUnitForDisplay(rawNum, leftUnit, 2) +
               ' ' +
               leftUnit
-          })
-          // 平均质量倍数 = 有效算力 ÷ 原值算力（保留 2 位小数；raw 为 0 或缺失不显示）
+          }
+          // 平均质量倍数 = 有效算力 ÷ 原值算力（保留 2 位小数；raw 为 0 / 缺失不显示）
           const qaNum = Number(point?.qa)
-          const rawNum = Number(point?.raw)
           if (isFinite(qaNum) && isFinite(rawNum) && rawNum !== 0) {
             result +=
               '<br/>' +
@@ -206,6 +205,17 @@ export default observer((props: Props) => {
               ': ' +
               (qaNum / rawNum).toFixed(2)
           }
+          // 算力净增 / 损失：已无自己的轴，用 unitConversion 自动按量级定档显示（典型 0.8 / 2.5 PiB）
+          const netRows: Array<[string, any]> = [
+            ['power_increase', point?.inc],
+            ['power_decrease', point?.dec],
+          ]
+          netRows.forEach(([key, val]) => {
+            if (val === null || val === undefined || val === '') return
+            const num = Number(val)
+            if (!isFinite(num)) return
+            result += '<br/>' + tr(key) + ': ' + unitConversion(num, 2)
+          })
           return result
         },
       },
@@ -244,9 +254,12 @@ export default observer((props: Props) => {
     list.forEach((value: any) => {
       const { timestamp } = value
       dateList.push(formatDateTime(timestamp, dateLabelFmt))
-      // tooltip 解释层要用的整点字段（附到每个点，供「有效算力/原值算力/平均质量倍数」三行）
+      // tooltip 解释层要用的整点字段（附到每个点，供「原值算力/平均质量倍数/净增/损失」四行）
       const qaPower = value['total_quality_adj_power']
       const rawPower = value['total_raw_byte_power']
+      // 净增 / 损失已不再占轴：作为原值字节随 point 交给 tooltip，由 unitConversion 自动定档显示
+      const incPower = value['power_increase']
+      const decPower = value['power_decrease']
       power_trend.list.forEach((item: any) => {
         // 同一轴上的系列共用一个单位（按该轴数据量级定档）
         const unit = units[item.yIndex] || units[0]
@@ -260,10 +273,12 @@ export default observer((props: Props) => {
           showTime: formatDateTime(timestamp, 'YYYY-MM-DD HH:mm'),
           qa: qaPower,
           raw: rawPower,
+          inc: incPower,
+          dec: decPower,
         })
       })
     })
-    // NV29 解释层竖线（照抄 DCCTrend.tsx 的 markLine 写法），挂到 series[0]（可升级算力线）
+    // NV29 解释层竖线（照抄 DCCTrend.tsx 的 markLine 写法），挂到 series[0]（有效算力线）
     let nv29Line: any = null
     if (nv29Idx >= 0) {
       nv29Line = {

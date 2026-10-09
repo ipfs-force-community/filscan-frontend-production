@@ -111,49 +111,43 @@ export const gas_24 = {
 }
 
 // 算力走势图（已合并旧「算力倍数结构走势」）：
-//   左轴 = 堆叠面积：可升级算力（1× 档，底层）+ 满倍率算力（10×，上层）⇒ 顶边即有效算力；
-//   右轴 = 算力净增 / 损失柱。
-// 数组顺序 = ECharts 叠放顺序（第一条在最底下）；两条线的颜色与旧图 power_tier_trend 同源。
+//   左轴 = 有效算力（质量调整算力 QA）一条折线；
+//   右轴 = 原值算力的两档堆叠面积：可升级算力（1× 档，底层）+ 满倍率算力（10×，上层）⇒ 顶边即原值算力 RAW。
+//   口径提醒：full + pending = RAW ≠ QA（QA = full×10 + pending×1），两轴量级不同，故必须分轴（不能同轴堆叠）。
+// 数组顺序 = ECharts 叠放顺序（第一条在最底下）；两条面积线的颜色与旧图 power_tier_trend 同源。
 // stack / area 由 Trend.tsx 透传给 ECharts（stack 同名才叠放，areaStyle 画成面积）。
+// 算力净增 / 损失不再单独占轴或画柱：数值改由 Trend.tsx 的 tooltip 从同点位字段读取（见 utils/powerTrend.ts）。
 export const power_trend = {
   title: 'power',
   list: [
     {
-      // 堆叠底层：可升级算力（1× 档）
-      title: 'pending_upgrade_power',
-      dataIndex: 'pending_upgrade_power',
+      // 左轴：有效算力（质量调整算力，不堆叠）
+      title: 'total_quality_adj_power',
+      dataIndex: 'total_quality_adj_power',
       yIndex: 0,
       type: 'line',
-      stack: 'qa',
+      color: '#FFC53D',
+    },
+    {
+      // 右轴堆叠底层：可升级算力（1× 档）
+      title: 'pending_upgrade_power',
+      dataIndex: 'pending_upgrade_power',
+      yIndex: 1,
+      type: 'line',
+      stack: 'raw',
       area: true,
       color: '#F8CD4D',
     },
     {
-      // 堆叠上层：满倍率算力（10×）
+      // 右轴堆叠上层：满倍率算力（10×）
       title: 'full_multiplier_power',
       dataIndex: 'full_multiplier_power',
-      yIndex: 0,
+      yIndex: 1,
       type: 'line',
-      stack: 'qa',
+      stack: 'raw',
       area: true,
       color: '#4ACAB4',
     },
-    {
-      title: 'power_increase',
-      dataIndex: 'power_increase',
-      yIndex: 1,
-      color: '#1C6AFD',
-      type: 'bar',
-      tip: 'power_increase_tip',
-    }, //算力净增
-    {
-      dataIndex: 'power_decrease',
-      title: 'power_decrease',
-      yIndex: 1,
-      color: '#B0CBFE',
-      type: 'bar',
-      tip: 'power_decrease_tip',
-    }, //算力损失
   ],
 }
 

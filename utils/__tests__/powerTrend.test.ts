@@ -104,52 +104,57 @@ test('formatPowerAxisTick: 非法输入不崩溃', () => {
 })
 
 // —— 序列取值（真实 API 量级） ——
-test('maxAbsBytes / pickAxisUnits: 主网 1m 数据左轴 EiB、右轴按净增量级', () => {
+test('maxAbsBytes / pickAxisUnits: 主网 30d 数据左轴 EiB、右轴（原值两档）压到 PiB', () => {
+  // 真实量级（api-v2 BaseLineTrend 30d 首点）：QA ≈ 12.29 EiB / RAW ≈ 1.374 EiB
+  //   full = (QA−RAW)/9 ≈ 1.213 EiB、pending = RAW−full ≈ 0.161 EiB（full + pending = RAW）
   const list = [
     {
-      total_quality_adj_power: 1.422e19, // ~12.34 EiB
-      total_raw_byte_power: 1.595e18, // ~1.38 EiB
-      power_increase: 2.773e18, // ~2.4 EiB
-      power_decrease: 1.268e18,
+      total_quality_adj_power: 1.4172573410077179904e19, // ~12.29 EiB
+      total_raw_byte_power: 1.584500090754564096e18, // ~1.374 EiB
+      full_multiplier_power: 1.398674813258068423e18, // ~1.213 EiB
+      pending_upgrade_power: 1.85825277496495672e17, // ~0.161 EiB
     },
     {
       total_quality_adj_power: 1.393e19,
-      total_raw_byte_power: 1.543e18,
-      power_increase: 3.664e14,
-      power_decrease: 8.724e14,
+      full_multiplier_power: 1.39e18,
+      pending_upgrade_power: 1.86e17,
     },
   ]
-  assert.equal(maxAbsBytes(list, ['total_quality_adj_power']), 1.422e19)
-  // 右轴有单位上限 PiB（= 改动前的写死值）：即便样本到 EiB 量级也不上探，
-  // 以保证主网显示与改动前逐字一致（上限回归见 powerTrendAxisCap.test.ts）
+  assert.equal(
+    maxAbsBytes(list, ['total_quality_adj_power']),
+    1.4172573410077179904e19,
+  )
+  // 右轴字段＝原值算力的两档（满倍率 + 可升级）；满倍率 ≈ 1.21 EiB 本会上探 EiB，
+  // 但右轴单位上限是 PiB ⇒ 被压到 PiB（≈1242 PiB）。上限回归见 powerTrendAxisCap.test.ts。
   assert.deepEqual(pickAxisUnits(list), ['EiB', 'PiB'])
 })
 
-test('pickAxisUnits: calibration 24h 数据左轴 PiB、右轴 TiB（两轴各自定档）', () => {
+test('pickAxisUnits: calibration 30d 数据左轴 PiB、右轴（原值两档）TiB（两轴各自定档）', () => {
+  // 真实量级（api-cali BaseLineTrend 30d 首点）：QA ≈ 1.034 PiB / RAW ≈ 109.4 TiB
+  //   full ≈ 105.2 TiB、pending ≈ 6.8 TiB ⇒ 右轴自然定档 TiB（0.10 PiB < 1 PiB，上限 PiB 只会压不会抬）。
   const list = [
     {
-      total_quality_adj_power: 1.17e15, // 1.04 PiB
-      total_raw_byte_power: 1.231e14, // 111 TiB
-      power_increase: 2.391e14, // 217 TiB
-      power_decrease: 2.391e14,
+      total_quality_adj_power: 1.164425763487744e15, // ~1.034 PiB
+      total_raw_byte_power: 1.23145302310912e14, // ~109.4 TiB
+      full_multiplier_power: 1.15697829019648e14, // ~105.2 TiB
+      pending_upgrade_power: 7.447473291264e12, // ~6.77 TiB
     },
     {
-      total_quality_adj_power: 1.164e15,
-      total_raw_byte_power: 1.23e14,
-      power_increase: 0,
-      power_decrease: 0,
+      total_quality_adj_power: 1.164425763487744e15,
+      full_multiplier_power: 1.15697829019648e14,
+      pending_upgrade_power: 7.447473291264e12,
     },
   ]
   assert.deepEqual(pickAxisUnits(list), ['PiB', 'TiB'])
 })
 
-test('pickAxisUnits: calibration 1m（1 个点）仍按 PiB，不因点少改变单位口径', () => {
+test('pickAxisUnits: calibration 单点仍按真实量级定档（左 PiB / 右 TiB），不因点少改变口径', () => {
   const list = [
     {
       total_quality_adj_power: 1.165e15,
       total_raw_byte_power: 1.23e14,
-      power_increase: 1.374e11,
-      power_decrease: 0,
+      full_multiplier_power: 1.157e14,
+      pending_upgrade_power: 7.45e12,
     },
   ]
   assert.deepEqual(pickAxisUnits(list), ['PiB', 'TiB'])

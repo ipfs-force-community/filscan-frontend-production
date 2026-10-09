@@ -13,9 +13,9 @@ const statistic = {
   power_trend_history_note:
     'Testnet keeps only ~36h of historical state; showing the last {{range}}',
   power_trend_data_unavailable: 'Insufficient testnet historical data',
-  // NV29 explanation layer: QA definition + activation-height vertical line + bar hovers
+  // NV29 explanation layer: raw-byte-power definition + activation-height vertical line + growth/loss notes
   power_trend_scope_note:
-    'QualityAdjPower = Full-multiplier power (10×) + Upgradable power (1× tier)',
+    'Raw byte power = full-multiplier power (10×) + upgradable power (1× tier); the left axis is quality-adjusted power',
   power_trend_nv29_line: 'NV29 activated',
   power_increase_tip:
     'Per-miner power change: upgrading legacy sectors to 10× raises quality-adjusted power without new hardware',
