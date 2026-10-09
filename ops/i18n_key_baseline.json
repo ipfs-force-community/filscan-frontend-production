@@ -1,0 +1,52 @@
+{
+  "_note": "i18n key 一致性基线：已接入语言（由 i18n/index.ts 的 import 推导）之间**既有**的 key 漂移。机检只对「超出本基线的漂移」失败（只降不升）；补齐后跑 node ops/check_chart_series.js --update-baseline 收紧。条目格式 \"<lang>/<命名空间文件>\" → 该文件相对同命名空间并集缺的 key 列表。",
+  "generated_at": "2026-10-09T01:15:00Z",
+  "drift": {
+    "en/account.js": [
+      "active_1",
+      "active_2",
+      "name_length",
+      "out_come_gas",
+      "personal_2"
+    ],
+    "kr/account.js": ["name_length", "out_come_gas"],
+    "en/analysis.js": ["7d"],
+    "kr/analysis.js": ["7d", "fund_analysis_time"],
+    "en/common.js": ["reset_password"],
+    "kr/common.js": ["reset_password"],
+    "en/contract.js": ["Items", "contract_abi", "optimize_runs"],
+    "kr/contract.js": [
+      "contract_abi",
+      "controller",
+      "nfts_total",
+      "nfts_trans"
+    ],
+    "en/detail.js": [
+      "all_method",
+      "contract_token_list_total",
+      "robust_address",
+      "sector_ratio_tip"
+    ],
+    "zh/detail.js": ["Burn", "Transfer"],
+    "kr/detail.js": ["all_method", "robust_address"],
+    "en/fvm.js": ["share"],
+    "zh/fvm.js": ["see_more"],
+    "kr/fvm.js": ["share"],
+    "en/home.js": ["contract_rank", "defi_list"],
+    "kr/home.js": ["contract_rank", "defi_list"],
+    "en/nav.js": ["login"],
+    "kr/nav.js": ["login"],
+    "en/statistic.js": ["FILecoinFoundation", "FILecoinFoundation_des"],
+    "zh/statistic.js": [
+      "FilecoinFoundation",
+      "FilecoinFoundation_des",
+      "all_message_count_tip"
+    ],
+    "kr/statistic.js": [
+      "FILecoinFoundation",
+      "FILecoinFoundation_des",
+      "all_message_count_tip"
+    ],
+    "en/tipset.js": ["message_list_method_name"]
+  }
+}

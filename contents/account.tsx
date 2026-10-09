@@ -1034,20 +1034,20 @@ export const account_power = {
         render: (text: string, record: any) => unitConversion(text, 2),
       },
       {
-        title: 'dc_power',
-        dataIndex: 'dc_power',
+        title: 'full_multiplier_power',
+        dataIndex: 'full_multiplier_power',
         //  width: 100,
         amountUnit: {
-          dc_power: { unit: 'power', number: 2 },
+          full_multiplier_power: { unit: 'power', number: 2 },
         },
         render: (text: string, record: any) => unitConversion(text, 2),
       },
       {
-        title: 'cc_power',
-        dataIndex: 'cc_power',
+        title: 'pending_upgrade_power',
+        dataIndex: 'pending_upgrade_power',
         //// width: 200,
         amountUnit: {
-          cc_power: { unit: 'power', number: 2 },
+          pending_upgrade_power: { unit: 'power', number: 2 },
         },
         render: (text: string, record: any) => unitConversion(text, 2),
       },
@@ -1198,11 +1198,11 @@ export const account_power_mobile = {
         width: 'unset',
         fixed: false,
       },
-      dc_power: {
+      full_multiplier_power: {
         width: 'unset',
         fixed: false,
       },
-      cc_power: {
+      pending_upgrade_power: {
         width: 'unset',
         fixed: false,
       },

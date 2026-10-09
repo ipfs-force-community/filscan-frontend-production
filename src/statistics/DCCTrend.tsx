@@ -2,7 +2,7 @@
 import { DCTrend } from '@/contents/apiUrl'
 import EChart from '@/components/echarts'
 import { Translation } from '@/components/hooks/Translation'
-import { cc_dc_trend, timeList } from '@/contents/statistic'
+import { power_tier_trend, timeList } from '@/contents/statistic'
 import { formatDateTime, unitConversion } from '@/utils'
 import { getColor, get_xAxis, seriesChangeArea } from '@/utils/echarts'
 import { useEffect, useMemo, useState } from 'react'
@@ -19,6 +19,14 @@ interface Props {
   className?: string
 }
 
+// 已按 NV29（Solstice / FIP-0118，主网高度 6,470,279）改造：本图 = 「算力倍数结构走势」。
+// 两条线不再用 DC/CC（datacap 冻结后该口径失效），字段由 DCTrend 响应直接给出，
+// 口径唯一实现在后端 chain.QualityTierSplit（NV29 前后同式，历史不重算）：
+//   full_multiplier_power  ＝ 满倍率算力（处于 10× 档的等效原始字节）
+//   pending_upgrade_power  ＝ 待升级算力（未达满倍率的等效原始字节）
+// 前端不重算该公式（避免两处口径分叉）；raw / quality_adj_power 仍随响应返回，供查证。
+// 恢复方式（一行）：把 contents/statistic.tsx 的 power_tier_trend 两条线 dataIndex 改回 cc/dc，
+// 并在 i18n 恢复 dc_trend / cc_trend，即回到旧的 CC/DC 口径（组件本体保留，未删）。
 export default observer((props: Props) => {
   const { className } = props
   const { theme, lang } = filscanStore
@@ -73,7 +81,12 @@ export default observer((props: Props) => {
         },
       },
       legend: {
-        show: false,
+        // NV29 改造：原来 legend.show=false，用户只能靠颜色猜哪条是 DC/CC；改为常显图例。
+        show: true,
+        top: 0,
+        textStyle: {
+          color: isMobile ? color.mobileLabelColor : color.labelColor,
+        },
       },
       tooltip: {
         //@ts-ignore
@@ -116,40 +129,70 @@ export default observer((props: Props) => {
 
   const load = async (time?: string) => {
     const seriesObj: any = {}
-    cc_dc_trend.list.forEach((v) => {
+    power_tier_trend.list.forEach((v) => {
       seriesObj[v.dataIndex] = []
     })
     const dateList: any = []
     const seriesData: any = []
     const inter = time || interval
     const result: any = await axiosData(DCTrend, { interval: inter })
-    result?.items?.forEach((value: any) => {
-      const { block_time, cc, dc } = value
+
+    // 兼容网关外壳 {code,msg,data:{…}} 与直出 {nv29_epoch,items} 两种形状
+    const payload = result?.data ?? result ?? {}
+    const items: any[] = payload?.items || []
+    const nv29 = Number(payload?.nv29_epoch || 0)
+
+    items.forEach((value: any) => {
+      const { block_time } = value
       const showTime =
         inter === '24h'
           ? formatDateTime(block_time, 'HH:mm')
           : formatDateTime(block_time, 'MM-DD HH:mm')
       dateList.push(showTime)
 
-      const [cc_amount, cc_unit] = cc && unitConversion(cc, 2)?.split(' ')
-
-      const [dc_amount, dc_unit] = dc && unitConversion(dc, 2)?.split(' ')
-      //amount
-      seriesObj.cc.push({
-        amount: cc_amount,
-        value: unitConversion(cc, 2, 5).split(' ')[0],
-        showTime: formatDateTime(block_time, 'YYYY-MM-DD HH:mm'),
-        unit: cc_unit,
-      })
-      seriesObj.dc.push({
-        amount: dc_amount,
-        showTime: formatDateTime(block_time, 'YYYY-MM-DD HH:mm'),
-        value: Number(unitConversion(dc, 2, 5).split(' ')[0]),
-        unit: dc_unit,
+      // 口径唯一实现在后端 chain.QualityTierSplit（NV29 前后同式），前端只渲染：
+      //   full_multiplier_power ＝ 满倍率算力（处于 10× 档的等效原始字节）
+      //   pending_upgrade_power ＝ 待升级算力（未达满倍率的等效原始字节）
+      power_tier_trend.list.forEach((item: any) => {
+        const val = Number(value[item.dataIndex]) || 0
+        const [amount, unit] = unitConversion(val, 2)?.split(' ') || []
+        seriesObj[item.dataIndex].push({
+          amount,
+          value: Number(unitConversion(val, 2, 5).split(' ')[0]),
+          showTime: formatDateTime(block_time, 'YYYY-MM-DD HH:mm'),
+          unit,
+        })
       })
     })
 
-    cc_dc_trend.list.forEach((item: any) => {
+    // NV29 竖线（照抄 RewardStreams.tsx 的 nv29Line 实现）：
+    // 仅在**窗口跨越激活高度**时画线（窗口首点早于 nv29 且窗口内存在 ≥ nv29 的点）——
+    // 否则本窗口全部在 NV29 之后，画在左边缘会被误读成「NV29 在本窗口起点激活」。
+    // nv29_epoch == 0（主网尚未排期）不画线。
+    let nv29Line: any = null
+    if (nv29 > 0 && items.length) {
+      const idx = items.findIndex((v: any) => Number(v.epoch) >= nv29)
+      const straddles = idx >= 0 && Number(items[0].epoch) < nv29
+      if (straddles) {
+        nv29Line = {
+          silent: true,
+          symbol: 'none',
+          lineStyle: {
+            color: '#E15252',
+            type: 'dashed',
+          },
+          label: {
+            show: true,
+            position: 'insideEndTop',
+            color: isMobile ? color.mobileLabelColor : color.labelColor,
+            formatter: tr('power_multiplier_nv29_line'),
+          },
+          data: [{ xAxis: dateList[idx] }],
+        }
+      }
+    }
+
+    power_tier_trend.list.forEach((item: any, i: number) => {
       seriesData.push({
         type: item.type,
         // ...seriesChangeArea,
@@ -161,6 +204,7 @@ export default observer((props: Props) => {
           color: item.color,
         },
         barMaxWidth: '30',
+        ...(i === 0 && nv29Line ? { markLine: nv29Line } : {}),
       })
     })
     setOptions({ series: seriesData, xData: dateList })
@@ -197,7 +241,7 @@ export default observer((props: Props) => {
             styles.title,
           )}
         >
-          {tr('cc_dc_power')}
+          {tr('power_multiplier_trend')}
         </div>
         <Segmented
           defaultValue={interval}

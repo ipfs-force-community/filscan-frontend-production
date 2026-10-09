@@ -126,7 +126,11 @@ const statistic = {
   power_decrease: '순 전력 감소',
   //chartsnav
 
-  cc_dc_power: 'CC/DC 전력 추세',
+  power_multiplier_trend: '전력 배수 구조 추세',
+  full_multiplier_power: '최대 배수 전력(10×)',
+  pending_upgrade_power: '업그레이드 대기 전력',
+  power_multiplier_nv29_line:
+    'NV29부터 전력 배수는 콘텐츠에 따라 변하지 않습니다',
   static_overview: '차트 통계',
   fil_overview: 'FIL 개요',
 

@@ -60,7 +60,10 @@ const statistic = {
   Contributors_des: '4.5%给协议实验室团队和贡献者',
 
   //chartsnav
-  cc_dc_power: 'CC/DC算力走势',
+  power_multiplier_trend: '算力倍数结构走势',
+  full_multiplier_power: '满倍率算力（10×）',
+  pending_upgrade_power: '待升级算力（折算 1×）',
+  power_multiplier_nv29_line: 'NV29 起算力倍数不再随内容变化',
   static_overview: '数据统计',
   contract_trend: '合约交易',
 
@@ -75,7 +78,8 @@ const statistic = {
   reward_stream_nv29_line: 'NV29 起区块奖励按权重拆分',
   block_reward_split: '服务奖励排行',
   block_trend_tip: '仅矿工实收（共识流）；服务流与销毁见「区块奖励流向」',
-  block_reward_per_TiB_tip: '仅矿工实收（共识流）；服务流与销毁见「区块奖励流向」',
+  block_reward_per_TiB_tip:
+    '仅矿工实收（共识流）；服务流与销毁见「区块奖励流向」',
   reward_stream_rec_address: '收益地址',
   reward_stream_rec_share: '当期份额',
   reward_stream_rec_rank: '排行',
@@ -125,8 +129,6 @@ const statistic = {
   locked: '扇区抵押的FIL',
   burnt: '已销毁的FIL',
   circulating: '可交易流通的FIL',
-  dc_trend: 'DC',
-  cc_trend: 'CC',
   networks_overview: '全网指标',
   contract_con: '合约部署走势',
   contract_counts: '合约部署',

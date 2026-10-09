@@ -116,9 +116,9 @@ const account = {
 
   //算力概览
   quality_power: '有效算力',
-  dc_power: 'DC算力',
+  full_multiplier_power: '满倍率算力',
   raw_power: '原值算力',
-  cc_power: 'CC算力',
+  pending_upgrade_power: '待升级算力',
   sector_size: '扇区大小',
   sector_power_change: '扇区变化',
   sector_power_count: 'Sector数量',

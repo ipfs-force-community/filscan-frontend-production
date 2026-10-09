@@ -330,18 +330,22 @@ export const active_miner_count = {
     },
   ],
 }
-//DC CC 走势
-export const cc_dc_trend = {
+// 算力倍数结构走势（NV29 / Solstice / FIP-0118 起的内容口径）。
+// 两条线由同一公式现算（前端从 DCTrend 响应的 raw / quality_adj_power 计算）：
+//   满倍率算力 full    = (qa − raw) / 9   —— 处于 10× 档的等效原始字节
+//   待升级算力 pending = raw − full       —— 未达满倍率的等效原始字节（可通过 snap / UpgradeSectorQuality 升级）
+// 两个时代同式：NV29 前 full 恰等于旧 DC、pending 恰等于旧 CC ⇒ 历史不重算、曲线连续。
+export const power_tier_trend = {
   list: [
     {
-      title: 'dc_trend',
-      dataIndex: 'dc',
+      title: 'full_multiplier_power',
+      dataIndex: 'full_multiplier_power',
       type: 'line',
       color: '#4ACAB4',
     },
     {
-      title: 'cc_trend',
-      dataIndex: 'cc',
+      title: 'pending_upgrade_power',
+      dataIndex: 'pending_upgrade_power',
       type: 'line',
       color: '#F8CD4D',
     },
@@ -546,8 +550,9 @@ export const chartsNav: Array<Menu_Info> = [
         title: 'power',
       },
       {
+        // id/hash 保持 'blockChain_cc_dc_power' 不变（外链 / 书签不能破）；仅侧栏显示名换成新口径。
         key: 'blockChain_cc_dc_power',
-        title: 'cc_dc_power',
+        title: 'power_multiplier_trend',
       },
       {
         key: 'blockChain_trend',

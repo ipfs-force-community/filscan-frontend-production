@@ -108,9 +108,9 @@ const account = {
 
   //算力概览
   quality_power: '유효 체굴 파워',
-  dc_power: 'DC 파워',
+  full_multiplier_power: '만배율 파워',
   raw_power: '로우바이트 체굴 파워',
-  cc_power: 'CC 파워',
+  pending_upgrade_power: '업그레이드 대기 파워',
   sector_size: '섹터 크기',
   sector_power_change: '팬섹터 변화',
   sector_power_count: 'Sector Count',

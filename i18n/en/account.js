@@ -115,9 +115,9 @@ const account = {
 
   //算力概览 Power Overview
   quality_power: 'Quality Power',
-  dc_power: 'DC Power',
+  full_multiplier_power: 'Full-multiplier power',
   raw_power: 'Raw Power',
-  cc_power: 'CC Power',
+  pending_upgrade_power: 'Pending upgrade power',
   sector_size: 'Sector Size',
   sector_power_change: 'Sector Change',
   sector_power_count: 'Sector Count',

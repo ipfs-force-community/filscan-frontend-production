@@ -107,8 +107,8 @@ const home = {
   proportion_32G:'QualityAdjPower Ratio for 64GiB Sectors',
   verified_contracts: 'Verified Contracts',
   contract_gas: 'Contract Gas Cost',
-  quality_power_Cc:'Commited Capacity (CC)',
-  quality_power_Dc:'DataCap (DC)',
+  full_multiplier_power: 'Full-multiplier power',
+  pending_upgrade_power: 'Pending upgrade power',
   see_more: 'See More',
   contract_balance:'Contract Balance'
 

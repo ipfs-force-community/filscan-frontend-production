@@ -106,8 +106,8 @@ const home = {
    proportion_64G:'32GiB 섹터의 품질 조정된 파워 비율',
   proportion_32G:'64GiB 섹터의 품질 조정된 파워 비율',
   contract_gas: '계약 가스 비용',
-  quality_power_Cc:'Commited Capacity (CC)',
-  quality_power_Dc:'DataCap (DC)',
+  full_multiplier_power: '만배율 파워',
+  pending_upgrade_power: '업그레이드 대기 파워',
   see_more: '더보기',
   contract_balance:'계약 잔액',
 

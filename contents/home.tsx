@@ -8,13 +8,13 @@ export const home_meta = [
     tip: 'total_quality_power_tip',
     tipContent: [
       {
-        title: 'quality_power_Cc',
-        dataIndex: 'Cc',
+        title: 'full_multiplier_power',
+        dataIndex: 'full_multiplier_power',
         render: (text: string | number) => unitConversion(text, 2),
       },
       {
-        title: 'quality_power_Dc',
-        dataIndex: 'Dc',
+        title: 'pending_upgrade_power',
+        dataIndex: 'pending_upgrade_power',
         render: (text: string | number) => unitConversion(text, 2),
       },
     ],
@@ -522,32 +522,6 @@ export const meta_list = [
     dataIndex: 'circulating_percent',
     render: (v: number) => Number(v * 100).toFixed(2) + '%',
   }, //流通率
-  {
-    title: 'quality_power_Cc',
-    dataIndex: 'Cc',
-    render: (text: string | number) => {
-      const [textValue, unit] = unitConversion(text, 2).split(' ')
-      return (
-        <span>
-          <span>{textValue + ' '}</span>
-          <span className="unit">{unit}</span>
-        </span>
-      )
-    },
-  },
-  {
-    title: 'quality_power_Dc',
-    dataIndex: 'Dc',
-    render: (text: string | number) => {
-      const [textValue, unit] = unitConversion(text, 2).split(' ')
-      return (
-        <span>
-          <span>{textValue + ' '}</span>
-          <span className="unit">{unit}</span>
-        </span>
-      )
-    },
-  },
   {
     title: 'gas_24',
     dataIndex: 'sum',
