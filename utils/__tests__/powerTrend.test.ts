@@ -25,6 +25,7 @@ import {
   powerUnitDigits,
   scaleToPowerUnit,
   scaleToPowerUnitForDisplay,
+  shouldDrawNv29Line,
   unavailableTrendIntervals,
 } from '../powerTrend'
 
@@ -219,4 +220,51 @@ test('超过 Number 安全整数范围的字节能正常定档（只比量级，
   assert.equal(pickPowerUnit(1.422e19), 'EiB') // 主网有效算力 12.34 EiB
   assert.equal(pickPowerUnit('1.422e19'), 'EiB') // 后端字段是字符串形式的数值
   assert.equal(pickPowerUnit(1.2e16), 'PiB') // 10.65 PiB
+})
+
+// —— NV29 解释层竖线：shouldDrawNv29Line ——
+// 口径：仅当「窗口跨越激活高度」（首点 epoch < nv29Epoch 且窗口内存在 >= nv29Epoch 的点）
+// 才返回该点下标；其余一律 -1。
+test('shouldDrawNv29Line: 窗口跨越激活高度 -> 返回首个 >= nv29 的点下标', () => {
+  // 测试网 30d 窗口跨越激活高度 4,109,133（激活点落在窗口中部）
+  const items = [
+    { epoch: 4106000 },
+    { epoch: 4109000 },
+    { epoch: 4109133 }, // = nv29Epoch，命中
+    { epoch: 4110000 },
+  ]
+  assert.equal(shouldDrawNv29Line(items, 4109133), 2)
+})
+
+test('shouldDrawNv29Line: 窗口内恰有等于激活高度的点（>= 而非 >）', () => {
+  assert.equal(shouldDrawNv29Line([{ epoch: 100 }, { epoch: 200 }], 200), 1)
+})
+
+test('shouldDrawNv29Line: 全窗都在激活之前 -> -1（窗口没到激活高度）', () => {
+  assert.equal(shouldDrawNv29Line([{ epoch: 100 }, { epoch: 200 }], 300), -1)
+})
+
+test('shouldDrawNv29Line: 全窗都在激活之后 -> -1（否则会误画在左边缘）', () => {
+  assert.equal(shouldDrawNv29Line([{ epoch: 300 }, { epoch: 400 }], 200), -1)
+  // 首点恰等于激活高度也算「整窗在激活之后」，不画
+  assert.equal(shouldDrawNv29Line([{ epoch: 200 }, { epoch: 300 }], 200), -1)
+})
+
+test('shouldDrawNv29Line: nv29Epoch <= 0（未排期/字段缺失）-> -1', () => {
+  assert.equal(shouldDrawNv29Line([{ epoch: 1 }, { epoch: 2 }], 0), -1)
+  assert.equal(shouldDrawNv29Line([{ epoch: 1 }, { epoch: 2 }], -1), -1)
+  // 主网当前 nv29_epoch 为 0 / 字段缺失 => Number(undefined || 0) = 0
+  assert.equal(shouldDrawNv29Line([{ epoch: 1 }, { epoch: 2 }], 0), -1)
+  assert.equal(shouldDrawNv29Line([{ epoch: 1 }, { epoch: 2 }], NaN), -1)
+})
+
+test('shouldDrawNv29Line: 点数 < 2 -> -1（画不出面）', () => {
+  assert.equal(shouldDrawNv29Line([], 200), -1)
+  assert.equal(shouldDrawNv29Line([{ epoch: 100 }], 200), -1)
+  assert.equal(shouldDrawNv29Line(null as any, 200), -1)
+})
+
+test('shouldDrawNv29Line: 条目缺 epoch（后端尚未发该字段）-> -1，不抛错', () => {
+  const items = [{ timestamp: 1 }, { timestamp: 2 }, { timestamp: 3 }]
+  assert.equal(shouldDrawNv29Line(items, 4109133), -1)
 })

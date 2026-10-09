@@ -122,18 +122,12 @@ export const power_trend = {
       color: '#FFC53D',
     }, //有效算力
     {
-      title: 'total_raw_byte_power',
-      dataIndex: 'total_raw_byte_power',
-      yIndex: 0,
-      type: 'line',
-      color: '#4ACAB4',
-    }, //原值算力
-    {
       title: 'power_increase',
       dataIndex: 'power_increase',
       yIndex: 1,
       color: '#1C6AFD',
       type: 'bar',
+      tip: 'power_increase_tip',
     }, //算力增长
     {
       dataIndex: 'power_decrease',
@@ -141,6 +135,7 @@ export const power_trend = {
       yIndex: 1,
       color: '#B0CBFE',
       type: 'bar',
+      tip: 'power_decrease_tip',
     }, //算力损失
   ],
 }

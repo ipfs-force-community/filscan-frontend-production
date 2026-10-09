@@ -14,6 +14,7 @@ import {
   pickTrendFallbackInterval,
   scaleToPowerUnit,
   scaleToPowerUnitForDisplay,
+  shouldDrawNv29Line,
   unavailableTrendIntervals,
   type PowerUnit,
 } from '@/utils/powerTrend'
@@ -58,6 +59,8 @@ export default observer((props: Props) => {
     {},
   )
   const [historyLimited, setHistoryLimited] = useState(false)
+  // 本网 NV29 激活高度（响应字段 nv29_epoch）；0/缺失 = 未排期或不带该字段，不画竖线
+  const [nv29Epoch, setNv29Epoch] = useState<number>(0)
   const { isMobile } = useWindow()
   const color = useMemo(() => {
     return getColor(theme)
@@ -176,6 +179,27 @@ export default observer((props: Props) => {
                 item.data.unit
             }
           })
+          // NV29 解释层：有效算力那条线（v[0]）额外附带原值/满倍率/可升级三个数。
+          // 单位取左轴单位；字段缺失或为 null 就不显示该行、不报错（允许后端字段后发）。
+          const point = v?.[0]?.data
+          const leftUnit = axisUnits[0]
+          const extra: Array<[string, any]> = [
+            ['total_raw_byte_power', point?.raw],
+            ['full_multiplier_power', point?.full],
+            ['pending_upgrade_power', point?.pending],
+          ]
+          extra.forEach(([key, val]) => {
+            if (val === null || val === undefined || val === '') return
+            const num = Number(val)
+            if (!isFinite(num)) return
+            result +=
+              '<br/>' +
+              tr(key) +
+              ': ' +
+              scaleToPowerUnitForDisplay(num, leftUnit, 2) +
+              ' ' +
+              leftUnit
+          })
           return result
         },
       },
@@ -198,7 +222,7 @@ export default observer((props: Props) => {
   }, [])
 
   // 用一批数据（原始字节值）构建图表 series；单位按该数据的量级定档，不做插值/平滑
-  const buildOptions = (list: any[]) => {
+  const buildOptions = (list: any[], nv29: number = nv29Epoch) => {
     const units = pickAxisUnits(list)
     const seriesObj: any = {}
     power_trend.list.forEach((v) => {
@@ -207,9 +231,13 @@ export default observer((props: Props) => {
     const dateList: any[] = []
     const legendList: any[] = []
     const seriesData: any[] = []
+    // NV29 竖线：仅当本档窗口跨越激活高度时画（下标 >= 0）。画线那一次 x 轴标签要带
+    // 时间（MM-DD HH:mm），否则同一天多点的标签重复会让 markLine 落到错的位置。
+    const nv29Idx = shouldDrawNv29Line(list, nv29)
+    const dateLabelFmt = nv29Idx >= 0 ? 'MM-DD HH:mm' : 'MM-DD'
     list.forEach((value: any) => {
       const { timestamp } = value
-      dateList.push(formatDateTime(timestamp, 'MM-DD'))
+      dateList.push(formatDateTime(timestamp, dateLabelFmt))
       power_trend.list.forEach((item: any) => {
         // 同一轴上的系列共用一个单位（按该轴数据量级定档）
         const unit = units[item.yIndex] || units[0]
@@ -221,14 +249,44 @@ export default observer((props: Props) => {
           amount: scaleToPowerUnitForDisplay(raw, unit, 2),
           unit,
           showTime: formatDateTime(timestamp, 'YYYY-MM-DD HH:mm'),
+          // 只有「有效算力」那条线（左轴）额外带原值/满倍率/可升级三个数，
+          // 供 tooltip 解释层显示；其它系列不带（字段缺失时为 undefined，tooltip 跳过）。
+          ...(item.dataIndex === 'total_quality_adj_power'
+            ? {
+                raw: value['total_raw_byte_power'],
+                full: value['full_multiplier_power'],
+                pending: value['pending_upgrade_power'],
+              }
+            : {}),
         })
       })
     })
-    power_trend.list.forEach((item: any) => {
+    // NV29 解释层竖线（照抄 DCCTrend.tsx 的 markLine 写法），挂到 series[0]（有效算力线）
+    let nv29Line: any = null
+    if (nv29Idx >= 0) {
+      nv29Line = {
+        silent: true,
+        symbol: 'none',
+        lineStyle: {
+          color: '#E15252',
+          type: 'dashed',
+        },
+        label: {
+          show: true,
+          position: 'insideEndTop',
+          color: isMobile ? color.mobileLabelColor : color.labelColor,
+          formatter: tr('power_trend_nv29_line'),
+        },
+        data: [{ xAxis: dateList[nv29Idx] }],
+      }
+    }
+    power_trend.list.forEach((item: any, i: number) => {
       legendList.push({
         name: item.dataIndex,
         color: item.color,
         type: item.type,
+        // 柱状 chip 的悬停说明（原值只有 line 有 tip，这里是 bar）
+        tip: item.tip,
       })
       seriesData.push({
         type: item.type,
@@ -242,6 +300,7 @@ export default observer((props: Props) => {
           color: item.color,
         },
         barMaxWidth: '30',
+        ...(i === 0 && nv29Line ? { markLine: nv29Line } : {}),
       })
     })
     setAxisUnits(units)
@@ -253,13 +312,16 @@ export default observer((props: Props) => {
       interval: DEFAULT_TREND_INTERVAL,
     })
     const primaryList: any[] = result?.list || []
+    // 本网 NV29 激活高度（响应字段 nv29_epoch）；未排期 / 后端未带该字段 => 0
+    let nv29 = Number(result?.nv29_epoch || 0) || 0
     if (hasEnoughPoints(primaryList)) {
       // 默认档位就有折线数据（主网）：请求与展示跟改动前一致，不额外请求、不显示档位与说明
       setListByInterval({ [DEFAULT_TREND_INTERVAL]: primaryList })
       setIntervalCounts({ [DEFAULT_TREND_INTERVAL]: primaryList.length })
       setActiveInterval(DEFAULT_TREND_INTERVAL)
       setHistoryLimited(false)
-      buildOptions(primaryList)
+      setNv29Epoch(nv29)
+      buildOptions(primaryList, nv29)
       return
     }
     // 默认档位点数不足（测试网只保留约 36h 历史状态，1m/1y 只有 1 个点）：
@@ -275,6 +337,9 @@ export default observer((props: Props) => {
       const list: any[] = res?.list || []
       lists[item] = list
       counts[item] = list.length
+      // 回退档的响应同样读 NV29 激活高度（任一档给出正数即采用）
+      const resNv29 = Number(res?.nv29_epoch || 0) || 0
+      if (resNv29 > 0) nv29 = resNv29
     }
     // 取回退顺序里第一个能画出线的档位（24h -> 7d -> 30d -> 1y），都没有就画空图，不编数据
     const fallback = pickTrendFallbackInterval(counts)
@@ -282,7 +347,8 @@ export default observer((props: Props) => {
     setIntervalCounts(counts)
     setHistoryLimited(true)
     setActiveInterval(fallback || DEFAULT_TREND_INTERVAL)
-    buildOptions(fallback ? lists[fallback] : [])
+    setNv29Epoch(nv29)
+    buildOptions(fallback ? lists[fallback] : [], nv29)
   }
 
   const changeInterval = (value: string) => {
@@ -348,6 +414,7 @@ export default observer((props: Props) => {
                     <span
                       className="flex cursor-pointer items-center gap-x-1 text-xs"
                       key={v.name}
+                      title={v.tip ? tr(v.tip) : undefined}
                       onClick={() => {
                         setNoShow({ ...noShow, [v.name]: !noShow[v.name] })
                       }}
@@ -365,6 +432,12 @@ export default observer((props: Props) => {
               </span>
             </BrowserView>
           </div>
+          <span
+            className="text_des ml-5 text-[11px] font-normal opacity-70"
+            data-testid="power-trend-scope-note"
+          >
+            {tr('power_trend_scope_note')}
+          </span>
         </div>
         {historyLimited && (
           <Segmented
@@ -429,6 +502,7 @@ export default observer((props: Props) => {
                       <span
                         className="flex cursor-pointer items-center gap-x-1 text-xs"
                         key={v.name}
+                        title={v.tip ? tr(v.tip) : undefined}
                         onClick={() => {
                           setNoShow({ ...noShow, [v.name]: !noShow[v.name] })
                         }}
@@ -463,6 +537,7 @@ export default observer((props: Props) => {
                     <span
                       className="flex cursor-pointer items-center gap-x-1 text-xs"
                       key={v.name}
+                      title={v.tip ? tr(v.tip) : undefined}
                       onClick={() => {
                         setNoShow({ ...noShow, [v.name]: !noShow[v.name] })
                       }}

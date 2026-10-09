@@ -13,6 +13,13 @@ const statistic = {
   power_trend_history_note:
     '테스트넷은 약 36시간의 이력 상태만 보관합니다. 최근 {{range}} 데이터를 표시합니다.',
   power_trend_data_unavailable: '테스트넷 이력 데이터가 부족합니다',
+  // NV29 설명 계층: 유효 파워 정의 + 활성화 높이 세로선 + 막대 호버 설명
+  power_trend_scope_note:
+    '유효 체굴파워 = 최대 배수 전력(10×) + 업그레이드 가능 전력(1×)',
+  power_trend_nv29_line: 'NV29 활성화',
+  power_increase_tip:
+    '노드별 파워 증감: 레거시 섹터가 10×로 업그레이드되면 새 하드웨어 없이도 유효 파워가 상승합니다',
+  power_decrease_tip: '노드별 파워 감소(섹터 종료/만료 포함)',
   trend_24: '24시간 기본 수수료 추세',
   total_raw_byte_power: '원래 로우바이트 파워',
   base_line_power: '기준선 추세',

@@ -13,6 +13,12 @@ const statistic = {
   power_trend_history_note:
     '测试网历史状态仅保留约 36 小时，展示最近 {{range}}',
   power_trend_data_unavailable: '测试网历史数据不足',
+  // NV29 解释层：有效算力口径说明 + 激活高度竖线 + 净增/损失柱的悬停说明
+  power_trend_scope_note: '有效算力 ＝ 满倍率算力（10×）＋ 可升级算力（1× 档）',
+  power_trend_nv29_line: 'NV29 激活',
+  power_increase_tip:
+    '按节点聚合的算力增减：老扇区升到 10× 时，即使没有新增硬件，有效算力也会上升',
+  power_decrease_tip: '按节点聚合的算力减少（含扇区终止与到期）',
   trend_24: '24h基础手续费走势',
   total_raw_byte_power: '原值算力',
   base_line_power: '基线走势',

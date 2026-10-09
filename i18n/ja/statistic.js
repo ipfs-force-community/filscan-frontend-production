@@ -12,6 +12,13 @@ const statistic = {
   power_trend_history_note:
     'テストネットの履歴状態は約 36 時間分のみ保持されます。直近 {{range}} を表示しています。',
   power_trend_data_unavailable: 'テストネットの履歴データが不足しています',
+  // NV29 説明レイヤー：有効計算力の定義 + アクティベーション高さの縦線 + バーのホバー説明
+  power_trend_scope_note:
+    '有効計算力 ＝ 満倍率計算力（10×）＋ アップグレード可能計算力（1×）',
+  power_trend_nv29_line: 'NV29 アクティベーション',
+  power_increase_tip:
+    'ノード別の計算力増減：レガシーセクターが 10× にアップグレードされると、新しいハードウェアなしでも有効計算力が上昇します',
+  power_decrease_tip: 'ノード別の計算力減少（セクター終了・満了を含む）',
   trend_24: '24h基础手续费走势',
   total_raw_byte_power: '全ネットーワークの計算力',
   base_line_power: 'ベースライントレンド',

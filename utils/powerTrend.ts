@@ -102,7 +102,7 @@ export function formatPowerAxisTick(
   return `${rounded} ${unit}`
 }
 
-/** 左轴 = 有效算力/原值算力；右轴 = 算力净增/损失。两个轴各自定档。 */
+/** 左轴 = 有效算力；右轴 = 算力净增/损失。两个轴各自定档。 */
 export const POWER_TREND_AXIS_FIELDS: string[][] = [
   ['total_quality_adj_power', 'total_raw_byte_power'],
   ['power_increase', 'power_decrease'],
@@ -177,4 +177,21 @@ export function unavailableTrendIntervals(
   return order.filter(
     (interval) => (counts?.[interval] ?? 0) < MIN_TREND_POINTS,
   )
+}
+
+/**
+ * NV29 解释层竖线：返回应当画竖线的点下标，否则 -1。
+ *
+ * 只在**窗口跨越激活高度**时画线（`items[idx].epoch >= nv29Epoch` 且
+ * `items[0].epoch < nv29Epoch`，即窗口内既有激活前、又有激活后的点）——
+ * 否则整窗都在激活之后，画在左边缘会被误读成「NV29 在本窗口起点激活」。
+ * `nv29Epoch <= 0`（未排期/接口未带该字段）或点数 < 2 一律 -1。
+ */
+export function shouldDrawNv29Line(items: any[], nv29Epoch: number): number {
+  if (!(Number(nv29Epoch) > 0)) return -1
+  if (!items || items.length < MIN_TREND_POINTS) return -1
+  const idx = items.findIndex((it) => Number(it?.epoch) >= nv29Epoch)
+  if (idx < 0) return -1
+  if (!(Number(items[0]?.epoch) < nv29Epoch)) return -1
+  return idx
 }
