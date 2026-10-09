@@ -10,6 +10,10 @@ import styles from './RewardStreams.module.scss'
 import classNames from 'classnames'
 import useAxiosData from '@/store/useAxiosData'
 import Segmented from '@/packages/segmented'
+import GoIcon from '@/assets/images/black_go.svg'
+import GoMobileIcon from '@/assets/images/icon-right-white.svg'
+import Link from 'next/link'
+import { BrowserView, MobileView } from '@/components/device-detect'
 import useWindow from '@/components/hooks/useWindown'
 import filscanStore from '@/store/modules/filscan'
 import { observer } from 'mobx-react'
@@ -27,7 +31,7 @@ interface Props {
 // （2026-10-08 二次裁定：本卡是全网唯一能看到奖励流向的地方 ⇒ 保留；同页的「服务奖励排行」卡改由首页承载。）
 // 字段口径与现有统计曲线一致（attoFIL 十进制字符串，展示时 ÷1e18 转 FIL）。
 export default observer((props: Props) => {
-  const { className } = props
+  const { origin, className } = props
   const { theme, lang } = filscanStore
   const { tr } = Translation({ ns: 'static' })
   const { axiosData } = useAxiosData()
@@ -227,16 +231,36 @@ export default observer((props: Props) => {
         <div className="w-fit min-w-[120px] font-HarmonyOS text-lg font-semibold ">
           {tr('block_reward_streams')}
         </div>
-        <Segmented
-          defaultValue={interval}
-          data={reward_streams_intervals}
-          ns="static"
-          isHash={false}
-          onChange={(value) => {
-            setInterval(value)
-            load(value)
-          }}
-        />
+        {/* 时段控件只在数据统计页出现（并排 Segmented 三档：24时/7天/30天）。
+            首页不暴露任何时段控件（产品 2026-10-09 更正）：固定用默认档 '24h'，
+            要切时段走右上角跳转图标去统计页。 */}
+        {origin !== 'home' && (
+          <Segmented
+            defaultValue={interval}
+            data={reward_streams_intervals}
+            ns="static"
+            isHash={false}
+            onChange={(value) => {
+              setInterval(value)
+              load(value)
+            }}
+          />
+        )}
+        {/* 首页专属：跳数据统计页同一张图的图标（统计页本来就在那页 ⇒ 仅 home 渲染） */}
+        {origin === 'home' && (
+          <Link href={`/statistics/charts#block_reward_streams`}>
+            <MobileView>
+              <GoMobileIcon width={28} height={28} />
+            </MobileView>
+            <BrowserView>
+              <GoIcon
+                width={18}
+                height={18}
+                className="mr-2.5 cursor-pointer"
+              />
+            </BrowserView>
+          </Link>
+        )}
       </div>
       <div
         className={classNames(

@@ -14,6 +14,7 @@ import GoMobileIcon from '@/assets/images/icon-right-white.svg'
 import ContractRank from '@/src/contract/rank'
 import DefiList from '@/src/fevm/defi'
 import Trend from '@/src/statistics/Trend'
+import RewardStreams from '@/src/statistics/RewardStreams'
 import useObserver from '@/components/hooks/useObserver'
 import { BrowserView, MobileView } from '@/components/device-detect'
 import styles from './style.module.scss'
@@ -74,6 +75,11 @@ function Home(props: any) {
           {/* 区块奖励分配（NV29 三股）：紧邻上方网络数据区；未激活 NV29 时块内只给一句说明 */}
           <div className="mt-5">
             <RewardAllocation />
+          </div>
+          {/* 区块奖励流向（NV29 三股堆叠柱）：与「区块奖励分配」同属奖励口径，紧邻其后。
+              单实例渲染（不套 BrowserView/MobileView），移动端自适应在组件内部完成，避免两个实例重复请求 —— 与相邻的 Trend / ContractTrend 同款做法。 */}
+          <div className="mt-5">
+            <RewardStreams origin="home" className="!h-full w-full" />
           </div>
           <div className="box-column mt-12 flex h-[400px] justify-between gap-x-5">
             <Trend origin="home" className={'!h-full w-full flex-1'} />
