@@ -69,6 +69,7 @@ const statistic = {
   power_multiplier_trend: '算力倍数结构走势',
   full_multiplier_power: '满倍率算力（10×）',
   pending_upgrade_power: '可升级算力（1× 档）',
+  avg_multiplier: '平均质量倍数',
   power_multiplier_nv29_line: 'NV29 起算力倍数不再随内容变化',
   static_overview: '数据统计',
   contract_trend: '合约交易',

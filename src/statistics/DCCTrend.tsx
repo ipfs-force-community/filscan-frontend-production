@@ -1,4 +1,6 @@
 /** @format */
+// 已下线（已合并进「算力走势」）。恢复方式＝把本组件挂回 pages/statistics/charts/index.tsx
+// 并在侧栏（contents/statistic.tsx 的 chartsNav）加回 blockChain_cc_dc_power 条目。
 import { DCTrend } from '@/contents/apiUrl'
 import EChart from '@/components/echarts'
 import { Translation } from '@/components/hooks/Translation'

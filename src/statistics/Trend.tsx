@@ -7,11 +7,9 @@ import { getSvgIcon } from '@/svgsIcon'
 import { formatDateTime } from '@/utils'
 import {
   DEFAULT_TREND_INTERVAL,
-  TREND_INTERVAL_FALLBACKS,
+  TREND_INTERVALS,
   formatPowerAxisTick,
-  hasEnoughPoints,
   pickAxisUnits,
-  pickTrendFallbackInterval,
   scaleToPowerUnit,
   scaleToPowerUnitForDisplay,
   shouldDrawNv29Line,
@@ -45,10 +43,10 @@ export default observer((props: Props) => {
   const { axiosData } = useAxiosData()
   const [noShow, setNoShow] = useState<Record<string, boolean>>({})
   const [options, setOptions] = useState<any>({})
-  // 轴单位（左轴=有效算力/原值算力，右轴=算力净增/损失），取到数据后按各轴数据量级定档
+  // 轴单位（左轴=堆叠算力（满倍率/可升级），右轴=算力净增/损失），取到数据后按各轴数据量级定档
   // 初值与改动前写死的 EiB/PiB 一致，主网量级仍会算成 EiB
   const [axisUnits, setAxisUnits] = useState<PowerUnit[]>(['EiB', 'PiB'])
-  // 时间区间：默认仍是 1m（改动前行为）；默认档位点数不足时进入 historyLimited（测试网历史状态只有约 36h）
+  // 时间区间：默认 30 天；四档常显（测试网历史状态只有约 36h，点数不足的档位置灰）
   const [activeInterval, setActiveInterval] = useState<string>(
     DEFAULT_TREND_INTERVAL,
   )
@@ -58,7 +56,6 @@ export default observer((props: Props) => {
   const [intervalCounts, setIntervalCounts] = useState<Record<string, number>>(
     {},
   )
-  const [historyLimited, setHistoryLimited] = useState(false)
   // 本网 NV29 激活高度（响应字段 nv29_epoch）；0/缺失 = 未排期或不带该字段，不画竖线
   const [nv29Epoch, setNv29Epoch] = useState<number>(0)
   const { isMobile } = useWindow()
@@ -73,7 +70,7 @@ export default observer((props: Props) => {
 
   // 档位里点数不足的（测试网无历史数据）置灰，不给用户点到空白图
   const unavailableIntervals = useMemo(() => {
-    return unavailableTrendIntervals(intervalCounts, TREND_INTERVAL_FALLBACKS)
+    return unavailableTrendIntervals(intervalCounts)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [intervalCounts])
 
@@ -81,8 +78,7 @@ export default observer((props: Props) => {
     const [leftUnit, rightUnit] = axisUnits
     let options = {
       grid: {
-        // 展示区间说明时留出一行小字的高度，避免压住轴标签
-        top: historyLimited ? (isMobile ? 34 : 46) : 30,
+        top: 30,
         left: 20,
         right: 20,
         bottom: 20,
@@ -167,6 +163,7 @@ export default observer((props: Props) => {
         },
         formatter(v: any) {
           var result = v?.[0]?.data?.showTime || ''
+          // 四条 series 行：可升级算力（1× 档）/ 满倍率算力（10×）/ 算力净增 / 算力损失
           v.forEach((item: any) => {
             if (item.data) {
               result +=
@@ -179,14 +176,13 @@ export default observer((props: Props) => {
                 item.data.unit
             }
           })
-          // NV29 解释层：有效算力那条线（v[0]）额外附带原值/满倍率/可升级三个数。
-          // 单位取左轴单位；字段缺失或为 null 就不显示该行、不报错（允许后端字段后发）。
+          // 解释层（末尾三行）：有效算力 / 原值算力 / 平均质量倍数。
+          // 单位取左轴单位；字段缺失或为 null 就跳过不显示、不报错（允许后端字段后发）。
           const point = v?.[0]?.data
           const leftUnit = axisUnits[0]
           const extra: Array<[string, any]> = [
+            ['total_quality_adj_power', point?.qa],
             ['total_raw_byte_power', point?.raw],
-            ['full_multiplier_power', point?.full],
-            ['pending_upgrade_power', point?.pending],
           ]
           extra.forEach(([key, val]) => {
             if (val === null || val === undefined || val === '') return
@@ -200,13 +196,23 @@ export default observer((props: Props) => {
               ' ' +
               leftUnit
           })
+          // 平均质量倍数 = 有效算力 ÷ 原值算力（保留 2 位小数；raw 为 0 或缺失不显示）
+          const qaNum = Number(point?.qa)
+          const rawNum = Number(point?.raw)
+          if (isFinite(qaNum) && isFinite(rawNum) && rawNum !== 0) {
+            result +=
+              '<br/>' +
+              tr('avg_multiplier') +
+              ': ' +
+              (qaNum / rawNum).toFixed(2)
+          }
           return result
         },
       },
     }
     if (isMobile) {
       ;(options as any)['grid'] = {
-        top: historyLimited ? '28px' : '16px',
+        top: '16px',
         right: '12px',
         bottom: '16px',
         left: '12px',
@@ -215,7 +221,7 @@ export default observer((props: Props) => {
     }
     return options
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [theme, isMobile, axisUnits, historyLimited])
+  }, [theme, isMobile, axisUnits])
 
   useEffect(() => {
     load()
@@ -238,30 +244,26 @@ export default observer((props: Props) => {
     list.forEach((value: any) => {
       const { timestamp } = value
       dateList.push(formatDateTime(timestamp, dateLabelFmt))
+      // tooltip 解释层要用的整点字段（附到每个点，供「有效算力/原值算力/平均质量倍数」三行）
+      const qaPower = value['total_quality_adj_power']
+      const rawPower = value['total_raw_byte_power']
       power_trend.list.forEach((item: any) => {
         // 同一轴上的系列共用一个单位（按该轴数据量级定档）
         const unit = units[item.yIndex] || units[0]
-        const raw = value[item.dataIndex]
+        const rawVal = value[item.dataIndex]
         seriesObj[item.dataIndex].push({
           // 绘图值：同一轴同一单位，保留 6 位小数（不插值、不平滑）
-          value: scaleToPowerUnit(raw, unit, 6),
+          value: scaleToPowerUnit(rawVal, unit, 6),
           // tooltip 值：同口径单位，但小数值自动补足小数位，不显示成 0
-          amount: scaleToPowerUnitForDisplay(raw, unit, 2),
+          amount: scaleToPowerUnitForDisplay(rawVal, unit, 2),
           unit,
           showTime: formatDateTime(timestamp, 'YYYY-MM-DD HH:mm'),
-          // 只有「有效算力」那条线（左轴）额外带原值/满倍率/可升级三个数，
-          // 供 tooltip 解释层显示；其它系列不带（字段缺失时为 undefined，tooltip 跳过）。
-          ...(item.dataIndex === 'total_quality_adj_power'
-            ? {
-                raw: value['total_raw_byte_power'],
-                full: value['full_multiplier_power'],
-                pending: value['pending_upgrade_power'],
-              }
-            : {}),
+          qa: qaPower,
+          raw: rawPower,
         })
       })
     })
-    // NV29 解释层竖线（照抄 DCCTrend.tsx 的 markLine 写法），挂到 series[0]（有效算力线）
+    // NV29 解释层竖线（照抄 DCCTrend.tsx 的 markLine 写法），挂到 series[0]（可升级算力线）
     let nv29Line: any = null
     if (nv29Idx >= 0) {
       nv29Line = {
@@ -300,6 +302,9 @@ export default observer((props: Props) => {
           color: item.color,
         },
         barMaxWidth: '30',
+        // 堆叠面积：stack 同名才叠放，area 为 true 时画成面积（由 contents 定义透传）
+        ...(item.stack ? { stack: item.stack } : {}),
+        ...(item.area ? { areaStyle: {} } : {}),
         ...(i === 0 && nv29Line ? { markLine: nv29Line } : {}),
       })
     })
@@ -308,52 +313,54 @@ export default observer((props: Props) => {
   }
 
   const load = async () => {
-    const result: any = await axiosData(apiUrl.line_trend, {
-      interval: DEFAULT_TREND_INTERVAL,
-    })
-    const primaryList: any[] = result?.list || []
-    // 本网 NV29 激活高度（响应字段 nv29_epoch）；未排期 / 后端未带该字段 => 0
-    let nv29 = Number(result?.nv29_epoch || 0) || 0
-    if (hasEnoughPoints(primaryList)) {
-      // 默认档位就有折线数据（主网）：请求与展示跟改动前一致，不额外请求、不显示档位与说明
-      setListByInterval({ [DEFAULT_TREND_INTERVAL]: primaryList })
-      setIntervalCounts({ [DEFAULT_TREND_INTERVAL]: primaryList.length })
-      setActiveInterval(DEFAULT_TREND_INTERVAL)
-      setHistoryLimited(false)
-      setNv29Epoch(nv29)
-      buildOptions(primaryList, nv29)
-      return
-    }
-    // 默认档位点数不足（测试网只保留约 36h 历史状态，1m/1y 只有 1 个点）：
-    // 逐档探测可用性，顺便把各档数据缓存下来（切档位不再重复请求）
-    const lists: Record<string, any[]> = {
-      [DEFAULT_TREND_INTERVAL]: primaryList,
-    }
-    const counts: Record<string, number> = {
-      [DEFAULT_TREND_INTERVAL]: primaryList.length,
-    }
-    for (const item of TREND_INTERVAL_FALLBACKS) {
-      const res: any = await axiosData(apiUrl.line_trend, { interval: item })
-      const list: any[] = res?.list || []
-      lists[item] = list
-      counts[item] = list.length
-      // 回退档的响应同样读 NV29 激活高度（任一档给出正数即采用）
-      const resNv29 = Number(res?.nv29_epoch || 0) || 0
-      if (resNv29 > 0) nv29 = resNv29
-    }
-    // 取回退顺序里第一个能画出线的档位（24h -> 7d -> 30d -> 1y），都没有就画空图，不编数据
-    const fallback = pickTrendFallbackInterval(counts)
-    setListByInterval(lists)
-    setIntervalCounts(counts)
-    setHistoryLimited(true)
-    setActiveInterval(fallback || DEFAULT_TREND_INTERVAL)
+    // 先按默认档位取数并立即出图（不等其它档位，避免慢档拖住首屏）
+    const primary: any = await axiosData(
+      apiUrl.line_trend,
+      { interval: DEFAULT_TREND_INTERVAL },
+      { flag: `power_trend_${DEFAULT_TREND_INTERVAL}` },
+    )
+    const nv29 = Number(primary?.nv29_epoch || 0) || 0
+    const primaryList: any[] = primary?.list || []
+    setListByInterval({ [DEFAULT_TREND_INTERVAL]: primaryList })
+    setIntervalCounts({ [DEFAULT_TREND_INTERVAL]: primaryList.length })
     setNv29Epoch(nv29)
-    buildOptions(fallback ? lists[fallback] : [], nv29)
+    setActiveInterval(DEFAULT_TREND_INTERVAL)
+    buildOptions(primaryList, nv29)
+    // 其余档位后台预取：用于「点数不足置灰」+ 切档即出图；不阻塞首屏。
+    // 每档用独立 flag（取消键变成 method:url_flag），四档并发互不取消。
+    TREND_INTERVALS.filter((iv) => iv !== DEFAULT_TREND_INTERVAL).forEach(
+      async (iv) => {
+        const res: any = await axiosData(
+          apiUrl.line_trend,
+          { interval: iv },
+          { flag: `power_trend_${iv}` },
+        )
+        const list: any[] = res?.list || []
+        setListByInterval((prev) => ({ ...prev, [iv]: list }))
+        setIntervalCounts((prev) => ({ ...prev, [iv]: list.length }))
+        const resNv29 = Number(res?.nv29_epoch || 0) || 0
+        if (resNv29 > 0) setNv29Epoch((prev) => prev || resNv29)
+      },
+    )
   }
 
-  const changeInterval = (value: string) => {
+  const changeInterval = async (value: string) => {
     setActiveInterval(value)
-    buildOptions(listByInterval[value] || [])
+    // 已缓存（预取过）直接出图
+    if (listByInterval[value]) {
+      buildOptions(listByInterval[value])
+      return
+    }
+    // 未缓存（预取失败/新增档位）：按需请求该档位再出图
+    const res: any = await axiosData(
+      apiUrl.line_trend,
+      { interval: value },
+      { flag: `power_trend_${value}` },
+    )
+    const list: any[] = res?.list || []
+    setListByInterval((prev) => ({ ...prev, [value]: list }))
+    setIntervalCounts((prev) => ({ ...prev, [value]: list.length }))
+    buildOptions(list)
   }
 
   const newOptions = useMemo(() => {
@@ -374,11 +381,6 @@ export default observer((props: Props) => {
   }, [options, defaultOptions, default_xAxis, noShow])
 
   const propsRef = origin === 'home' ? { ref } : {}
-
-  // 真实区间说明（浅色小字）：只在默认档位数据不足、自动回退时出现
-  const historyNote = historyLimited
-    ? tr('power_trend_history_note', { range: activeInterval })
-    : ''
 
   return (
     <div
@@ -439,17 +441,15 @@ export default observer((props: Props) => {
             {tr('power_trend_scope_note')}
           </span>
         </div>
-        {historyLimited && (
-          <Segmented
-            defaultValue={activeInterval}
-            data={power_trend_intervals}
-            ns="static"
-            isHash={false}
-            disabledKeys={unavailableIntervals}
-            disabledTip="power_trend_data_unavailable"
-            onChange={(value: string) => changeInterval(value)}
-          />
-        )}
+        <Segmented
+          defaultValue={activeInterval}
+          data={power_trend_intervals}
+          ns="static"
+          isHash={false}
+          disabledKeys={unavailableIntervals}
+          disabledTip="power_trend_data_unavailable"
+          onChange={(value: string) => changeInterval(value)}
+        />
         {origin === 'home' && (
           <Link href={`/statistics/charts#blockChain`}>
             <MobileView>
@@ -470,14 +470,6 @@ export default observer((props: Props) => {
         <div
           className={`card_shadow border_color relative h-[350px] w-full rounded-xl border pb-2`}
         >
-          {historyNote && (
-            <span
-              className="text_des pointer-events-none absolute right-2.5 top-1.5 z-10 text-[11px] font-normal opacity-70"
-              data-testid="power-trend-history-note"
-            >
-              {historyNote}
-            </span>
-          )}
           <EChart options={newOptions} />
         </div>
       </BrowserView>
@@ -561,11 +553,6 @@ export default observer((props: Props) => {
             )
           })()}
           <div className="relative h-[350px]">
-            {historyNote && (
-              <span className="text_des pointer-events-none absolute right-2.5 top-1 z-10 text-[10px] font-normal opacity-70">
-                {historyNote}
-              </span>
-            )}
             <EChart options={newOptions} />
           </div>
         </div>

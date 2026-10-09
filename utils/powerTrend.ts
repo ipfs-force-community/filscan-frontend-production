@@ -1,6 +1,6 @@
 /** @format */
 /**
- * 「算力走势」图（src/statistics/Trend.tsx）的单位自适应 / 时间区间回退工具。
+ * 「算力走势」图（src/statistics/Trend.tsx）的单位自适应 / 档位可用性工具。
  *
  * 设计约束：
  * 1) 纯函数、零依赖（不 import React / next / dayjs），可被单测直接引用；
@@ -144,35 +144,19 @@ export function pickAxisUnits(
   )
 }
 
-/** Trend 的默认档位（改动前的写死值：后端 1m = 1 个月聚合） */
-export const DEFAULT_TREND_INTERVAL = '1m'
+/** Trend 的默认档位（30 天；与 contents/statistic.tsx 的 power_trend_intervals 一致） */
+export const DEFAULT_TREND_INTERVAL = '30d'
 
 /** 能画出折线的最少点数（< 2 点画不出线） */
 export const MIN_TREND_POINTS = 2
 
-/** 回退顺序：先试最短窗口（测试网状态只保留约 36h），不足再依次放大 */
-export const TREND_INTERVAL_FALLBACKS: string[] = ['24h', '7d', '30d', '1y']
-
-/** 该档位返回的点数是否够画线 */
-export function hasEnoughPoints(list: any[] | null | undefined): boolean {
-  return !!list && list.length >= MIN_TREND_POINTS
-}
-
-/** 按回退顺序取第一个点数足够的档位；都没有数据返回 null */
-export function pickTrendFallbackInterval(
-  counts: Record<string, number>,
-  order: string[] = TREND_INTERVAL_FALLBACKS,
-): string | null {
-  for (const interval of order) {
-    if ((counts?.[interval] ?? 0) >= MIN_TREND_POINTS) return interval
-  }
-  return null
-}
+/** 四个档位（与 contents/statistic.tsx 的 power_trend_intervals 一致）：用于置灰判断与预取 */
+export const TREND_INTERVALS: string[] = ['24h', '7d', '30d', '1y']
 
 /** 点数不足（测试网无历史数据）的档位，用于按钮置灰 */
 export function unavailableTrendIntervals(
   counts: Record<string, number>,
-  order: string[] = TREND_INTERVAL_FALLBACKS,
+  order: string[] = TREND_INTERVALS,
 ): string[] {
   return order.filter(
     (interval) => (counts?.[interval] ?? 0) < MIN_TREND_POINTS,

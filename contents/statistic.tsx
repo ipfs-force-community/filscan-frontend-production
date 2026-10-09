@@ -110,17 +110,34 @@ export const gas_24 = {
   ],
 }
 
-//算力走势图
+// 算力走势图（已合并旧「算力倍数结构走势」）：
+//   左轴 = 堆叠面积：可升级算力（1× 档，底层）+ 满倍率算力（10×，上层）⇒ 顶边即有效算力；
+//   右轴 = 算力净增 / 损失柱。
+// 数组顺序 = ECharts 叠放顺序（第一条在最底下）；两条线的颜色与旧图 power_tier_trend 同源。
+// stack / area 由 Trend.tsx 透传给 ECharts（stack 同名才叠放，areaStyle 画成面积）。
 export const power_trend = {
   title: 'power',
   list: [
     {
-      title: 'total_quality_adj_power',
-      dataIndex: 'total_quality_adj_power',
+      // 堆叠底层：可升级算力（1× 档）
+      title: 'pending_upgrade_power',
+      dataIndex: 'pending_upgrade_power',
       yIndex: 0,
       type: 'line',
-      color: '#FFC53D',
-    }, //有效算力
+      stack: 'qa',
+      area: true,
+      color: '#F8CD4D',
+    },
+    {
+      // 堆叠上层：满倍率算力（10×）
+      title: 'full_multiplier_power',
+      dataIndex: 'full_multiplier_power',
+      yIndex: 0,
+      type: 'line',
+      stack: 'qa',
+      area: true,
+      color: '#4ACAB4',
+    },
     {
       title: 'power_increase',
       dataIndex: 'power_increase',
@@ -128,7 +145,7 @@ export const power_trend = {
       color: '#1C6AFD',
       type: 'bar',
       tip: 'power_increase_tip',
-    }, //算力增长
+    }, //算力净增
     {
       dataIndex: 'power_decrease',
       title: 'power_decrease',
@@ -140,8 +157,7 @@ export const power_trend = {
   ],
 }
 
-// 算力走势图的档位（注意：本图 30 天档用 interval='30d'；后端 '1m' 在测试网只返回 1 个点，
-// 画不出折线。默认档位仍是 '1m'，见 utils/powerTrend.ts 的 DEFAULT_TREND_INTERVAL）
+// 算力走势图的档位（24h / 7d / 30d / 1y；默认档 30d，见 utils/powerTrend.ts 的 DEFAULT_TREND_INTERVAL）
 export const power_trend_intervals = [
   {
     label: '24h',
@@ -543,11 +559,6 @@ export const chartsNav: Array<Menu_Info> = [
       {
         key: 'blockChain_power',
         title: 'power',
-      },
-      {
-        // id/hash 保持 'blockChain_cc_dc_power' 不变（外链 / 书签不能破）；仅侧栏显示名换成新口径。
-        key: 'blockChain_cc_dc_power',
-        title: 'power_multiplier_trend',
       },
       {
         key: 'blockChain_trend',

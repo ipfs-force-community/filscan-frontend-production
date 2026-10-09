@@ -11,7 +11,6 @@ import ActiveNodeTrend from '@/src/statistics/ActiveNodeTrend'
 import Link from 'next/link'
 import FilChart from '@/src/statistics/FilChart'
 import Charts from '@/src/statistics/Charts'
-import DCCTrend from '@/src/statistics/DCCTrend'
 import classNames from 'classnames'
 import { BrowserView, MobileView } from '@/components/device-detect'
 import Meta from '@/src/statistics/Meta'
@@ -30,6 +29,12 @@ export default observer(() => {
   const { hash } = useHash()
 
   useEffect(() => {
+    // 旧 hash 别名：「算力倍数结构走势」已并入「算力走势」⇒ 落点重定向到合并后的那张图
+    // （hash 仍以 'blockChain' 开头，故上面的分组判据照常渲染；这里只改滚动落点）
+    const hashAliases: Record<string, string> = {
+      blockChain_cc_dc_power: 'blockChain_power',
+    }
+    const target = hashAliases[hash] || hash
     const hashArr = [
       'networks',
       'fevm',
@@ -40,8 +45,11 @@ export default observer(() => {
       'reward_split',
       'fil_overview',
     ]
-    if (hashArr.includes(hash) && typeof window !== 'undefined') {
-      window?.scrollTo(0, 0)
+    if (typeof window === 'undefined') return
+    if (hashAliases[hash]) {
+      document.getElementById(target)?.scrollIntoView()
+    } else if (hashArr.includes(target)) {
+      window.scrollTo(0, 0)
     }
   }, [hash])
 
@@ -155,12 +163,6 @@ export default observer(() => {
             <div>
               <div id="blockChain_power">
                 <PowerTrend />
-              </div>
-              <div
-                id="blockChain_cc_dc_power"
-                className={styles['statistics-target']}
-              >
-                <DCCTrend />
               </div>
               <div
                 id="blockChain_trend"

@@ -77,6 +77,7 @@ const statistic = {
   power_multiplier_trend: '算力倍率構成の推移',
   full_multiplier_power: '満倍率算力（10×）',
   pending_upgrade_power: 'アップグレード可能算力',
+  avg_multiplier: '平均品質倍率',
   power_multiplier_nv29_line:
     'NV29以降、算力倍率はコンテンツに依存しなくなります',
   messages_trend: '消息数走势图',

@@ -17,11 +17,9 @@ import {
   POWER_UNIT_BYTES,
   formatPowerAxisTick,
   formatPowerWithUnit,
-  hasEnoughPoints,
   maxAbsBytes,
   pickAxisUnits,
   pickPowerUnit,
-  pickTrendFallbackInterval,
   powerUnitDigits,
   scaleToPowerUnit,
   scaleToPowerUnitForDisplay,
@@ -168,33 +166,7 @@ test('maxAbsBytes: 空数据 / 缺字段 -> 0，不抛错', () => {
   )
 })
 
-// —— 时间区间回退 & 置灰 ——
-test('hasEnoughPoints: 1 个点画不出折线', () => {
-  assert.equal(hasEnoughPoints([{}]), false)
-  assert.equal(hasEnoughPoints([]), false)
-  assert.equal(hasEnoughPoints(null), false)
-  assert.equal(hasEnoughPoints([{}, {}]), true)
-})
-
-test('pickTrendFallbackInterval: calibration 实测计数（1m=1, 24h=46, 7d=34, 30d=34, 1y=1）-> 24h', () => {
-  const counts = { '1m': 1, '24h': 46, '7d': 34, '30d': 34, '1y': 1 }
-  assert.equal(pickTrendFallbackInterval(counts), '24h')
-})
-
-test('pickTrendFallbackInterval: 24h 无数据时退到 7d，再看 30d', () => {
-  assert.equal(pickTrendFallbackInterval({ '24h': 1, '7d': 34 }), '7d')
-  assert.equal(pickTrendFallbackInterval({ '30d': 34 }), '30d')
-  assert.equal(pickTrendFallbackInterval({ '1y': 12 }), '1y')
-})
-
-test('pickTrendFallbackInterval: 全档位都没数据 -> null（不拿假数据充数）', () => {
-  assert.equal(
-    pickTrendFallbackInterval({ '24h': 1, '7d': 0, '30d': 1, '1y': 1 }),
-    null,
-  )
-  assert.equal(pickTrendFallbackInterval({}), null)
-})
-
+// —— 档位置灰 ——
 test('unavailableTrendIntervals: 主网全档位有数据 -> 无置灰项', () => {
   const mainnet = { '24h': 46, '7d': 23, '30d': 290, '1y': 12 }
   assert.deepEqual(unavailableTrendIntervals(mainnet), [])
@@ -205,8 +177,8 @@ test('unavailableTrendIntervals: 测试网 1y=1 -> 仅 1y 置灰', () => {
   assert.deepEqual(unavailableTrendIntervals(cali), ['1y'])
 })
 
-test('默认档位保持 1m（改动前行为）', () => {
-  assert.equal(DEFAULT_TREND_INTERVAL, '1m')
+test('默认档位改为 30d', () => {
+  assert.equal(DEFAULT_TREND_INTERVAL, '30d')
 })
 
 test('常量自检：三档单位是 1024 的 4/5/6 次方', () => {
