@@ -252,7 +252,8 @@ export default observer((props: Props) => {
           show: true,
           position: 'insideEndTop',
           color: isMobile ? color.mobileLabelColor : color.labelColor,
-          formatter: tr('power_trend_nv29_line'),
+          // 函数形式 ⇒ 每次重绘取当前语言（切语言后 newOptions 会重建并 setOption，标签随之刷新）
+          formatter: () => tr('power_trend_nv29_line'),
         },
         data: [{ xAxis: dateList[nv29Idx] }],
       }

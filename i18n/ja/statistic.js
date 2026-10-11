@@ -73,7 +73,7 @@ const statistic = {
   reward_stream_service: 'サービスストリーム',
   reward_stream_burn: 'バーン',
   reward_stream_nv29_line: 'NV29以降、ブロック報酬は重みに応じて分配されます',
-  reward_stream_off_chart: '0.01 FIL 未満 — グラフには表示されません',
+  reward_stream_off_chart: ' (0.01 FIL 未満 — グラフには表示されません)',
   block_reward_per_TiB: '产出效率',
   acc_block_rewards: '累计区块奖励',
   active_nodes: '活跃节点数',

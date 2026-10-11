@@ -97,7 +97,7 @@ export default observer((props: Props) => {
               result +=
                 '<br/>' +
                 item.marker +
-                item.seriesName +
+                tr(item.seriesName) +
                 ': ' +
                 item.data.amount +
                 item.data.unit
@@ -149,7 +149,7 @@ export default observer((props: Props) => {
         type: item.type,
         ...seriesChangeArea,
         data: seriesObj[item.dataIndex],
-        name: tr(item.title),
+        name: item.title,
         symbol: 'circle',
         smooth: true,
         itemStyle: {

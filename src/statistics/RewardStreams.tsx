@@ -106,13 +106,17 @@ export default observer((props: Props) => {
           var result = v[0]?.data?.showTime || ''
           v.forEach((item: any) => {
             if (item.data) {
+              // 「非 0 但柱上画不出」的说明**在这里**按当前语言生成。
+              // 不能烘进 series 数据：那是 load() 时算好的一次性字符串，切语言要刷新才变
+              // （2026-10-11 用户实测：切英文后其余文案立刻变英文，只有这句还是中文）。
               result +=
                 '<br/>' +
                 item.marker +
                 tr(item.seriesName) +
                 ': ' +
                 item.data.amount +
-                item.data.unit
+                item.data.unit +
+                (item.data.offChart ? tr('reward_stream_off_chart') : '')
             }
           })
           return result
@@ -169,9 +173,9 @@ export default observer((props: Props) => {
           value: formatFil(raw, 'FIL', 2),
           showTime: formatDateTime(block_time, 'YYYY-MM-DD HH:mm'),
           amount,
-          unit: offChart
-            ? ` ${unit}（${tr('reward_stream_off_chart')}）`
-            : ` ${unit}`,
+          unit: ` ${unit}`,
+          // 只带标记、不带文案：文案由 tooltip formatter 按当前语言生成（见上）
+          offChart,
         })
       })
     })
@@ -193,7 +197,9 @@ export default observer((props: Props) => {
             show: true,
             position: 'insideEndTop',
             color: isMobile ? color.mobileLabelColor : color.labelColor,
-            formatter: tr('reward_stream_nv29_line'),
+            // 用函数形式：文案在每次 setOption/重绘时取当前语言，切语言无需刷新
+            // （写成 tr(...) 的返回值就会被烘在这次 load 的语言上）
+            formatter: () => tr('reward_stream_nv29_line'),
           },
           data: [{ xAxis: dateList[idx] }],
         }

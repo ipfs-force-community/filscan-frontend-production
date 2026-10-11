@@ -88,7 +88,7 @@ function Gas(props: Props) {
               result +=
                 '<br/>' +
                 item.marker +
-                item.seriesName +
+                tr(item.seriesName) +
                 ': ' +
                 item.data.showValue +
                 ' ' +
@@ -166,7 +166,7 @@ function Gas(props: Props) {
           type: item.type,
           ...seriesArea,
           data: seriesObj[item.label],
-          name: tr(item.label),
+          name: item.label,
           smooth: false,
           yAxisIndex: item.yIndex,
           symbol: 'none',

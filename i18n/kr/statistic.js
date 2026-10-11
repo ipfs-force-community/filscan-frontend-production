@@ -77,7 +77,7 @@ const statistic = {
   reward_stream_service: '서비스 스트림',
   reward_stream_burn: '소각',
   reward_stream_nv29_line: 'NV29부터 블록 보상은 가중치에 따라 분배됩니다',
-  reward_stream_off_chart: '0.01 FIL 미만 — 차트에 표시되지 않음',
+  reward_stream_off_chart: ' (0.01 FIL 미만 — 차트에 표시되지 않음)',
   block_reward_split: '서비스 보상 순위',
   block_trend_tip:
     '마이너 실수령(컨센서스 스트림)만 해당; 서비스 스트림과 소각은 「블록 보상 흐름」을 참고하세요',
