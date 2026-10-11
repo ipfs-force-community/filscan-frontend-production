@@ -87,6 +87,7 @@ const statistic = {
   reward_stream_service: '服务流',
   reward_stream_burn: '销毁',
   reward_stream_nv29_line: 'NV29 起区块奖励按权重拆分',
+  reward_stream_off_chart: '折合不足 0.01 FIL，柱上不显示',
   block_reward_split: '服务奖励排行',
   block_trend_tip: '仅矿工实收（共识流）；服务流与销毁见「区块奖励流向」',
   block_reward_per_TiB_tip:

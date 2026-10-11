@@ -154,11 +154,24 @@ export default observer((props: Props) => {
       dateList.push(showTime)
       reward_streams.list.forEach((item: any) => {
         const raw = value[item.dataIndex]
+        // 每股按各自的真实量级带单位：formatFilNum 会分别给出 FIL / nanoFIL / attoFIL，
+        // 不能再把单位写死成 'FIL'（销毁在 NV29 当前日程下只拿每 epoch 的取整 dust，
+        // Cali 实测 ≈1.3 attoFIL/epoch ⇒ 折合 FIL 是 1e-16 量级）。
+        const shown = formatFilNum(raw, false, false, 4, false)
+        const [amount, ...unitParts] = shown.split(' ')
+        const unit = unitParts.join(' ')
+        // 柱高按 2 位小数画：非 0 但折合 <0.01 FIL 的股永远画不出高度（<0.005 直接成 0.00），
+        // 且本卡不显示图例，故在悬停提示里明说「数字有、柱上看不到」的原因，
+        // 避免被当成显示故障（2026-10-11 用户实问：「数字上明明有销毁，但看不到黄色」）。
+        const offChart =
+          Number(raw) > 0 && Number(formatFil(raw, 'FIL', 2)) === 0
         seriesObj[item.dataIndex].push({
           value: formatFil(raw, 'FIL', 2),
           showTime: formatDateTime(block_time, 'YYYY-MM-DD HH:mm'),
-          amount: formatFilNum(raw, false, false, 4, false).split(' ')[0],
-          unit: 'FIL',
+          amount,
+          unit: offChart
+            ? ` ${unit}（${tr('reward_stream_off_chart')}）`
+            : ` ${unit}`,
         })
       })
     })

@@ -79,6 +79,7 @@ const statistic = {
   reward_stream_service: 'Service Stream',
   reward_stream_burn: 'Burn',
   reward_stream_nv29_line: 'Since NV29 block rewards are split by weight',
+  reward_stream_off_chart: 'below 0.01 FIL — not drawn on the chart',
   block_reward_split: 'Service Reward Ranking',
   block_trend_tip:
     'Miner actual receipts (consensus stream) only; see Block Reward Streams for the service stream and burn',
