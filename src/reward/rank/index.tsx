@@ -10,7 +10,7 @@ import { recipientColumns, useRewardLedger } from '@/src/nv29/rewardRecipients'
 import styles from './index.module.scss'
 
 // 服务奖励排行（全量）：从第一名到最后一名。
-// 数据源与卡一致（后端 jsonrpc RewardStreamLedger，recipients 已按应收降序、不截断），
+// 数据源与卡一致（后端 jsonrpc RewardStreamLedger，recipients 已按累计收益（累计已收+累计应收）降序、不截断），
 // 取数走公共层 useRewardLedger（唯一一份实现）；翻页**只在本地切片**，不重新请求接口。
 // 名次全局连续：排名 = (当前页 - 1) * pageLimit + 行下标 + 1（第 2 页第 1 行 = pageLimit + 1）。
 // 未激活 NV29（ledger.nv29 不为 true）或取数失败 ⇒ 标题 + 一句未激活文案，不渲染表。
